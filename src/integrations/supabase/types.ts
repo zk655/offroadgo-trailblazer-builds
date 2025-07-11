@@ -14,7 +14,245 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      blogs: {
+        Row: {
+          author: string | null
+          content: string | null
+          cover_image: string | null
+          created_at: string
+          excerpt: string | null
+          external_url: string | null
+          id: string
+          published_at: string | null
+          slug: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author?: string | null
+          content?: string | null
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          external_url?: string | null
+          id?: string
+          published_at?: string | null
+          slug: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string | null
+          content?: string | null
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          external_url?: string | null
+          id?: string
+          published_at?: string | null
+          slug?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      builds: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          mod_ids: string[] | null
+          name: string
+          total_cost: number | null
+          updated_at: string
+          vehicle_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          mod_ids?: string[] | null
+          name: string
+          total_cost?: number | null
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          mod_ids?: string[] | null
+          name?: string
+          total_cost?: number | null
+          updated_at?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "builds_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mods: {
+        Row: {
+          amazon_link: string | null
+          brand: string | null
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          price: number | null
+          rating: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amazon_link?: string | null
+          brand?: string | null
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          price?: number | null
+          rating?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amazon_link?: string | null
+          brand?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          price?: number | null
+          rating?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      trails: {
+        Row: {
+          created_at: string
+          description: string | null
+          difficulty: string | null
+          distance: number | null
+          elevation_gain: number | null
+          gpx_url: string | null
+          id: string
+          image_url: string | null
+          latitude: number | null
+          location: string | null
+          longitude: number | null
+          name: string
+          terrain: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          distance?: number | null
+          elevation_gain?: number | null
+          gpx_url?: string | null
+          id?: string
+          image_url?: string | null
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
+          name: string
+          terrain?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          distance?: number | null
+          elevation_gain?: number | null
+          gpx_url?: string | null
+          id?: string
+          image_url?: string | null
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
+          name?: string
+          terrain?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      vehicles: {
+        Row: {
+          approach_angle: number | null
+          brand: string
+          clearance: number | null
+          created_at: string
+          departure_angle: number | null
+          engine: string | null
+          ground_clearance: number | null
+          id: string
+          image_url: string | null
+          mpg: number | null
+          name: string
+          price: number | null
+          tire_size: string | null
+          towing_capacity: number | null
+          type: string
+          updated_at: string
+          year: number | null
+        }
+        Insert: {
+          approach_angle?: number | null
+          brand: string
+          clearance?: number | null
+          created_at?: string
+          departure_angle?: number | null
+          engine?: string | null
+          ground_clearance?: number | null
+          id?: string
+          image_url?: string | null
+          mpg?: number | null
+          name: string
+          price?: number | null
+          tire_size?: string | null
+          towing_capacity?: number | null
+          type: string
+          updated_at?: string
+          year?: number | null
+        }
+        Update: {
+          approach_angle?: number | null
+          brand?: string
+          clearance?: number | null
+          created_at?: string
+          departure_angle?: number | null
+          engine?: string | null
+          ground_clearance?: number | null
+          id?: string
+          image_url?: string | null
+          mpg?: number | null
+          name?: string
+          price?: number | null
+          tire_size?: string | null
+          towing_capacity?: number | null
+          type?: string
+          updated_at?: string
+          year?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -8,63 +8,64 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* OffRoadGo Design System - Adventure Tech Theme */
-    --background: 210 20% 6%;
-    --foreground: 40 20% 95%;
+    /* OffRoadGo Design System - White & Orange Theme */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
 
-    --card: 210 15% 8%;
-    --card-foreground: 40 15% 92%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
 
-    --popover: 210 15% 8%;
-    --popover-foreground: 40 15% 92%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
 
-    /* Primary: Amber/Orange (off-road lights) */
-    --primary: 36 85% 55%;
-    --primary-foreground: 210 20% 6%;
+    /* Primary: Orange */
+    --primary: 20 94% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 25 95% 65%;
 
-    /* Secondary: Forest Green */
-    --secondary: 140 30% 25%;
-    --secondary-foreground: 40 20% 95%;
+    /* Secondary: Light Grays */
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    --muted: 210 15% 15%;
-    --muted-foreground: 40 10% 70%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    /* Accent: Bright Orange */
-    --accent: 20 90% 60%;
-    --accent-foreground: 210 20% 6%;
+    /* Accent: Orange variations */
+    --accent: 25 95% 95%;
+    --accent-foreground: 20 94% 60%;
 
-    --destructive: 0 75% 55%;
-    --destructive-foreground: 40 20% 95%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 210 15% 20%;
-    --input: 210 15% 15%;
-    --ring: 36 85% 55%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 20 94% 60%;
 
     --radius: 0.75rem;
 
-    /* Adventure Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(210 20% 6%) 0%, hsl(140 30% 15%) 50%, hsl(36 85% 25%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(210 15% 8%) 0%, hsl(210 15% 12%) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(36 85% 55%) 0%, hsl(20 90% 60%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(20 90% 60%) 0%, hsl(30 100% 70%) 100%);
+    /* Orange Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(20 94% 60%) 0%, hsl(25 95% 65%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(25 95% 98%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(20 94% 60%) 0%, hsl(25 95% 65%) 100%);
+    --gradient-accent: linear-gradient(145deg, hsl(25 95% 95%) 0%, hsl(240 4.8% 95.9%) 100%);
 
-    /* Adventure Shadows */
-    --shadow-glow: 0 0 40px hsl(36 85% 55% / 0.3);
-    --shadow-card: 0 10px 30px hsl(210 20% 6% / 0.5);
-    --shadow-primary: 0 8px 25px hsl(36 85% 55% / 0.4);
+    /* Orange Shadows */
+    --shadow-glow: 0 0 40px hsl(20 94% 60% / 0.3);
+    --shadow-card: 0 10px 30px hsl(20 94% 60% / 0.15);
+    --shadow-primary: 0 20px 40px hsl(20 94% 60% / 0.4);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-    --sidebar-background: 210 20% 6%;
-    --sidebar-foreground: 40 20% 95%;
-    --sidebar-primary: 36 85% 55%;
-    --sidebar-primary-foreground: 210 20% 6%;
-    --sidebar-accent: 210 15% 15%;
-    --sidebar-accent-foreground: 40 20% 95%;
-    --sidebar-border: 210 15% 20%;
-    --sidebar-ring: 36 85% 55%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 20 94% 60%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 25 95% 95%;
+    --sidebar-accent-foreground: 20 94% 60%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 20 94% 60%;
   }
 
   .dark {

@@ -9,16 +9,17 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-primary text-primary-foreground hover:shadow-primary hover:scale-105 transition-bounce",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-card",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border border-border bg-card text-card-foreground hover:bg-gradient-card hover:shadow-card",
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-muted hover:text-muted-foreground",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-gradient-accent text-accent-foreground hover:shadow-glow hover:scale-105 transition-bounce font-semibold",
+        hero: "bg-gradient-primary text-white hover:shadow-glow transition-all duration-300 border border-white/20",
+        premium: "bg-gradient-accent text-primary border border-primary/20 hover:shadow-primary",
         adventure: "bg-gradient-card border border-primary/20 text-foreground hover:bg-gradient-primary hover:text-primary-foreground hover:shadow-primary transition-bounce",
       },
       size: {
