@@ -7,11 +7,11 @@ const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
+    { href: '/vehicles', label: 'Vehicles' },
     { href: '/compare', label: 'Compare' },
     { href: '/build', label: 'Build' },
+    { href: '/parts', label: 'Parts' },
     { href: '/trails', label: 'Trails' },
-    { href: '/garage', label: 'Garage' },
-    { href: '/mods', label: 'Mods' },
     { href: '/blog', label: 'Blog' },
   ];
 

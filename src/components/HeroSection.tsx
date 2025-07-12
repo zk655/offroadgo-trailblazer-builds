@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Play, Search } from 'lucide-react';
-import heroImage1 from '@/assets/hero-offroad-1.jpg';
-import heroImage2 from '@/assets/hero-offroad-2.jpg';
-import heroImage3 from '@/assets/hero-offroad-3.jpg';
+import heroImage1 from '@/assets/hero-modern-1.jpg';
+import heroImage2 from '@/assets/hero-modern-2.jpg';
+import heroImage3 from '@/assets/hero-modern-3.jpg';
 
 const HeroSection = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
