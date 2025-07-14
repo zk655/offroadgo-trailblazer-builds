@@ -319,7 +319,7 @@ const VehicleDetail = () => {
                 </div>
               }>
                 <Canvas camera={{ position: [0, 2, 8], fov: 50 }}>
-                  <Car3D color={carColor} autoRotate={true} />
+                  <Car3D imageUrl={vehicle.image_url} vehicleName={vehicle.name} autoRotate={true} />
                 </Canvas>
               </Suspense>
               <div className="absolute bottom-4 left-4 bg-background/80 backdrop-blur-sm rounded-lg px-3 py-2">

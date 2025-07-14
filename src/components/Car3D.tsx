@@ -1,92 +1,98 @@
 import { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Environment, OrbitControls } from '@react-three/drei';
-import { Group } from 'three';
+import { useFrame, useLoader } from '@react-three/fiber';
+import { Environment, OrbitControls, Text } from '@react-three/drei';
+import { Group, TextureLoader } from 'three';
 
 interface Car3DProps {
-  color?: string;
+  imageUrl: string;
+  vehicleName: string;
   autoRotate?: boolean;
 }
 
-// Simple car geometry using basic shapes since we don't have GLTF models
-const SimpleCar = ({ color = '#ff4444' }: { color?: string }) => {
+// 3D Car Display using real images
+const CarDisplay = ({ imageUrl, vehicleName }: { imageUrl: string; vehicleName: string }) => {
   const meshRef = useRef<Group>(null);
+  const texture = useLoader(TextureLoader, imageUrl);
 
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.15;
+      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.05;
     }
   });
 
   return (
-    <group ref={meshRef} position={[0, -0.5, 0]}>
-      {/* Car body */}
-      <mesh position={[0, 0.3, 0]}>
-        <boxGeometry args={[2, 0.8, 4]} />
-        <meshStandardMaterial color={color} metalness={0.6} roughness={0.2} />
+    <group ref={meshRef} position={[0, 0, 0]}>
+      {/* Main car image display */}
+      <mesh position={[0, 0, 0]} rotation={[0, 0, 0]}>
+        <planeGeometry args={[6, 4]} />
+        <meshStandardMaterial 
+          map={texture} 
+          transparent
+          alphaTest={0.1}
+          side={2}
+        />
       </mesh>
       
-      {/* Car roof */}
-      <mesh position={[0, 0.9, -0.2]} rotation={[0, 0, 0]}>
-        <boxGeometry args={[1.6, 0.6, 2.5]} />
-        <meshStandardMaterial color={color} metalness={0.4} roughness={0.3} />
+      {/* Subtle 3D frame around the image */}
+      <mesh position={[0, 0, -0.1]}>
+        <boxGeometry args={[6.2, 4.2, 0.1]} />
+        <meshStandardMaterial 
+          color="#1a1a1a" 
+          metalness={0.8} 
+          roughness={0.2}
+          transparent
+          opacity={0.8}
+        />
       </mesh>
 
-      {/* Wheels */}
-      <mesh position={[-0.8, -0.2, 1.2]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.3, 0.3, 0.2]} />
-        <meshStandardMaterial color="#333" metalness={0.8} roughness={0.2} />
-      </mesh>
-      <mesh position={[0.8, -0.2, 1.2]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.3, 0.3, 0.2]} />
-        <meshStandardMaterial color="#333" metalness={0.8} roughness={0.2} />
-      </mesh>
-      <mesh position={[-0.8, -0.2, -1.2]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.3, 0.3, 0.2]} />
-        <meshStandardMaterial color="#333" metalness={0.8} roughness={0.2} />
-      </mesh>
-      <mesh position={[0.8, -0.2, -1.2]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.3, 0.3, 0.2]} />
-        <meshStandardMaterial color="#333" metalness={0.8} roughness={0.2} />
-      </mesh>
+      {/* Floating car name */}
+      <Text
+        position={[0, -2.5, 0.1]}
+        fontSize={0.3}
+        color="#ffffff"
+        anchorX="center"
+        anchorY="middle"
+        font="/fonts/helvetiker_regular.typeface.json"
+      >
+        {vehicleName}
+      </Text>
 
-      {/* Headlights */}
-      <mesh position={[-0.6, 0.2, 2.1]}>
-        <sphereGeometry args={[0.15]} />
-        <meshStandardMaterial color="white" emissive="white" emissiveIntensity={0.2} />
-      </mesh>
-      <mesh position={[0.6, 0.2, 2.1]}>
-        <sphereGeometry args={[0.15]} />
-        <meshStandardMaterial color="white" emissive="white" emissiveIntensity={0.2} />
-      </mesh>
-
-      {/* Windscreen */}
-      <mesh position={[0, 0.8, 0.5]}>
-        <boxGeometry args={[1.4, 0.5, 0.1]} />
-        <meshStandardMaterial color="#87CEEB" transparent opacity={0.3} />
+      {/* Additional visual elements */}
+      <mesh position={[0, 0, -0.2]}>
+        <ringGeometry args={[3.5, 3.8, 32]} />
+        <meshStandardMaterial 
+          color="#444" 
+          transparent 
+          opacity={0.3}
+          side={2}
+        />
       </mesh>
     </group>
   );
 };
 
-const Car3D = ({ color = '#ff4444', autoRotate = true }: Car3DProps) => {
+const Car3D = ({ imageUrl, vehicleName, autoRotate = true }: Car3DProps) => {
   return (
     <>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} intensity={1} />
-      <pointLight position={[-10, -10, -10]} intensity={0.5} />
-      <directionalLight position={[0, 5, 5]} intensity={0.5} />
+      <ambientLight intensity={0.8} />
+      <pointLight position={[10, 10, 10]} intensity={0.8} />
+      <pointLight position={[-10, -10, -10]} intensity={0.4} />
+      <directionalLight position={[0, 5, 5]} intensity={0.6} />
+      <spotLight position={[0, 10, 0]} intensity={0.5} angle={0.3} penumbra={0.1} />
       
-      <SimpleCar color={color} />
+      <CarDisplay imageUrl={imageUrl} vehicleName={vehicleName} />
       
-      <Environment preset="sunset" />
+      <Environment preset="city" />
       <OrbitControls 
         enablePan={false} 
-        enableZoom={false} 
+        enableZoom={true}
+        minDistance={4}
+        maxDistance={12}
         autoRotate={autoRotate} 
-        autoRotateSpeed={2}
-        maxPolarAngle={Math.PI / 2}
-        minPolarAngle={Math.PI / 4}
+        autoRotateSpeed={1}
+        maxPolarAngle={Math.PI / 1.8}
+        minPolarAngle={Math.PI / 6}
       />
     </>
   );
