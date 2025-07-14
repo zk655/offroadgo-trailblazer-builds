@@ -310,6 +310,7 @@ const VehicleDetail = () => {
             {/* Real 3D Vehicle Viewer */}
             <Real3DViewer 
               vehicleName={vehicle.name}
+              vehicleId={vehicle.id}
               fallbackImage={vehicle.image_url}
               autoRotate={true}
               enableControls={true}

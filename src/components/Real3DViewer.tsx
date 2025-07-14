@@ -1,6 +1,6 @@
 import { Suspense, useState, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows, Html, useProgress } from '@react-three/drei';
+import { OrbitControls, Environment, ContactShadows, Html, useProgress, useGLTF } from '@react-three/drei';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,18 +12,83 @@ import {
   Pause, 
   Maximize2,
   Move3D,
-  Loader2
+  Loader2,
+  AlertTriangle
 } from 'lucide-react';
 import * as THREE from 'three';
 
 interface Real3DViewerProps {
   vehicleName: string;
+  vehicleId?: string;
   modelUrl?: string;
   fallbackImage?: string;
   autoRotate?: boolean;
   enableControls?: boolean;
   theme?: 'light' | 'dark';
   className?: string;
+}
+
+// Car model URLs from free sources
+const CAR_MODEL_URLS: Record<string, string> = {
+  '1': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Ford Bronco Raptor
+  '2': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Ford F-150 Raptor (using same model for demo)
+  '6': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Ram TRX
+  '10': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Jeep Wrangler
+  '15': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Toyota 4Runner
+  '20': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Chevy Colorado
+};
+
+// 3D Car Model component with error handling
+function CarModel({ vehicleId, modelUrl }: { vehicleId?: string; modelUrl?: string }) {
+  const meshRef = useRef<THREE.Group>(null);
+  
+  // Determine which model URL to use
+  const finalModelUrl = modelUrl || (vehicleId ? CAR_MODEL_URLS[vehicleId] : null);
+  
+  let gltf;
+  let error = false;
+  
+  try {
+    if (finalModelUrl) {
+      gltf = useGLTF(finalModelUrl);
+    }
+  } catch (err) {
+    console.warn('Failed to load 3D model:', err);
+    error = true;
+  }
+  
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime) * 0.1;
+    }
+  });
+
+  // If model loaded successfully, display it
+  if (gltf && gltf.scene && !error) {
+    return (
+      <group ref={meshRef} position={[0, -1, 0]}>
+        <primitive 
+          object={gltf.scene.clone()} 
+          scale={[2, 2, 2]}
+          position={[0, 0, 0]}
+        />
+      </group>
+    );
+  }
+  
+  // Fallback to SimpleCar for missing models or errors
+  return <SimpleCar />;
+}
+
+// Error boundary component for 3D models
+function ModelErrorBoundary({ children, onError }: { children: React.ReactNode; onError: () => void }) {
+  try {
+    return <>{children}</>;
+  } catch (error) {
+    console.error('3D Model Error:', error);
+    onError();
+    return <SimpleCar />;
+  }
 }
 
 // Simple car geometry as fallback when no model is provided
@@ -95,6 +160,7 @@ function Loader() {
 
 const Real3DViewer = ({ 
   vehicleName, 
+  vehicleId,
   modelUrl, 
   fallbackImage,
   autoRotate = true,
@@ -105,8 +171,13 @@ const Real3DViewer = ({
   const [isAutoRotating, setIsAutoRotating] = useState(autoRotate);
   const [showControls, setShowControls] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [modelError, setModelError] = useState(false);
   const controlsRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleModelError = () => {
+    setModelError(true);
+  };
 
   const toggleAutoRotate = () => {
     setIsAutoRotating(!isAutoRotating);
@@ -181,7 +252,9 @@ const Real3DViewer = ({
           
           {/* 3D Model */}
           <Suspense fallback={<Loader />}>
-            <SimpleCar />
+            <ModelErrorBoundary onError={handleModelError}>
+              <CarModel vehicleId={vehicleId} modelUrl={modelUrl} />
+            </ModelErrorBoundary>
             <ContactShadows 
               position={[0, -1, 0]} 
               opacity={0.4} 
@@ -279,7 +352,9 @@ const Real3DViewer = ({
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-semibold text-sm text-foreground">{vehicleName}</p>
-                <p className="text-xs text-muted-foreground">Real-time 3D Model</p>
+                <p className="text-xs text-muted-foreground">
+                  {modelError ? 'Fallback 3D Model' : 'Real-time 3D Model'}
+                </p>
               </div>
               
               <div className="flex items-center space-x-2">
@@ -287,6 +362,12 @@ const Real3DViewer = ({
                   <Move3D className="w-3 h-3 mr-1" />
                   3D
                 </Badge>
+                {modelError && (
+                  <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800 border-orange-200">
+                    <AlertTriangle className="w-3 h-3 mr-1" />
+                    Fallback
+                  </Badge>
+                )}
                 {isAutoRotating && (
                   <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 border-green-200">
                     Auto-Rotate
