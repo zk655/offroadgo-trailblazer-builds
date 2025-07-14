@@ -8,43 +8,9 @@ import {
   ZoomOut, 
   Play, 
   Pause, 
-  Palette,
-  Settings,
   Maximize2,
-  Download,
-  Share2
+  Move3D
 } from 'lucide-react';
-
-// Extend window interface for model-viewer
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'model-viewer': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
-        src?: string;
-        'camera-controls'?: boolean;
-        'auto-rotate'?: boolean;
-        'auto-rotate-delay'?: number;
-        'rotation-per-second'?: string;
-        loading?: 'auto' | 'lazy' | 'eager';
-        'reveal'?: 'auto' | 'interaction' | 'manual';
-        poster?: string;
-        'background-color'?: string;
-        'environment-image'?: string;
-        'skybox-image'?: string;
-        'shadow-intensity'?: number;
-        'shadow-softness'?: number;
-        exposure?: number;
-        'min-camera-orbit'?: string;
-        'max-camera-orbit'?: string;
-        'camera-orbit'?: string;
-        'field-of-view'?: string;
-        style?: React.CSSProperties;
-        onLoad?: () => void;
-        onError?: () => void;
-      };
-    }
-  }
-}
 
 interface Modern3DViewerProps {
   vehicleName: string;
@@ -65,52 +31,75 @@ const Modern3DViewer = ({
   theme = 'dark',
   className = ''
 }: Modern3DViewerProps) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
   const [isAutoRotating, setIsAutoRotating] = useState(autoRotate);
   const [showControls, setShowControls] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const viewerRef = useRef<HTMLElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Default model URL - you can replace with actual .glb models from Supabase Storage
-  const defaultModelUrl = modelUrl || "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
+  const [rotationY, setRotationY] = useState(0);
+  const [rotationX, setRotationX] = useState(-10);
+  const [scale, setScale] = useState(1);
+  const [isDragging, setIsDragging] = useState(false);
+  const [lastMousePos, setLastMousePos] = useState({ x: 0, y: 0 });
   
-  // Load model-viewer script
+  const containerRef = useRef<HTMLDivElement>(null);
+  const modelRef = useRef<HTMLDivElement>(null);
+
+  // Auto rotation effect
   useEffect(() => {
-    const script = document.createElement('script');
-    script.type = 'module';
-    script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
-    document.head.appendChild(script);
+    if (!isAutoRotating) return;
+    
+    const interval = setInterval(() => {
+      setRotationY(prev => (prev + 1) % 360);
+    }, 50);
+    
+    return () => clearInterval(interval);
+  }, [isAutoRotating]);
 
-    return () => {
-      if (document.head.contains(script)) {
-        document.head.removeChild(script);
-      }
-    };
-  }, []);
-
-  const handleLoad = () => {
-    setIsLoading(false);
-    setHasError(false);
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!enableControls) return;
+    setIsDragging(true);
+    setLastMousePos({ x: e.clientX, y: e.clientY });
+    setIsAutoRotating(false);
   };
 
-  const handleError = () => {
-    setIsLoading(false);
-    setHasError(true);
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !enableControls) return;
+    
+    const deltaX = e.clientX - lastMousePos.x;
+    const deltaY = e.clientY - lastMousePos.y;
+    
+    setRotationY(prev => prev + deltaX * 0.5);
+    setRotationX(prev => Math.max(-90, Math.min(90, prev - deltaY * 0.5)));
+    
+    setLastMousePos({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (!enableControls) return;
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    setScale(prev => Math.max(0.5, Math.min(3, prev + delta)));
   };
 
   const toggleAutoRotate = () => {
     setIsAutoRotating(!isAutoRotating);
-    if (viewerRef.current) {
-      (viewerRef.current as any).autoRotate = !isAutoRotating;
-    }
   };
 
   const resetCamera = () => {
-    if (viewerRef.current) {
-      (viewerRef.current as any).resetTurntableRotation();
-    }
+    setRotationX(-10);
+    setRotationY(0);
+    setScale(1);
+  };
+
+  const zoomIn = () => {
+    setScale(prev => Math.min(3, prev + 0.2));
+  };
+
+  const zoomOut = () => {
+    setScale(prev => Math.max(0.5, prev - 0.2));
   };
 
   const toggleFullscreen = () => {
@@ -135,7 +124,7 @@ const Modern3DViewer = ({
   return (
     <div 
       ref={containerRef}
-      className={`relative group ${className}`}
+      className={`relative group ${className} select-none`}
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
     >
@@ -143,88 +132,94 @@ const Modern3DViewer = ({
         theme === 'dark' 
           ? 'from-slate-900/50 to-slate-800/30' 
           : 'from-white to-gray-50/50'
-      } backdrop-blur-sm`}>
+      } backdrop-blur-sm h-[500px]`}>
         
-        {/* Loading State */}
-        {isLoading && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-gradient-to-br from-background/95 to-muted/95 backdrop-blur-sm">
-            <div className="text-center space-y-4">
-              <div className="relative">
-                <div className="w-16 h-16 mx-auto rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
-                <div className="absolute inset-0 w-16 h-16 mx-auto rounded-full border-2 border-transparent border-b-accent animate-pulse"></div>
+        {/* 3D Scene Container */}
+        <div 
+          className="relative w-full h-full flex items-center justify-center perspective-1000 cursor-grab active:cursor-grabbing"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onWheel={handleWheel}
+          style={{ perspective: '1000px' }}
+        >
+          {/* 3D Model Container */}
+          <div
+            ref={modelRef}
+            className="relative transform-gpu transition-transform duration-75 ease-out"
+            style={{
+              transform: `
+                rotateX(${rotationX}deg) 
+                rotateY(${rotationY}deg) 
+                scale3d(${scale}, ${scale}, ${scale})
+              `,
+              transformStyle: 'preserve-3d'
+            }}
+          >
+            {/* Vehicle Image with 3D Frame */}
+            <div className="relative">
+              {/* Main vehicle image */}
+              <div 
+                className="w-80 h-64 rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-white to-gray-100"
+                style={{
+                  transform: 'translateZ(20px)',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.3), 0 0 0 2px rgba(255,255,255,0.1)'
+                }}
+              >
+                <img 
+                  src={fallbackImage || '/placeholder.svg'} 
+                  alt={vehicleName}
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <div className="space-y-2">
-                <p className="text-lg font-semibold text-foreground">Loading 3D Model</p>
-                <p className="text-sm text-muted-foreground">{vehicleName}</p>
-                <div className="flex items-center justify-center space-x-1">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                </div>
-              </div>
+              
+              {/* 3D Frame sides */}
+              <div 
+                className="absolute inset-0 w-80 h-64 bg-gradient-to-r from-orange-500/20 to-orange-400/20 rounded-2xl"
+                style={{
+                  transform: 'translateZ(-20px) rotateY(180deg)',
+                  boxShadow: 'inset 0 0 20px rgba(255,165,0,0.3)'
+                }}
+              />
+              
+              {/* Side panels for depth */}
+              <div 
+                className="absolute top-0 left-0 w-10 h-64 bg-gradient-to-r from-orange-600/30 to-orange-500/20"
+                style={{
+                  transform: 'rotateY(-90deg) translateZ(20px)',
+                  transformOrigin: 'left center'
+                }}
+              />
+              <div 
+                className="absolute top-0 right-0 w-10 h-64 bg-gradient-to-l from-orange-600/30 to-orange-500/20"
+                style={{
+                  transform: 'rotateY(90deg) translateZ(20px)',
+                  transformOrigin: 'right center'
+                }}
+              />
+              
+              {/* Top and bottom panels */}
+              <div 
+                className="absolute top-0 left-0 w-80 h-10 bg-gradient-to-b from-orange-600/30 to-orange-500/20"
+                style={{
+                  transform: 'rotateX(90deg) translateZ(20px)',
+                  transformOrigin: 'top center'
+                }}
+              />
+              <div 
+                className="absolute bottom-0 left-0 w-80 h-10 bg-gradient-to-t from-orange-600/30 to-orange-500/20"
+                style={{
+                  transform: 'rotateX(-90deg) translateZ(20px)',
+                  transformOrigin: 'bottom center'
+                }}
+              />
             </div>
           </div>
-        )}
-
-        {/* Error State with Fallback */}
-        {hasError && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-gradient-to-br from-background/95 to-muted/95">
-            {fallbackImage ? (
-              <div className="relative w-full h-full">
-                <img 
-                  src={fallbackImage} 
-                  alt={vehicleName}
-                  className="w-full h-full object-contain p-8"
-                />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <Badge variant="secondary" className="bg-amber-100 text-amber-800 border-amber-200">
-                    3D model unavailable - showing image
-                  </Badge>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center space-y-4">
-                <div className="w-16 h-16 mx-auto rounded-full bg-destructive/10 flex items-center justify-center">
-                  <Settings className="w-8 h-8 text-destructive" />
-                </div>
-                <div>
-                  <p className="text-lg font-semibold text-foreground">3D Model Unavailable</p>
-                  <p className="text-sm text-muted-foreground">Unable to load 3D model for {vehicleName}</p>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* 3D Model Viewer */}
-        <model-viewer
-          ref={viewerRef}
-          src={defaultModelUrl}
-          camera-controls={enableControls}
-          auto-rotate={isAutoRotating}
-          auto-rotate-delay={1000}
-          rotation-per-second="30deg"
-          loading="lazy"
-          reveal="auto"
-          poster={fallbackImage}
-          background-color={theme === 'dark' ? '#0f0f23' : '#ffffff'}
-          environment-image={theme === 'dark' ? 'neutral' : 'warehouse'}
-          shadow-intensity={0.3}
-          shadow-softness={0.8}
-          exposure={1.2}
-          min-camera-orbit="auto auto 3m"
-          max-camera-orbit="auto auto 12m"
-          camera-orbit="0deg 75deg 6m"
-          field-of-view="45deg"
-          style={{
-            width: '100%',
-            height: '100%',
-            minHeight: 400,
-            borderRadius: '1.5rem'
-          }}
-          onLoad={handleLoad}
-          onError={handleError}
-        />
+          
+          {/* Ambient lighting effect */}
+          <div className="absolute inset-0 bg-gradient-radial from-orange-500/5 via-transparent to-transparent pointer-events-none" />
+        </div>
 
         {/* Control Panel */}
         {enableControls && (
@@ -248,9 +243,29 @@ const Modern3DViewer = ({
                   size="sm"
                   onClick={resetCamera}
                   className="h-8 w-8 p-0"
-                  title="Reset camera"
+                  title="Reset view"
                 >
                   <RotateCcw className="w-4 h-4" />
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={zoomIn}
+                  className="h-8 w-8 p-0"
+                  title="Zoom in"
+                >
+                  <ZoomIn className="w-4 h-4" />
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={zoomOut}
+                  className="h-8 w-8 p-0"
+                  title="Zoom out"
+                >
+                  <ZoomOut className="w-4 h-4" />
                 </Button>
 
                 <Button
@@ -269,45 +284,40 @@ const Modern3DViewer = ({
 
         {/* Info Panel */}
         <div className={`absolute bottom-4 left-4 right-4 transition-all duration-300 ${
-          showControls || isLoading || hasError ? 'opacity-100 translate-y-0' : 'opacity-80'
+          showControls ? 'opacity-100 translate-y-0' : 'opacity-80'
         }`}>
           <div className="bg-background/90 backdrop-blur-sm rounded-lg p-3 border border-border/30">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-semibold text-sm text-foreground">{vehicleName}</p>
-                <p className="text-xs text-muted-foreground">
-                  {hasError ? 'Fallback image' : '3D Interactive Model'}
-                </p>
+                <p className="text-xs text-muted-foreground">3D Interactive Viewer</p>
               </div>
               
-              {!hasError && (
-                <div className="flex items-center space-x-2">
-                  <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
-                    Interactive
+              <div className="flex items-center space-x-2">
+                <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
+                  <Move3D className="w-3 h-3 mr-1" />
+                  3D
+                </Badge>
+                {isAutoRotating && (
+                  <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 border-green-200">
+                    Auto-Rotate
                   </Badge>
-                  {isAutoRotating && (
-                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 border-green-200">
-                      Auto-Rotate
-                    </Badge>
-                  )}
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Instructions */}
-        {!hasError && !isLoading && (
-          <div className={`absolute top-4 left-4 transition-all duration-300 ${
-            showControls ? 'opacity-0' : 'opacity-60'
-          }`}>
-            <div className="bg-background/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-border/20">
-              <p className="text-xs text-muted-foreground">
-                Drag to rotate • Scroll to zoom • Double-click to reset
-              </p>
-            </div>
+        <div className={`absolute top-4 left-4 transition-all duration-300 ${
+          showControls ? 'opacity-0' : 'opacity-60'
+        }`}>
+          <div className="bg-background/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-border/20">
+            <p className="text-xs text-muted-foreground">
+              Drag to rotate • Scroll to zoom • Controls on hover
+            </p>
           </div>
-        )}
+        </div>
       </Card>
     </div>
   );
