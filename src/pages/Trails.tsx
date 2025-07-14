@@ -18,6 +18,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Search, Filter, MapPin, Mountain, Compass, Route } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
+import SEO from '@/components/SEO';
+import Footer from '@/components/Footer';
 
 interface Trail {
   id: string;
@@ -187,6 +189,12 @@ const Trails = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Epic 4x4 Trails & Off-Road Adventure Routes"
+        description="Discover epic off-road trails and adventure routes. From beginner-friendly paths to expert 4x4 challenges. Find your next adventure destination."
+        keywords="4x4 trails, off-road routes, adventure trails, jeep trails, mountain trails, desert trails, rock crawling"
+        url="/trails"
+      />
       <Navigation />
       
       {/* Hero Section */}
@@ -390,6 +398,7 @@ const Trails = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

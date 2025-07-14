@@ -297,7 +297,7 @@ const ProductsSection = () => {
 
         {/* View All Products Button */}
         <div className="text-center mt-12">
-          <Link to="/parts">
+          <Link to="/products">
             <Button 
               size="sm" 
               className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-6 py-2"

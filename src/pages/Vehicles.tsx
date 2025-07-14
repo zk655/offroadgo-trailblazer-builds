@@ -9,6 +9,8 @@ import { Car, Search, Filter, Star, Fuel, Gauge, TrendingUp, Zap, Shield, Users,
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
 import { supabase } from '@/integrations/supabase/client';
+import SEO from '@/components/SEO';
+import Footer from '@/components/Footer';
 
 // Import vehicle images
 import fordBroncoRaptor from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
@@ -139,6 +141,12 @@ const Vehicles = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="4x4 Off-Road Vehicles - Browse Premium SUVs & Trucks"
+        description="Explore our extensive collection of 4x4 off-road vehicles. Compare specs, features, and find your perfect adventure companion from top brands like Ford, Jeep, Toyota, and more."
+        keywords="4x4 vehicles, off-road SUV, pickup trucks, jeep wrangler, ford bronco, toyota 4runner, lifted trucks, AWD vehicles"
+        url="/vehicles"
+      />
       <Navigation />
       
       {/* Hero Section */}
@@ -369,6 +377,7 @@ const Vehicles = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

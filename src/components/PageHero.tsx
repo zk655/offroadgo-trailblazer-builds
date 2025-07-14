@@ -10,11 +10,15 @@ interface PageHeroProps {
   autoRotate?: boolean;
 }
 
-// Default 4x4 background images
+// Default 4x4 background images - using imported assets
+import heroOffroad1 from '@/assets/hero-offroad-1.jpg';
+import heroOffroad2 from '@/assets/hero-offroad-2.jpg';
+import heroOffroad3 from '@/assets/hero-offroad-3.jpg';
+
 const default4x4Images = [
-  '/src/assets/hero-offroad-1.jpg',
-  '/src/assets/hero-offroad-2.jpg', 
-  '/src/assets/hero-offroad-3.jpg'
+  heroOffroad1,
+  heroOffroad2,
+  heroOffroad3
 ];
 
 const PageHero = ({ 

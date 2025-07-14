@@ -8,6 +8,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Search, Calendar, User, BookOpen, ArrowRight } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
+import SEO from '@/components/SEO';
+import Footer from '@/components/Footer';
 
 interface BlogPost {
   id: string;
@@ -111,6 +113,12 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Off-Road Adventure Blog - 4x4 Stories & Guides"
+        description="Stories, guides, and insights from the 4x4 community. Learn from experts and fellow off-road adventurers. Latest tips and adventures."
+        keywords="off-road blog, 4x4 stories, adventure guides, jeep adventures, off-road tips, trail reports"
+        url="/blog"
+      />
       <Navigation />
       
       {/* Hero Section */}
@@ -289,6 +297,7 @@ const Blog = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

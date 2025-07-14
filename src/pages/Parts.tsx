@@ -18,6 +18,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Search, Filter, Star, ExternalLink, Package, Zap, Shield, Lightbulb, Grid, List } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
+import SEO from '@/components/SEO';
+import Footer from '@/components/Footer';
 
 interface Product {
   id: string;
@@ -188,6 +190,12 @@ const Parts = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Premium 4x4 Parts & Accessories - Off-Road Products"
+        description="Shop premium 4x4 parts and accessories. Find LED light bars, winches, lift kits, bumpers, and more. All products feature Amazon affiliate links for easy purchasing."
+        keywords="4x4 parts, off-road accessories, LED light bars, winches, lift kits, bumpers, rock sliders, recovery gear"
+        url="/products"
+      />
       <Navigation />
       
       {/* Hero Section */}
@@ -510,6 +518,7 @@ const Parts = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

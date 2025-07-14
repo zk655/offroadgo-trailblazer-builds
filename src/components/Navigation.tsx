@@ -30,9 +30,10 @@ const Navigation = () => {
       href: '/vehicles', 
       label: 'Vehicles',
       submenu: [
-        { href: '/vehicles', label: 'Browse All' },
-        { href: '/compare', label: 'Compare' },
-        { href: '/vehicle/1', label: 'Featured' }
+        { href: '/vehicles', label: 'Browse All Models' },
+        { href: '/compare', label: 'Compare Vehicles' },
+        { href: '/vehicles?type=Pickup', label: 'Pickup Trucks' },
+        { href: '/vehicles?type=SUV', label: 'SUVs' }
       ]
     },
     { href: '/trails', label: 'Trails' },
@@ -112,11 +113,8 @@ const Navigation = () => {
               </motion.div>
             ))}
             
-            <div className="flex items-center gap-2 lg:gap-3 ml-2 lg:ml-4">
+            <div className="flex items-center ml-2 lg:ml-4">
               <ThemeToggle />
-              <Button variant="outline" size="sm" className="border-primary/20 hover:border-primary text-xs lg:text-sm px-2 lg:px-3">
-                Sign In
-              </Button>
             </div>
           </div>
 
@@ -200,16 +198,6 @@ const Navigation = () => {
                   </motion.div>
                 ))}
                 
-                <motion.div
-                  className="pt-4 border-t border-border/20"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3, delay: 0.4 }}
-                >
-                  <Button className="w-full adventure-button">
-                    Sign In
-                  </Button>
-                </motion.div>
               </div>
             </motion.div>
           )}
