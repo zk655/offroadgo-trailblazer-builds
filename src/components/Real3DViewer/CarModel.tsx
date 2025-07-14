@@ -6,11 +6,14 @@ import { CAR_MODEL_URLS } from './types';
 import { SimpleCar } from './SimpleCar';
 
 // 3D Car Model component with error handling
-export function CarModel({ vehicleId, modelUrl }: { vehicleId?: string; modelUrl?: string }) {
+export function CarModel({ vehicleId, vehicleBrand, modelUrl }: { vehicleId?: string; vehicleBrand?: string; modelUrl?: string }) {
   const meshRef = useRef<THREE.Group>(null);
   
-  // Determine which model URL to use
-  const finalModelUrl = modelUrl || (vehicleId ? CAR_MODEL_URLS[vehicleId] : null);
+  // Determine which model URL to use - prioritize by brand for better variety
+  const finalModelUrl = modelUrl || 
+    (vehicleBrand ? CAR_MODEL_URLS[vehicleBrand.toLowerCase()] : null) ||
+    (vehicleId ? CAR_MODEL_URLS[vehicleId] : null) ||
+    CAR_MODEL_URLS['default'];
   
   let gltf;
   let error = false;

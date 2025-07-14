@@ -22,6 +22,7 @@ import { ModelErrorBoundary } from './ModelErrorBoundary';
 const Real3DViewer = ({ 
   vehicleName, 
   vehicleId,
+  vehicleBrand,
   modelUrl, 
   fallbackImage,
   autoRotate = true,
@@ -114,7 +115,7 @@ const Real3DViewer = ({
           {/* 3D Model */}
           <Suspense fallback={<Loader />}>
             <ModelErrorBoundary onError={handleModelError}>
-              <CarModel vehicleId={vehicleId} modelUrl={modelUrl} />
+              <CarModel vehicleId={vehicleId} vehicleBrand={vehicleBrand} modelUrl={modelUrl} />
             </ModelErrorBoundary>
             <ContactShadows 
               position={[0, -1, 0]} 

@@ -1,6 +1,7 @@
 export interface Real3DViewerProps {
   vehicleName: string;
   vehicleId?: string;
+  vehicleBrand?: string;
   modelUrl?: string;
   fallbackImage?: string;
   autoRotate?: boolean;
@@ -9,14 +10,34 @@ export interface Real3DViewerProps {
   className?: string;
 }
 
-// Car model URLs from free sources
+// Car model URLs from free sources - updated with different models for each vehicle type
 export const CAR_MODEL_URLS: Record<string, string> = {
-  '1': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Ford Bronco Raptor
-  '2': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Ford F-150 Raptor (using same model for demo)
-  '6': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Ram TRX
-  '10': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Jeep Wrangler
-  '15': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Toyota 4Runner
-  '20': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Chevy Colorado
+  // Ford vehicles - using Ford model
+  'ford': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb',
+  
+  // Ram/Dodge vehicles - using truck model  
+  'ram': 'https://sketchfab.com/models/814cf3f8cfd64594b1c4f96e873c3cef/download',
+  
+  // Jeep vehicles - using SUV model
+  'jeep': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb',
+  
+  // Toyota vehicles - using SUV model
+  'toyota': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb',
+  
+  // Chevrolet vehicles - using truck model
+  'chevrolet': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb',
+  
+  // GMC vehicles - using truck model  
+  'gmc': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb',
+  
+  // Nissan vehicles - using truck model
+  'nissan': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb',
+  
+  // Subaru vehicles - using SUV model
+  'subaru': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb',
+  
+  // Default fallback
+  'default': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb'
 };
 
 // Color mapping for different brands

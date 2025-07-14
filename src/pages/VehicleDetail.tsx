@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Car, Gauge, Fuel, TrendingUp, Users, Calendar, Award, Cog, Zap, Shield, Mountain, Wrench, Info, Star, Heart, Share2, Download } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Real3DViewer from '@/components/Real3DViewer';
+import { supabase } from '@/integrations/supabase/client';
 
 // Import vehicle images
 import fordBroncoRaptor from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
@@ -25,7 +26,7 @@ interface Vehicle {
   brand: string;
   type: string;
   engine: string;
-  clearance: number;
+  clearance?: number;
   tire_size: string;
   image_url: string;
   year: number;
@@ -33,142 +34,19 @@ interface Vehicle {
   mpg: number;
   towing_capacity: number;
   ground_clearance: number;
-  seating_capacity: number;
-  drivetrain: string;
-  transmission: string;
-  fuel_tank: number;
-  warranty: string;
-  safety_rating: number;
 }
 
-// Using the same vehicle data structure from Vehicles.tsx (simplified version for the detail page)
-const vehicleData: Record<string, Vehicle> = {
-  '1': {
-    id: '1',
-    name: 'Bronco Raptor',
-    brand: 'Ford',
-    type: 'SUV',
-    engine: '3.0L V6 Twin-Turbo',
-    clearance: 13.1,
-    tire_size: '37x12.50R17',
-    image_url: fordBroncoRaptor,
-    year: 2024,
-    price: 69995,
-    mpg: 15,
-    towing_capacity: 4500,
-    ground_clearance: 13.1,
-    seating_capacity: 4,
-    drivetrain: '4WD',
-    transmission: '10-Speed Automatic',
-    fuel_tank: 23.8,
-    warranty: '3yr/36k Basic',
-    safety_rating: 4
-  },
-  '2': {
-    id: '2',
-    name: 'F-150 Raptor',
-    brand: 'Ford',
-    type: 'Truck',
-    engine: '3.5L V6 Twin-Turbo',
-    clearance: 13.0,
-    tire_size: '35x12.50R17',
-    image_url: fordF150Raptor,
-    year: 2024,
-    price: 78205,
-    mpg: 15,
-    towing_capacity: 8200,
-    ground_clearance: 13.0,
-    seating_capacity: 5,
-    drivetrain: '4WD',
-    transmission: '10-Speed Automatic',
-    fuel_tank: 36.0,
-    warranty: '3yr/36k Basic',
-    safety_rating: 5
-  },
-  '6': {
-    id: '6',
-    name: '1500 TRX',
-    brand: 'Ram',
-    type: 'Truck',
-    engine: '6.2L Supercharged HEMI V8',
-    clearance: 11.8,
-    tire_size: '35x11.50R18',
-    image_url: ramTrx,
-    year: 2024,
-    price: 98335,
-    mpg: 12,
-    towing_capacity: 8100,
-    ground_clearance: 11.8,
-    seating_capacity: 5,
-    drivetrain: '4WD',
-    transmission: '8-Speed Automatic',
-    fuel_tank: 33.0,
-    warranty: '3yr/36k Basic',
-    safety_rating: 4
-  },
-  '10': {
-    id: '10',
-    name: 'Wrangler Rubicon',
-    brand: 'Jeep',
-    type: 'SUV',
-    engine: '3.6L V6',
-    clearance: 10.8,
-    tire_size: '33x12.50R17',
-    image_url: jeepWrangler,
-    year: 2024,
-    price: 48995,
-    mpg: 18,
-    towing_capacity: 3500,
-    ground_clearance: 10.8,
-    seating_capacity: 4,
-    drivetrain: '4WD',
-    transmission: '8-Speed Automatic',
-    fuel_tank: 22.5,
-    warranty: '3yr/36k Basic',
-    safety_rating: 3
-  },
-  '15': {
-    id: '15',
-    name: '4Runner TRD Pro',
-    brand: 'Toyota',
-    type: 'SUV',
-    engine: '4.0L V6',
-    clearance: 9.6,
-    tire_size: '33x11.50R17',
-    image_url: toyota4Runner,
-    year: 2024,
-    price: 54520,
-    mpg: 17,
-    towing_capacity: 5000,
-    ground_clearance: 9.6,
-    seating_capacity: 5,
-    drivetrain: '4WD',
-    transmission: '5-Speed Automatic',
-    fuel_tank: 23.0,
-    warranty: '3yr/36k Basic',
-    safety_rating: 4
-  },
-  '20': {
-    id: '20',
-    name: 'Colorado ZR2',
-    brand: 'Chevrolet',
-    type: 'Truck',
-    engine: '2.7L Turbo I-4',
-    clearance: 10.7,
-    tire_size: '33x10.50R17',
-    image_url: chevyColorado,
-    year: 2024,
-    price: 48195,
-    mpg: 19,
-    towing_capacity: 7700,
-    ground_clearance: 10.7,
-    seating_capacity: 5,
-    drivetrain: '4WD',
-    transmission: '8-Speed Automatic',
-    fuel_tank: 21.0,
-    warranty: '3yr/36k Basic',
-    safety_rating: 4
-  }
+// Image mapping for vehicles
+const vehicleImages: Record<string, string> = {
+  'ford-bronco-raptor': fordBroncoRaptor,
+  'ford-f-150-raptor': fordF150Raptor,  
+  'ram-1500-trx': ramTrx,
+  'jeep-wrangler-rubicon': jeepWrangler,
+  'toyota-4runner-trd-pro': toyota4Runner,
+  'chevrolet-colorado-zr2': chevyColorado,
+  'gmc-sierra-at4x': gmcSierra,
+  'nissan-frontier-pro-4x': nissanFrontier,
+  'subaru-outback-wilderness': subaruOutback,
 };
 
 // Color mapping for different brands
@@ -183,16 +61,46 @@ const brandColors: Record<string, string> = {
   'Subaru': '#0057b8'
 };
 
+// Helper function to get vehicle image
+const getVehicleImage = (brand: string, name: string, image_url?: string) => {
+  if (image_url) return image_url;
+  
+  const key = `${brand.toLowerCase()}-${name.toLowerCase().replace(/\s+/g, '-')}`;
+  return vehicleImages[key] || fordBroncoRaptor; // Default fallback
+};
+
 const VehicleDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (id && vehicleData[id]) {
-      setVehicle(vehicleData[id]);
-    }
-    setLoading(false);
+    const fetchVehicle = async () => {
+      if (!id) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('vehicles')
+          .select('*')
+          .eq('id', id)
+          .single();
+          
+        if (error) {
+          console.error('Error fetching vehicle:', error);
+          return;
+        }
+        
+        if (data) {
+          setVehicle(data);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicle();
   }, [id]);
 
   if (loading) {
@@ -235,6 +143,7 @@ const VehicleDetail = () => {
   }
 
   const carColor = brandColors[vehicle.brand] || '#ff4444';
+  const vehicleImageUrl = getVehicleImage(vehicle.brand, vehicle.name, vehicle.image_url);
 
   return (
     <div className="min-h-screen bg-background">
@@ -274,21 +183,21 @@ const VehicleDetail = () => {
                   <p className="text-sm font-medium text-muted-foreground">MPG</p>
                   <p className="text-lg font-bold">{vehicle.mpg}</p>
                 </div>
-                <div className="text-center p-4 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors">
-                  <Mountain className="w-6 h-6 mx-auto mb-2 text-primary" />
-                  <p className="text-sm font-medium text-muted-foreground">Clearance</p>
-                  <p className="text-lg font-bold">{vehicle.ground_clearance}"</p>
-                </div>
-                <div className="text-center p-4 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors">
-                  <Wrench className="w-6 h-6 mx-auto mb-2 text-primary" />
-                  <p className="text-sm font-medium text-muted-foreground">Towing</p>
-                  <p className="text-lg font-bold">{vehicle.towing_capacity.toLocaleString()}</p>
-                </div>
-                <div className="text-center p-4 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors">
-                  <Users className="w-6 h-6 mx-auto mb-2 text-primary" />
-                  <p className="text-sm font-medium text-muted-foreground">Seating</p>
-                  <p className="text-lg font-bold">{vehicle.seating_capacity}</p>
-                </div>
+                  <div className="text-center p-4 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors">
+                    <Mountain className="w-6 h-6 mx-auto mb-2 text-primary" />
+                    <p className="text-sm font-medium text-muted-foreground">Clearance</p>
+                    <p className="text-lg font-bold">{vehicle.ground_clearance}"</p>
+                  </div>
+                  <div className="text-center p-4 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors">
+                    <Wrench className="w-6 h-6 mx-auto mb-2 text-primary" />
+                    <p className="text-sm font-medium text-muted-foreground">Towing</p>
+                    <p className="text-lg font-bold">{vehicle.towing_capacity.toLocaleString()}</p>
+                  </div>
+                  <div className="text-center p-4 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors">
+                    <Users className="w-6 h-6 mx-auto mb-2 text-primary" />
+                    <p className="text-sm font-medium text-muted-foreground">Type</p>
+                    <p className="text-lg font-bold">{vehicle.type}</p>
+                  </div>
               </div>
 
               {/* Action Buttons */}
@@ -311,7 +220,8 @@ const VehicleDetail = () => {
             <Real3DViewer 
               vehicleName={vehicle.name}
               vehicleId={vehicle.id}
-              fallbackImage={vehicle.image_url}
+              vehicleBrand={vehicle.brand}
+              fallbackImage={vehicleImageUrl}
               autoRotate={true}
               enableControls={true}
               theme="dark"
@@ -358,16 +268,16 @@ const VehicleDetail = () => {
                     <span className="font-semibold">{vehicle.engine}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Transmission</span>
-                    <span className="font-semibold">{vehicle.transmission}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Drivetrain</span>
-                    <span className="font-semibold">{vehicle.drivetrain}</span>
+                    <span className="text-muted-foreground">Type</span>
+                    <span className="font-semibold">{vehicle.type}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Tire Size</span>
                     <span className="font-semibold">{vehicle.tire_size}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Year</span>
+                    <span className="font-semibold">{vehicle.year}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -384,13 +294,15 @@ const VehicleDetail = () => {
                     <span className="text-muted-foreground">Fuel Economy</span>
                     <span className="font-semibold">{vehicle.mpg} MPG</span>
                   </div>
+                  {vehicle.engine && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Engine</span>
+                      <span className="font-semibold">{vehicle.engine}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Fuel Tank</span>
-                    <span className="font-semibold">{vehicle.fuel_tank} gal</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Range</span>
-                    <span className="font-semibold">~{Math.round(vehicle.mpg * vehicle.fuel_tank)} miles</span>
+                    <span className="text-muted-foreground">Type</span>
+                    <span className="font-semibold">{vehicle.type}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -419,9 +331,9 @@ const VehicleDetail = () => {
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
-                      <span className="text-lg font-bold text-primary">{vehicle.drivetrain}</span>
+                      <span className="text-lg font-bold text-primary">{vehicle.type}</span>
                     </div>
-                    <p className="text-sm font-medium text-muted-foreground">Drive Type</p>
+                    <p className="text-sm font-medium text-muted-foreground">Vehicle Type</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
@@ -509,18 +421,10 @@ const VehicleDetail = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="w-5 h-5 text-primary" />
-                  Safety Rating
+                  Safety Features
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="text-4xl font-bold text-primary">{vehicle.safety_rating}/5</div>
-                  <div className="flex gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className={`w-6 h-6 ${i < vehicle.safety_rating ? 'text-yellow-400 fill-current' : 'text-muted-foreground'}`} />
-                    ))}
-                  </div>
-                </div>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
                     <Shield className="w-4 h-4 text-primary" />
@@ -546,12 +450,12 @@ const VehicleDetail = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Award className="w-5 h-5 text-primary" />
-                  Warranty Coverage
+                  Vehicle Information
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-primary mb-4">{vehicle.warranty}</div>
-                <p className="text-muted-foreground">Comprehensive warranty coverage for peace of mind</p>
+                <div className="text-2xl font-bold text-primary mb-4">{vehicle.brand} {vehicle.name}</div>
+                <p className="text-muted-foreground">High-quality {vehicle.type.toLowerCase()} built for adventure and reliability</p>
               </CardContent>
             </Card>
           </TabsContent>
