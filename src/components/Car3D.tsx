@@ -1,7 +1,7 @@
-import { useRef } from 'react';
-import { useFrame, useLoader } from '@react-three/fiber';
-import { Environment, OrbitControls, Text } from '@react-three/drei';
-import { Group, TextureLoader } from 'three';
+import { useRef, useState } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { OrbitControls, Html } from '@react-three/drei';
+import { Group } from 'three';
 
 interface Car3DProps {
   imageUrl: string;
@@ -9,64 +9,49 @@ interface Car3DProps {
   autoRotate?: boolean;
 }
 
-// 3D Car Display using real images
-const CarDisplay = ({ imageUrl, vehicleName }: { imageUrl: string; vehicleName: string }) => {
+// Optimized 3D Car Display - Simple and Fast
+const OptimizedCarDisplay = ({ imageUrl, vehicleName }: { imageUrl: string; vehicleName: string }) => {
   const meshRef = useRef<Group>(null);
-  const texture = useLoader(TextureLoader, imageUrl);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.15;
-      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.05;
+      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
     }
   });
 
   return (
     <group ref={meshRef} position={[0, 0, 0]}>
-      {/* Main car image display */}
-      <mesh position={[0, 0, 0]} rotation={[0, 0, 0]}>
-        <planeGeometry args={[6, 4]} />
-        <meshStandardMaterial 
-          map={texture} 
-          transparent
-          alphaTest={0.1}
-          side={2}
-        />
-      </mesh>
+      {/* HTML-based image display for better performance */}
+      <Html center>
+        <div className="relative w-96 h-64 rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-muted to-muted/50 border border-border/30">
+          <img 
+            src={imageUrl} 
+            alt={vehicleName}
+            className={`w-full h-full object-cover transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            onLoad={() => setImageLoaded(true)}
+            style={{ objectPosition: 'center' }}
+          />
+          {!imageLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-muted animate-pulse">
+              <div className="text-center text-muted-foreground">
+                <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-primary/20 flex items-center justify-center">
+                  <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                <p className="text-sm">Loading...</p>
+              </div>
+            </div>
+          )}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+            <h3 className="text-white font-bold text-lg drop-shadow-lg">{vehicleName}</h3>
+          </div>
+        </div>
+      </Html>
       
-      {/* Subtle 3D frame around the image */}
-      <mesh position={[0, 0, -0.1]}>
-        <boxGeometry args={[6.2, 4.2, 0.1]} />
-        <meshStandardMaterial 
-          color="#1a1a1a" 
-          metalness={0.8} 
-          roughness={0.2}
-          transparent
-          opacity={0.8}
-        />
-      </mesh>
-
-      {/* Floating car name */}
-      <Text
-        position={[0, -2.5, 0.1]}
-        fontSize={0.3}
-        color="#ffffff"
-        anchorX="center"
-        anchorY="middle"
-        font="/fonts/helvetiker_regular.typeface.json"
-      >
-        {vehicleName}
-      </Text>
-
-      {/* Additional visual elements */}
-      <mesh position={[0, 0, -0.2]}>
-        <ringGeometry args={[3.5, 3.8, 32]} />
-        <meshStandardMaterial 
-          color="#444" 
-          transparent 
-          opacity={0.3}
-          side={2}
-        />
+      {/* Simple geometric elements for 3D feel */}
+      <mesh position={[0, 0, -2]} rotation={[Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[2, 2.2, 8]} />
+        <meshBasicMaterial color="#333" transparent opacity={0.2} />
       </mesh>
     </group>
   );
@@ -75,24 +60,21 @@ const CarDisplay = ({ imageUrl, vehicleName }: { imageUrl: string; vehicleName: 
 const Car3D = ({ imageUrl, vehicleName, autoRotate = true }: Car3DProps) => {
   return (
     <>
-      <ambientLight intensity={0.8} />
-      <pointLight position={[10, 10, 10]} intensity={0.8} />
-      <pointLight position={[-10, -10, -10]} intensity={0.4} />
-      <directionalLight position={[0, 5, 5]} intensity={0.6} />
-      <spotLight position={[0, 10, 0]} intensity={0.5} angle={0.3} penumbra={0.1} />
+      {/* Minimal lighting for better performance */}
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[5, 5, 5]} intensity={0.4} />
       
-      <CarDisplay imageUrl={imageUrl} vehicleName={vehicleName} />
+      <OptimizedCarDisplay imageUrl={imageUrl} vehicleName={vehicleName} />
       
-      <Environment preset="city" />
       <OrbitControls 
         enablePan={false} 
         enableZoom={true}
-        minDistance={4}
-        maxDistance={12}
+        minDistance={3}
+        maxDistance={8}
         autoRotate={autoRotate} 
-        autoRotateSpeed={1}
-        maxPolarAngle={Math.PI / 1.8}
-        minPolarAngle={Math.PI / 6}
+        autoRotateSpeed={0.5}
+        maxPolarAngle={Math.PI / 2}
+        minPolarAngle={Math.PI / 4}
       />
     </>
   );

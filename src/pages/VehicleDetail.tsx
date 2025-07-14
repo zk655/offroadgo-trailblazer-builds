@@ -308,23 +308,31 @@ const VehicleDetail = () => {
               </div>
             </div>
 
-            {/* 3D Car Model */}
-            <div className="relative h-[400px] rounded-3xl overflow-hidden bg-gradient-to-br from-muted/50 to-muted border border-border/50">
+            {/* Optimized 3D Car Display */}
+            <div className="relative h-[400px] rounded-3xl overflow-hidden bg-gradient-to-br from-muted/20 to-muted/10 border border-border/30">
               <Suspense fallback={
-                <div className="flex items-center justify-center h-full">
+                <div className="flex items-center justify-center h-full bg-muted/10">
                   <div className="text-center">
-                    <Car className="mx-auto h-12 w-12 text-muted-foreground mb-2 animate-pulse" />
-                    <p className="text-muted-foreground">Loading 3D Model...</p>
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                      <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                    <p className="text-muted-foreground font-medium">Loading Vehicle Display...</p>
+                    <p className="text-xs text-muted-foreground mt-1">Please wait</p>
                   </div>
                 </div>
               }>
-                <Canvas camera={{ position: [0, 2, 8], fov: 50 }}>
+                <Canvas 
+                  camera={{ position: [0, 0, 5], fov: 60 }}
+                  performance={{ min: 0.5 }}
+                  dpr={[1, 1.5]}
+                  gl={{ antialias: false, alpha: true }}
+                >
                   <Car3D imageUrl={vehicle.image_url} vehicleName={vehicle.name} autoRotate={true} />
                 </Canvas>
               </Suspense>
-              <div className="absolute bottom-4 left-4 bg-background/80 backdrop-blur-sm rounded-lg px-3 py-2">
-                <p className="text-sm font-medium">Interactive 3D Model</p>
-                <p className="text-xs text-muted-foreground">Click and drag to rotate</p>
+              <div className="absolute bottom-4 right-4 bg-background/90 backdrop-blur-sm rounded-lg px-3 py-2 border border-border/30">
+                <p className="text-xs font-medium">Interactive Display</p>
+                <p className="text-xs text-muted-foreground">Drag to rotate • Scroll to zoom</p>
               </div>
             </div>
           </div>
