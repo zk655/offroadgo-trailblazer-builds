@@ -196,60 +196,114 @@ export type Database = {
       vehicles: {
         Row: {
           approach_angle: number | null
+          approach_angle_degrees: number | null
           brand: string
+          breakover_angle: number | null
+          cargo_capacity: number | null
           clearance: number | null
           created_at: string
           departure_angle: number | null
+          departure_angle_degrees: number | null
+          drivetrain: string | null
           engine: string | null
+          fuel_tank_capacity: number | null
+          fuel_type: string | null
           ground_clearance: number | null
+          horsepower: number | null
           id: string
           image_url: string | null
+          max_payload: number | null
           mpg: number | null
           name: string
           price: number | null
+          safety_rating: number | null
+          seating_capacity: number | null
+          starting_price: number | null
           tire_size: string | null
+          top_speed: number | null
+          torque: number | null
           towing_capacity: number | null
+          transmission: string | null
           type: string
           updated_at: string
+          wading_depth: number | null
+          warranty: string | null
           year: number | null
+          zero_to_sixty: number | null
         }
         Insert: {
           approach_angle?: number | null
+          approach_angle_degrees?: number | null
           brand: string
+          breakover_angle?: number | null
+          cargo_capacity?: number | null
           clearance?: number | null
           created_at?: string
           departure_angle?: number | null
+          departure_angle_degrees?: number | null
+          drivetrain?: string | null
           engine?: string | null
+          fuel_tank_capacity?: number | null
+          fuel_type?: string | null
           ground_clearance?: number | null
+          horsepower?: number | null
           id?: string
           image_url?: string | null
+          max_payload?: number | null
           mpg?: number | null
           name: string
           price?: number | null
+          safety_rating?: number | null
+          seating_capacity?: number | null
+          starting_price?: number | null
           tire_size?: string | null
+          top_speed?: number | null
+          torque?: number | null
           towing_capacity?: number | null
+          transmission?: string | null
           type: string
           updated_at?: string
+          wading_depth?: number | null
+          warranty?: string | null
           year?: number | null
+          zero_to_sixty?: number | null
         }
         Update: {
           approach_angle?: number | null
+          approach_angle_degrees?: number | null
           brand?: string
+          breakover_angle?: number | null
+          cargo_capacity?: number | null
           clearance?: number | null
           created_at?: string
           departure_angle?: number | null
+          departure_angle_degrees?: number | null
+          drivetrain?: string | null
           engine?: string | null
+          fuel_tank_capacity?: number | null
+          fuel_type?: string | null
           ground_clearance?: number | null
+          horsepower?: number | null
           id?: string
           image_url?: string | null
+          max_payload?: number | null
           mpg?: number | null
           name?: string
           price?: number | null
+          safety_rating?: number | null
+          seating_capacity?: number | null
+          starting_price?: number | null
           tire_size?: string | null
+          top_speed?: number | null
+          torque?: number | null
           towing_capacity?: number | null
+          transmission?: string | null
           type?: string
           updated_at?: string
+          wading_depth?: number | null
+          warranty?: string | null
           year?: number | null
+          zero_to_sixty?: number | null
         }
         Relationships: []
       }
