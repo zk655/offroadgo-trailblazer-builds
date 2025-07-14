@@ -3,6 +3,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, ShoppingCart, Heart, Eye } from 'lucide-react';
 
+// Import product images
+import winchImage from '@/assets/products/winch-12000lb.jpg';
+import lightbarImage from '@/assets/products/led-lightbar-50.jpg';
+import roofRackImage from '@/assets/products/roof-rack-system.jpg';
+import tiresImage from '@/assets/products/mud-terrain-tires.jpg';
+import rockSlidersImage from '@/assets/products/rock-sliders.jpg';
+import suspensionImage from '@/assets/products/suspension-lift-kit.jpg';
+
 const ProductsSection = () => {
   const products = [
     {
@@ -10,7 +18,7 @@ const ProductsSection = () => {
       name: "Pro Series Winch 12000lb",
       price: "$899.99",
       originalPrice: "$1,199.99",
-      image: "/src/assets/offroad-bg-1.jpg",
+      image: winchImage,
       rating: 4.8,
       reviews: 234,
       category: "Recovery",
@@ -22,7 +30,7 @@ const ProductsSection = () => {
       name: "All-Terrain LED Light Bar 50\"",
       price: "$349.99",
       originalPrice: "$449.99",
-      image: "/src/assets/offroad-bg-2.jpg",
+      image: lightbarImage,
       rating: 4.9,
       reviews: 189,
       category: "Lighting",
@@ -34,7 +42,7 @@ const ProductsSection = () => {
       name: "Heavy Duty Roof Rack System",
       price: "$599.99",
       originalPrice: "$749.99",
-      image: "/src/assets/offroad-bg-3.jpg",
+      image: roofRackImage,
       rating: 4.7,
       reviews: 156,
       category: "Storage",
@@ -46,7 +54,7 @@ const ProductsSection = () => {
       name: "Mud Terrain Tires Set (4)",
       price: "$1,299.99",
       originalPrice: "$1,599.99",
-      image: "/src/assets/hero-offroad-1.jpg",
+      image: tiresImage,
       rating: 4.6,
       reviews: 298,
       category: "Tires",
@@ -58,7 +66,7 @@ const ProductsSection = () => {
       name: "Rock Sliders Protection Kit",
       price: "$749.99",
       originalPrice: "$899.99",
-      image: "/src/assets/hero-offroad-2.jpg",
+      image: rockSlidersImage,
       rating: 4.8,
       reviews: 124,
       category: "Protection",
@@ -70,7 +78,7 @@ const ProductsSection = () => {
       name: "Suspension Lift Kit 6\"",
       price: "$2,199.99",
       originalPrice: "$2,599.99",
-      image: "/src/assets/hero-offroad-3.jpg",
+      image: suspensionImage,
       rating: 4.9,
       reviews: 87,
       category: "Suspension",
@@ -93,24 +101,16 @@ const ProductsSection = () => {
   };
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background with 4x4 car theme */}
-      <div 
-        className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-background/90 bg-cover bg-center bg-no-repeat"
-        style={{ 
-          backgroundImage: `url('/src/assets/parts-hero.jpg')`,
-          backgroundBlendMode: 'overlay'
-        }}
-      />
-      
-      {/* Content */}
-      <div className="relative z-10 container mx-auto">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      {/* Clean Content Container */}
+      <div className="container mx-auto">
+        {/* Section Header */}
         <div className="text-center mb-16">
-          <Badge variant="outline" className="mb-4 text-primary border-primary/20">
+          <Badge variant="outline" className="mb-4 text-primary border-primary/20 bg-primary/5">
             Premium Products
           </Badge>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 bg-gradient-primary bg-clip-text text-transparent">
-            4x4 Gear & Accessories
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground">
+            4x4 Gear & <span className="text-primary">Accessories</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Discover our premium collection of off-road equipment, from winches to lighting systems, 
@@ -121,37 +121,36 @@ const ProductsSection = () => {
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product) => (
-            <Card key={product.id} className="group glass-effect border-border/20 hover:shadow-glow transition-all duration-300 hover-lift overflow-hidden">
+            <Card key={product.id} className="group bg-background border border-border hover:shadow-primary/10 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
               {/* Product Image */}
-              <div className="relative overflow-hidden aspect-video">
+              <div className="relative overflow-hidden aspect-square bg-muted/20 p-6">
                 <img 
                   src={product.image} 
                   alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 
                 {/* Badge */}
                 <Badge 
                   variant="secondary" 
-                  className="absolute top-4 left-4 bg-primary text-primary-foreground border-0"
+                  className="absolute top-4 left-4 bg-primary text-primary-foreground border-0 font-semibold"
                 >
                   {product.badge}
                 </Badge>
 
                 {/* Action Buttons */}
                 <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Button size="icon" variant="secondary" className="h-10 w-10 glass-effect">
+                  <Button size="icon" variant="secondary" className="h-9 w-9 bg-background/80 backdrop-blur-sm">
                     <Heart className="h-4 w-4" />
                   </Button>
-                  <Button size="icon" variant="secondary" className="h-10 w-10 glass-effect">
+                  <Button size="icon" variant="secondary" className="h-9 w-9 bg-background/80 backdrop-blur-sm">
                     <Eye className="h-4 w-4" />
                   </Button>
                 </div>
 
                 {/* Category */}
                 <div className="absolute bottom-4 left-4">
-                  <Badge variant="outline" className="glass-effect border-white/20 text-white">
+                  <Badge variant="outline" className="bg-background/80 backdrop-blur-sm border-border">
                     {product.category}
                   </Badge>
                 </div>
@@ -181,12 +180,12 @@ const ProductsSection = () => {
               <CardContent className="pt-0">
                 {/* Price */}
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl font-black text-primary">{product.price}</span>
+                  <span className="text-2xl font-bold text-primary">{product.price}</span>
                   <span className="text-lg text-muted-foreground line-through">{product.originalPrice}</span>
                 </div>
 
                 {/* Add to Cart Button */}
-                <Button className="w-full premium-gradient text-white hover:shadow-glow hover-lift border-0 font-bold">
+                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   Add to Cart
                 </Button>
@@ -196,11 +195,11 @@ const ProductsSection = () => {
         </div>
 
         {/* View All Products Button */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-16">
           <Button 
             size="lg" 
             variant="outline" 
-            className="premium-gradient text-white hover:shadow-glow hover-lift border-0 font-bold px-8 py-3"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 border-primary font-semibold px-8 py-3"
           >
             View All Products
           </Button>
