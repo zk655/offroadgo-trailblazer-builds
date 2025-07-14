@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, ShoppingCart, Heart, Eye } from 'lucide-react';
@@ -23,7 +23,7 @@ const ProductsSection = () => {
       reviews: 234,
       category: "Recovery",
       badge: "Best Seller",
-      description: "Heavy-duty electric winch with synthetic rope and wireless remote"
+      description: "Heavy-duty electric winch with synthetic rope"
     },
     {
       id: 2,
@@ -35,7 +35,7 @@ const ProductsSection = () => {
       reviews: 189,
       category: "Lighting",
       badge: "New",
-      description: "Ultra-bright LED light bar with flood and spot beam combo"
+      description: "Ultra-bright LED with flood and spot combo"
     },
     {
       id: 3,
@@ -47,7 +47,7 @@ const ProductsSection = () => {
       reviews: 156,
       category: "Storage",
       badge: "Sale",
-      description: "Modular roof rack system with integrated mounting points"
+      description: "Modular rack with integrated mounting points"
     },
     {
       id: 4,
@@ -59,7 +59,7 @@ const ProductsSection = () => {
       reviews: 298,
       category: "Tires",
       badge: "Popular",
-      description: "Premium mud terrain tires for extreme off-road performance"
+      description: "Premium tires for extreme off-road performance"
     },
     {
       id: 5,
@@ -71,7 +71,7 @@ const ProductsSection = () => {
       reviews: 124,
       category: "Protection",
       badge: "Recommended",
-      description: "Heavy-duty rock sliders with integrated step plates"
+      description: "Heavy-duty sliders with integrated step plates"
     },
     {
       id: 6,
@@ -83,7 +83,7 @@ const ProductsSection = () => {
       reviews: 87,
       category: "Suspension",
       badge: "Premium",
-      description: "Complete suspension lift kit with adjustable coilovers"
+      description: "Complete kit with adjustable coilovers"
     }
   ];
 
@@ -91,7 +91,7 @@ const ProductsSection = () => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`h-4 w-4 ${
+        className={`h-3 w-3 ${
           i < Math.floor(rating) 
             ? 'fill-yellow-400 text-yellow-400' 
             : 'text-muted-foreground'
@@ -101,29 +101,28 @@ const ProductsSection = () => {
   };
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-background">
       {/* Clean Content Container */}
       <div className="container mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <Badge variant="outline" className="mb-4 text-primary border-primary/20 bg-primary/5">
+        <div className="text-center mb-12">
+          <Badge variant="outline" className="mb-3 text-primary border-primary/20 bg-primary/5 text-xs font-medium">
             Premium Products
           </Badge>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
             4x4 Gear & <span className="text-primary">Accessories</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Discover our premium collection of off-road equipment, from winches to lighting systems, 
-            designed to enhance your 4x4 adventures.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Premium off-road equipment designed to enhance your adventures
           </p>
         </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Products Grid - More Compact */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <Card key={product.id} className="group bg-background border border-border hover:shadow-primary/10 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-              {/* Product Image */}
-              <div className="relative overflow-hidden aspect-square bg-muted/20 p-6">
+            <Card key={product.id} className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+              {/* Product Image - Compact */}
+              <div className="relative overflow-hidden aspect-square bg-muted/10 p-4">
                 <img 
                   src={product.image} 
                   alt={product.name}
@@ -133,60 +132,58 @@ const ProductsSection = () => {
                 {/* Badge */}
                 <Badge 
                   variant="secondary" 
-                  className="absolute top-4 left-4 bg-primary text-primary-foreground border-0 font-semibold"
+                  className="absolute top-2 left-2 bg-primary text-primary-foreground border-0 text-xs font-medium"
                 >
                   {product.badge}
                 </Badge>
 
                 {/* Action Buttons */}
-                <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Button size="icon" variant="secondary" className="h-9 w-9 bg-background/80 backdrop-blur-sm">
-                    <Heart className="h-4 w-4" />
+                <div className="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Button size="sm" variant="secondary" className="h-7 w-7 p-0 bg-background/80 backdrop-blur-sm">
+                    <Heart className="h-3 w-3" />
                   </Button>
-                  <Button size="icon" variant="secondary" className="h-9 w-9 bg-background/80 backdrop-blur-sm">
-                    <Eye className="h-4 w-4" />
+                  <Button size="sm" variant="secondary" className="h-7 w-7 p-0 bg-background/80 backdrop-blur-sm">
+                    <Eye className="h-3 w-3" />
                   </Button>
                 </div>
 
                 {/* Category */}
-                <div className="absolute bottom-4 left-4">
-                  <Badge variant="outline" className="bg-background/80 backdrop-blur-sm border-border">
+                <div className="absolute bottom-2 left-2">
+                  <Badge variant="outline" className="bg-background/80 backdrop-blur-sm border-border text-xs">
                     {product.category}
                   </Badge>
                 </div>
               </div>
 
-              <CardHeader className="pb-4">
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-xl font-bold leading-tight group-hover:text-primary transition-colors">
+              <CardContent className="p-4">
+                {/* Product Info */}
+                <div className="mb-3">
+                  <h3 className="text-lg font-semibold leading-tight group-hover:text-primary transition-colors line-clamp-2">
                     {product.name}
-                  </CardTitle>
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                    {product.description}
+                  </p>
                 </div>
-                
-                <CardDescription className="text-muted-foreground leading-relaxed">
-                  {product.description}
-                </CardDescription>
 
-                {/* Rating */}
-                <div className="flex items-center gap-2 mt-2">
+                {/* Rating - Compact */}
+                <div className="flex items-center gap-2 mb-3">
                   <div className="flex items-center gap-1">
                     {renderStars(product.rating)}
                   </div>
-                  <span className="text-sm font-semibold">{product.rating}</span>
-                  <span className="text-sm text-muted-foreground">({product.reviews} reviews)</span>
-                </div>
-              </CardHeader>
-
-              <CardContent className="pt-0">
-                {/* Price */}
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl font-bold text-primary">{product.price}</span>
-                  <span className="text-lg text-muted-foreground line-through">{product.originalPrice}</span>
+                  <span className="text-xs font-medium">{product.rating}</span>
+                  <span className="text-xs text-muted-foreground">({product.reviews})</span>
                 </div>
 
-                {/* Add to Cart Button */}
-                <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium">
-                  <ShoppingCart className="h-4 w-4 mr-2" />
+                {/* Price - Compact */}
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-xl font-bold text-primary">{product.price}</span>
+                  <span className="text-sm text-muted-foreground line-through">{product.originalPrice}</span>
+                </div>
+
+                {/* Add to Cart Button - Small */}
+                <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium h-8">
+                  <ShoppingCart className="h-3 w-3 mr-2" />
                   Add to Cart
                 </Button>
               </CardContent>
@@ -195,11 +192,10 @@ const ProductsSection = () => {
         </div>
 
         {/* View All Products Button */}
-        <div className="text-center mt-16">
+        <div className="text-center mt-12">
           <Button 
-            size="default" 
-            variant="outline" 
-            className="bg-primary text-primary-foreground hover:bg-primary/90 border-primary font-medium px-6 py-2"
+            size="sm" 
+            className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-6 py-2"
           >
             View All Products
           </Button>
