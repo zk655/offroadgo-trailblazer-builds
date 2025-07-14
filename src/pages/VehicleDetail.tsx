@@ -322,10 +322,14 @@ const VehicleDetail = () => {
                 </div>
               }>
                 <Canvas 
-                  camera={{ position: [0, 0, 5], fov: 60 }}
+                  camera={{ position: [0, 0, 6], fov: 50 }}
                   performance={{ min: 0.5 }}
-                  dpr={[1, 1.5]}
-                  gl={{ antialias: false, alpha: true }}
+                  dpr={[1, 2]}
+                  gl={{ 
+                    antialias: true, 
+                    alpha: true,
+                    powerPreference: "high-performance"
+                  }}
                 >
                   <Car3D imageUrl={vehicle.image_url} vehicleName={vehicle.name} autoRotate={true} />
                 </Canvas>
