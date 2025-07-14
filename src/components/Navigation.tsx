@@ -44,9 +44,6 @@ const Navigation = () => {
             ))}
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <Button className="premium-gradient text-white hover:shadow-glow hover-lift border-0 font-bold px-6">
-                🚀 Book Now
-              </Button>
             </div>
           </div>
 
@@ -69,21 +66,19 @@ const Navigation = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border">
-            <div className="flex flex-col space-y-4">
+          <div className="md:hidden py-6 border-t border-border/20 glass-effect">
+            <div className="flex flex-col space-y-6">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   to={item.href}
-                  className="text-muted-foreground hover:text-foreground transition-smooth py-2"
+                  className="text-muted-foreground hover:text-primary transition-all duration-300 py-3 px-2 font-semibold text-lg relative group"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}
+                  <span className="absolute bottom-0 left-2 w-0 h-0.5 premium-gradient group-hover:w-[calc(100%-16px)] transition-all duration-300"></span>
                 </Link>
               ))}
-              <Button className="bg-primary hover:bg-primary/90 text-white self-start">
-                Book Now
-              </Button>
             </div>
           </div>
         )}
