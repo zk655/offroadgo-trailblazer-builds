@@ -1,13 +1,12 @@
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Canvas } from '@react-three/fiber';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Car, Gauge, Fuel, TrendingUp, Users, Calendar, Award, Cog, Zap, Shield, Mountain, Wrench, Info, Star, Heart, Share2, Download } from 'lucide-react';
 import Navigation from '@/components/Navigation';
-import Car3D from '@/components/Car3D';
+import Modern3DViewer from '@/components/Modern3DViewer';
 
 // Import vehicle images
 import fordBroncoRaptor from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
@@ -308,37 +307,15 @@ const VehicleDetail = () => {
               </div>
             </div>
 
-            {/* Optimized 3D Car Display */}
-            <div className="relative h-[400px] rounded-3xl overflow-hidden bg-gradient-to-br from-muted/20 to-muted/10 border border-border/30">
-              <Suspense fallback={
-                <div className="flex items-center justify-center h-full bg-muted/10">
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                      <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
-                    </div>
-                    <p className="text-muted-foreground font-medium">Loading Vehicle Display...</p>
-                    <p className="text-xs text-muted-foreground mt-1">Please wait</p>
-                  </div>
-                </div>
-              }>
-                <Canvas 
-                  camera={{ position: [0, 0, 6], fov: 50 }}
-                  performance={{ min: 0.5 }}
-                  dpr={[1, 2]}
-                  gl={{ 
-                    antialias: true, 
-                    alpha: true,
-                    powerPreference: "high-performance"
-                  }}
-                >
-                  <Car3D imageUrl={vehicle.image_url} vehicleName={vehicle.name} autoRotate={true} />
-                </Canvas>
-              </Suspense>
-              <div className="absolute bottom-4 right-4 bg-background/90 backdrop-blur-sm rounded-lg px-3 py-2 border border-border/30">
-                <p className="text-xs font-medium">Interactive Display</p>
-                <p className="text-xs text-muted-foreground">Drag to rotate • Scroll to zoom</p>
-              </div>
-            </div>
+            {/* Modern 3D Vehicle Viewer */}
+            <Modern3DViewer 
+              vehicleName={vehicle.name}
+              fallbackImage={vehicle.image_url}
+              autoRotate={true}
+              enableControls={true}
+              theme="dark"
+              className="h-[400px]"
+            />
           </div>
         </div>
       </div>
