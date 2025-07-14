@@ -217,9 +217,9 @@ const VehiclesShowcase = () => {
                   </div>
                 </div>
 
-                {/* View Details Button - Compact */}
+                {/* View Details Button - Theme Color */}
                 <Link to={`/vehicles/${vehicle.id}`}>
-                  <Button size="sm" variant="outline" className="w-full text-xs font-medium h-8">
+                  <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-xs h-8">
                     View Details
                     <ArrowRight className="h-3 w-3 ml-1" />
                   </Button>
