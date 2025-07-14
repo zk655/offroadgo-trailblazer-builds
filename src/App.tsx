@@ -9,13 +9,12 @@ import Vehicles from "./pages/Vehicles";
 import VehicleDetail from "./pages/VehicleDetail";
 import Compare from "./pages/Compare";
 import Build from "./pages/Build";
-import Mods from "./pages/Mods";
 import Parts from "./pages/Parts";
+import ProductDetail from "./pages/ProductDetail";
 import Trails from "./pages/Trails";
 import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 import TrailDetail from "./pages/TrailDetail";
-import ProductDetail from "./pages/ProductDetail";
 import AdventureStart from "./pages/AdventureStart";
 
 const queryClient = new QueryClient();
@@ -38,11 +37,10 @@ const App = () => (
             <Route path="/vehicle/:id" element={<VehicleDetail />} />
             <Route path="/compare" element={<Compare />} />
             <Route path="/build" element={<Build />} />
-            <Route path="/mods" element={<Mods />} />
-            <Route path="/parts" element={<Parts />} />
+            <Route path="/products" element={<Parts />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/trails" element={<Trails />} />
             <Route path="/trail/:id" element={<TrailDetail />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/adventure-start" element={<AdventureStart />} />
             <Route path="/blog" element={<Blog />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

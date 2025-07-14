@@ -20,7 +20,7 @@ const Footer = () => {
       links: [
         { href: '/trails', label: 'Trail Explorer' },
         { href: '/garage', label: 'Community Builds' },
-        { href: '/mods', label: 'Browse Mods' },
+        { href: '/products', label: 'Browse Products' },
         { href: '/blog', label: 'Blog' },
       ],
     },

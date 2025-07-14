@@ -1,59 +1,166 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Star, ShoppingCart, Heart, Share2, Truck, Shield, RotateCcw } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { 
+  ArrowLeft, 
+  Star, 
+  ShoppingCart, 
+  ExternalLink, 
+  Package, 
+  Shield, 
+  Truck,
+  Award,
+  CheckCircle,
+  AlertCircle,
+  Zap,
+  Lightbulb
+} from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+
+interface Product {
+  id: string;
+  title: string;
+  category: string;
+  price: number;
+  brand: string;
+  rating: number;
+  image_url: string;
+  amazon_link: string;
+  description: string;
+}
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock product data - in a real app, this would be fetched from an API
-  const product = {
-    id: id || '1',
-    name: 'Winch 12000lb Synthetic Rope',
-    price: '$799.99',
-    originalPrice: '$999.99',
-    brand: 'WARN',
-    rating: 4.8,
-    reviews: 342,
-    category: 'Recovery',
-    inStock: true,
-    image: '/src/assets/products/winch-12000lb.jpg',
-    images: [
-      '/src/assets/products/winch-12000lb.jpg',
-      '/src/assets/products/recovery-tracks.jpg',
-      '/src/assets/products/bull-bar-bumper.jpg'
-    ],
-    description: 'Heavy-duty 12,000lb capacity winch with synthetic rope. Features wireless remote control, automatic load-holding brake, and weatherproof construction. Perfect for serious off-road recovery situations.',
-    features: [
-      '12,000 lb pulling capacity',
-      'Synthetic rope (lighter and safer than steel cable)',
-      'Wireless remote control with 50ft range',
-      'Automatic load-holding brake system',
-      'IP67 weatherproof rating',
-      'Includes mounting hardware and fairlead'
-    ],
-    specifications: {
-      'Pulling Capacity': '12,000 lbs',
-      'Motor': '6.0 HP series wound',
-      'Gear Ratio': '218:1',
-      'Rope Length': '100 ft',
-      'Rope Diameter': '3/8 inch',
-      'Weight': '89 lbs'
+  useEffect(() => {
+    if (id) {
+      fetchProduct(id);
     }
+  }, [id]);
+
+  const fetchProduct = async (productId: string) => {
+    try {
+      setLoading(true);
+      
+      // Fetch the main product
+      const { data: productData, error: productError } = await supabase
+        .from('mods')
+        .select('*')
+        .eq('id', productId)
+        .single();
+
+      if (productError) throw productError;
+      setProduct(productData);
+
+      // Fetch related products (same category, different product)
+      if (productData) {
+        const { data: relatedData, error: relatedError } = await supabase
+          .from('mods')
+          .select('*')
+          .eq('category', productData.category)
+          .neq('id', productId)
+          .limit(4);
+
+        if (relatedError) throw relatedError;
+        setRelatedProducts(relatedData || []);
+      }
+    } catch (error) {
+      console.error('Error fetching product:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0,
+    }).format(price);
   };
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
-      <Star 
-        key={i} 
-        className={`w-4 h-4 ${i < Math.floor(rating) ? 'fill-primary text-primary' : 'text-muted-foreground'}`} 
+      <Star
+        key={i}
+        className={`h-4 w-4 ${
+          i < Math.floor(rating) 
+            ? 'text-yellow-400 fill-current' 
+            : 'text-gray-300'
+        }`}
       />
     ));
   };
+
+  const getCategoryIcon = (category: string) => {
+    switch (category?.toLowerCase()) {
+      case 'lighting':
+        return <Lightbulb className="h-5 w-5" />;
+      case 'protection':
+        return <Shield className="h-5 w-5" />;
+      case 'performance':
+        return <Zap className="h-5 w-5" />;
+      default:
+        return <Package className="h-5 w-5" />;
+    }
+  };
+
+  const getAmazonAffiliateLink = (originalLink: string) => {
+    // Add your Amazon affiliate tag here
+    const affiliateTag = 'offroad-20'; // Replace with your actual affiliate tag
+    
+    if (originalLink && originalLink.includes('amazon.com')) {
+      const url = new URL(originalLink);
+      url.searchParams.set('tag', affiliateTag);
+      return url.toString();
+    }
+    return originalLink;
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="pt-16">
+          <div className="container mx-auto px-4 py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="h-96 bg-muted animate-pulse rounded-lg" />
+              <div className="space-y-4">
+                <div className="h-8 bg-muted animate-pulse rounded" />
+                <div className="h-6 bg-muted animate-pulse rounded w-2/3" />
+                <div className="h-4 bg-muted animate-pulse rounded" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto px-4 pt-32 text-center">
+          <AlertCircle className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
+          <h1 className="text-2xl font-bold mb-4">Product not found</h1>
+          <Button onClick={() => navigate('/products')}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Products
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -61,165 +168,183 @@ const ProductDetail = () => {
       
       <main className="pt-16">
         {/* Breadcrumb */}
-        <section className="bg-muted/50 py-4">
+        <div className="bg-muted/50 py-4">
+          <div className="container mx-auto px-4">
+            <nav className="flex items-center space-x-2 text-sm text-muted-foreground">
+              <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+              <span>/</span>
+              <Link to="/products" className="hover:text-primary transition-colors">Products</Link>
+              <span>/</span>
+              <span className="text-foreground">{product.title}</span>
+            </nav>
+          </div>
+        </div>
+
+        {/* Product Detail */}
+        <section className="py-8">
           <div className="container mx-auto px-4">
             <Button 
               variant="ghost" 
               onClick={() => navigate(-1)}
-              className="text-muted-foreground hover:text-foreground"
+              className="mb-6"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Products
+              Back
             </Button>
-          </div>
-        </section>
 
-        {/* Product Details */}
-        <section className="py-16">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              {/* Product Images */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+              {/* Product Image */}
               <div className="space-y-4">
-                <div className="aspect-square overflow-hidden rounded-lg bg-muted">
-                  <img 
-                    src={product.image} 
-                    alt={product.name}
-                    className="w-full h-full object-cover"
+                <div className="relative overflow-hidden rounded-lg">
+                  <img
+                    src={product.image_url}
+                    alt={product.title}
+                    className="w-full h-96 object-cover"
                   />
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  {product.images.map((image, index) => (
-                    <div key={index} className="aspect-square overflow-hidden rounded-lg bg-muted cursor-pointer border-2 border-transparent hover:border-primary transition-colors">
-                      <img 
-                        src={image} 
-                        alt={`${product.name} view ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
+                  <div className="absolute top-4 left-4">
+                    <Badge className="bg-black/80 text-white">
+                      {getCategoryIcon(product.category)}
+                      <span className="ml-2">{product.category}</span>
+                    </Badge>
+                  </div>
                 </div>
               </div>
 
               {/* Product Info */}
               <div className="space-y-6">
                 <div>
-                  <Badge variant="secondary" className="mb-2">{product.category}</Badge>
-                  <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">
-                    {product.name}
-                  </h1>
-                  <p className="text-muted-foreground mb-4">by {product.brand}</p>
+                  <p className="text-muted-foreground font-medium mb-2">{product.brand}</p>
+                  <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
                   
-                  {/* Rating */}
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="flex items-center space-x-1">
                       {renderStars(product.rating)}
+                      <span className="text-sm text-muted-foreground ml-2">
+                        ({product.rating} stars)
+                      </span>
                     </div>
-                    <span className="font-medium">{product.rating}</span>
-                    <span className="text-muted-foreground">({product.reviews} reviews)</span>
+                    <Badge variant="outline">{product.category}</Badge>
                   </div>
 
-                  {/* Price */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <span className="text-3xl font-bold text-primary">{product.price}</span>
-                    <span className="text-xl text-muted-foreground line-through">{product.originalPrice}</span>
-                    <Badge variant="destructive">20% OFF</Badge>
-                  </div>
-
-                  {/* Stock Status */}
-                  <div className="flex items-center gap-2 mb-6">
-                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                    <span className="text-green-600 font-medium">In Stock - Ready to Ship</span>
+                  <div className="text-3xl font-bold text-primary mb-6">
+                    {formatPrice(product.price)}
                   </div>
                 </div>
+
+                <Separator />
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Description</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {product.description}
+                  </p>
+                </div>
+
+                <Separator />
+
+                {/* Key Features */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Key Features</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm">Premium Quality</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm">4x4 Compatible</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm">Easy Installation</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm">Durable Materials</span>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
 
                 {/* Action Buttons */}
                 <div className="space-y-3">
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3">
-                    <ShoppingCart className="w-5 h-5 mr-2" />
-                    Add to Cart
+                  {product.amazon_link && (
+                    <Button asChild size="lg" className="w-full">
+                      <a 
+                        href={getAmazonAffiliateLink(product.amazon_link)} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                      >
+                        <ExternalLink className="mr-2 h-5 w-5" />
+                        Buy on Amazon
+                      </a>
+                    </Button>
+                  )}
+                  
+                  <Button variant="outline" size="lg" className="w-full">
+                    <ShoppingCart className="mr-2 h-5 w-5" />
+                    Add to Build List
                   </Button>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button variant="outline" className="font-medium">
-                      <Heart className="w-4 h-4 mr-2" />
-                      Save
-                    </Button>
-                    <Button variant="outline" className="font-medium">
-                      <Share2 className="w-4 h-4 mr-2" />
-                      Share
-                    </Button>
-                  </div>
                 </div>
 
-                {/* Shipping Info */}
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <Truck className="w-5 h-5 text-primary" />
-                        <div>
-                          <p className="font-medium">Free Shipping</p>
-                          <p className="text-sm text-muted-foreground">On orders over $99</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <RotateCcw className="w-5 h-5 text-primary" />
-                        <div>
-                          <p className="font-medium">30-Day Returns</p>
-                          <p className="text-sm text-muted-foreground">Easy returns & exchanges</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Shield className="w-5 h-5 text-primary" />
-                        <div>
-                          <p className="font-medium">2-Year Warranty</p>
-                          <p className="text-sm text-muted-foreground">Manufacturer warranty included</p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                {/* Trust Indicators */}
+                <div className="grid grid-cols-3 gap-4 pt-4">
+                  <div className="text-center">
+                    <Truck className="h-6 w-6 mx-auto mb-2 text-muted-foreground" />
+                    <p className="text-xs text-muted-foreground">Fast Shipping</p>
+                  </div>
+                  <div className="text-center">
+                    <Shield className="h-6 w-6 mx-auto mb-2 text-muted-foreground" />
+                    <p className="text-xs text-muted-foreground">Secure Purchase</p>
+                  </div>
+                  <div className="text-center">
+                    <Award className="h-6 w-6 mx-auto mb-2 text-muted-foreground" />
+                    <p className="text-xs text-muted-foreground">Quality Guaranteed</p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Product Details Tabs */}
-            <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Description</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground leading-relaxed mb-6">
-                    {product.description}
-                  </p>
-                  
-                  <h3 className="text-lg font-semibold mb-4">Key Features</h3>
-                  <ul className="space-y-2">
-                    {product.features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2">
-                        <Star className="w-4 h-4 text-primary" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Specifications</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {Object.entries(product.specifications).map(([key, value]) => (
-                      <div key={key} className="flex justify-between py-2 border-b border-border/50 last:border-0">
-                        <span className="text-muted-foreground">{key}</span>
-                        <span className="font-medium">{value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            {/* Related Products */}
+            {relatedProducts.length > 0 && (
+              <section>
+                <h2 className="text-2xl font-bold mb-6">Related Products</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {relatedProducts.map((relatedProduct) => (
+                    <Card 
+                      key={relatedProduct.id} 
+                      className="group hover:shadow-primary transition-smooth hover:-translate-y-1 overflow-hidden"
+                    >
+                      <Link to={`/product/${relatedProduct.id}`}>
+                        <div className="relative">
+                          <img
+                            src={relatedProduct.image_url}
+                            alt={relatedProduct.title}
+                            className="w-full h-48 object-cover group-hover:scale-105 transition-smooth"
+                          />
+                          <div className="absolute top-2 right-2">
+                            <Badge className="bg-primary text-white text-xs">
+                              {formatPrice(relatedProduct.price)}
+                            </Badge>
+                          </div>
+                        </div>
+                        
+                        <CardContent className="p-4">
+                          <p className="text-xs text-muted-foreground mb-1">{relatedProduct.brand}</p>
+                          <h3 className="font-semibold text-sm line-clamp-2 mb-2">
+                            {relatedProduct.title}
+                          </h3>
+                          <div className="flex items-center space-x-1">
+                            {renderStars(relatedProduct.rating)}
+                          </div>
+                        </CardContent>
+                      </Link>
+                    </Card>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
         </section>
       </main>

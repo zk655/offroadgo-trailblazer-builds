@@ -37,7 +37,7 @@ const Navigation = () => {
     },
     { href: '/trails', label: 'Trails' },
     { href: '/build', label: 'Build' },
-    { href: '/mods', label: 'Mods' },
+    { href: '/products', label: 'Products' },
     { href: '/blog', label: 'Blog' },
   ];
 
