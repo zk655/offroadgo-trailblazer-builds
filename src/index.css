@@ -8,103 +8,112 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* OffRoadGo Design System - Clean Modern Theme */
-    --background: 0 0% 100%;
-    --foreground: 222 14% 13%;
+    /* 2025 Modern Design System - Premium Light Theme */
+    --background: 0 0% 99%;
+    --foreground: 210 11% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 14% 13%;
+    --card-foreground: 210 11% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 14% 13%;
+    --popover-foreground: 210 11% 15%;
 
-    /* Primary: Orange */
+    /* Premium Orange Palette */
     --primary: 25 95% 53%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 25 95% 60%;
+    --primary-glow: 25 100% 60%;
+    --primary-dark: 25 85% 45%;
 
-    /* Secondary: Light Grays */
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 14% 13%;
+    /* Modern Neutrals */
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 210 11% 15%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 210 11% 46%;
 
-    /* Accent: Orange */
     --accent: 25 95% 53%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
+    --border: 210 20% 92%;
+    --input: 210 20% 96%;
     --ring: 25 95% 53%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Clean Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 50%, hsl(25 95% 53%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(25 95% 53%) 0%, hsl(25 95% 60%) 100%);
-    --gradient-accent: linear-gradient(145deg, hsl(210 40% 96%) 0%, hsl(0 0% 100%) 100%);
+    /* 2025 Premium Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 99%) 0%, hsl(210 20% 98%) 30%, hsl(25 95% 53% / 0.1) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(210 20% 98%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(25 95% 53%) 0%, hsl(25 100% 60%) 100%);
+    --gradient-accent: linear-gradient(145deg, hsl(210 20% 96%) 0%, hsl(0 0% 100%) 100%);
+    --gradient-dark: linear-gradient(135deg, hsl(210 11% 15%) 0%, hsl(210 11% 8%) 100%);
 
-    /* Clean Shadows */
-    --shadow-glow: 0 0 20px hsl(25 95% 53% / 0.2);
-    --shadow-card: 0 4px 12px hsl(0 0% 0% / 0.1);
-    --shadow-primary: 0 8px 25px hsl(25 95% 53% / 0.3);
+    /* Modern Shadows & Effects */
+    --shadow-glow: 0 0 40px hsl(25 95% 53% / 0.25);
+    --shadow-card: 0 8px 32px hsl(210 11% 15% / 0.08);
+    --shadow-primary: 0 20px 40px hsl(25 95% 53% / 0.3);
+    --shadow-premium: 0 25px 50px hsl(210 11% 15% / 0.15);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-premium: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
+    /* Sidebar */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 14% 13%;
+    --sidebar-foreground: 210 11% 15%;
     --sidebar-primary: 25 95% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 40% 96%;
-    --sidebar-accent-foreground: 222 14% 13%;
-    --sidebar-border: 214 32% 91%;
+    --sidebar-accent: 210 20% 96%;
+    --sidebar-accent-foreground: 210 11% 15%;
+    --sidebar-border: 210 20% 92%;
     --sidebar-ring: 25 95% 53%;
   }
 
   .dark {
-    /* Dark mode - still clean but with dark colors */
-    --background: 222 14% 5%;
-    --foreground: 210 40% 98%;
+    /* 2025 Modern Dark Theme - Premium */
+    --background: 210 11% 4%;
+    --foreground: 210 20% 98%;
 
-    --card: 222 14% 8%;
-    --card-foreground: 210 40% 98%;
+    --card: 210 11% 6%;
+    --card-foreground: 210 20% 98%;
 
-    --popover: 222 14% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 210 11% 6%;
+    --popover-foreground: 210 20% 98%;
 
     --primary: 25 95% 53%;
-    --primary-foreground: 0 0% 100%;
+    --primary-foreground: 210 11% 4%;
 
-    --secondary: 217 32% 17%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 210 11% 10%;
+    --secondary-foreground: 210 20% 98%;
 
-    --muted: 217 32% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 210 11% 10%;
+    --muted-foreground: 210 11% 65%;
 
     --accent: 25 95% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent-foreground: 210 11% 4%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 217 32% 17%;
-    --input: 217 32% 17%;
+    --border: 210 11% 15%;
+    --input: 210 11% 10%;
     --ring: 25 95% 53%;
 
-    --sidebar-background: 222 14% 8%;
-    --sidebar-foreground: 210 40% 98%;
+    /* Dark Theme Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(210 11% 4%) 0%, hsl(210 11% 8%) 30%, hsl(25 95% 53% / 0.1) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(210 11% 6%) 0%, hsl(210 11% 8%) 100%);
+    --gradient-accent: linear-gradient(145deg, hsl(210 11% 10%) 0%, hsl(210 11% 6%) 100%);
+
+    --sidebar-background: 210 11% 6%;
+    --sidebar-foreground: 210 20% 98%;
     --sidebar-primary: 25 95% 53%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 32% 17%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 32% 17%;
+    --sidebar-primary-foreground: 210 11% 4%;
+    --sidebar-accent: 210 11% 10%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 210 11% 15%;
     --sidebar-ring: 25 95% 53%;
   }
 }
@@ -115,6 +124,38 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "cv11", "ss01";
+    font-variation-settings: "opsz" 32;
+  }
+
+  /* Modern Typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  /* Premium Effects */
+  .glass-effect {
+    @apply bg-card/80 backdrop-blur-xl border border-border/50;
+  }
+
+  .premium-gradient {
+    background: var(--gradient-primary);
+  }
+
+  .hover-lift {
+    @apply transform transition-all duration-300 hover:-translate-y-2 hover:shadow-premium;
   }
 }
