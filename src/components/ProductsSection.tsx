@@ -10,6 +10,9 @@ import roofRackImage from '@/assets/products/roof-rack-system.jpg';
 import tiresImage from '@/assets/products/mud-terrain-tires.jpg';
 import rockSlidersImage from '@/assets/products/rock-sliders.jpg';
 import suspensionImage from '@/assets/products/suspension-lift-kit.jpg';
+import bullBarImage from '@/assets/products/bull-bar-bumper.jpg';
+import recoveryTracksImage from '@/assets/products/recovery-tracks.jpg';
+import airCompressorImage from '@/assets/products/air-compressor.jpg';
 
 const ProductsSection = () => {
   const products = [
@@ -84,6 +87,42 @@ const ProductsSection = () => {
       category: "Suspension",
       badge: "Premium",
       description: "Complete kit with adjustable coilovers"
+    },
+    {
+      id: 7,
+      name: "Heavy Duty Bull Bar",
+      price: "$1,599.99",
+      originalPrice: "$1,899.99",
+      image: bullBarImage,
+      rating: 4.7,
+      reviews: 156,
+      category: "Protection",
+      badge: "Heavy Duty",
+      description: "Steel bull bar with LED light mounts"
+    },
+    {
+      id: 8,
+      name: "Recovery Tracks Set",
+      price: "$299.99",
+      originalPrice: "$399.99",
+      image: recoveryTracksImage,
+      rating: 4.6,
+      reviews: 203,
+      category: "Recovery",
+      badge: "Essential",
+      description: "Sand ladders for vehicle recovery"
+    },
+    {
+      id: 9,
+      name: "Portable Air Compressor",
+      price: "$199.99",
+      originalPrice: "$249.99",
+      image: airCompressorImage,
+      rating: 4.8,
+      reviews: 342,
+      category: "Tools",
+      badge: "Portable",
+      description: "12V compressor for tire inflation"
     }
   ];
 
