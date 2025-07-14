@@ -5,6 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { 
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
 import { supabase } from '@/integrations/supabase/client';
 import { Search, Filter, MapPin, Mountain, Compass, Route } from 'lucide-react';
 import Navigation from '@/components/Navigation';
@@ -26,21 +35,30 @@ interface Trail {
 
 const Trails = () => {
   const [trails, setTrails] = useState<Trail[]>([]);
-  const [filteredTrails, setFilteredTrails] = useState<Trail[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState('all');
   const [terrainFilter, setTerrainFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [allTrails, setAllTrails] = useState<Trail[]>([]);
+  
+  const ITEMS_PER_PAGE = 20;
 
   useEffect(() => {
-    fetchTrails();
+    fetchAllTrails();
   }, []);
 
   useEffect(() => {
-    filterTrails();
-  }, [trails, searchTerm, difficultyFilter, terrainFilter]);
+    setCurrentPage(1); // Reset to first page when filters change
+    fetchTrails();
+  }, [searchTerm, difficultyFilter, terrainFilter]);
 
-  const fetchTrails = async () => {
+  useEffect(() => {
+    fetchTrails();
+  }, [currentPage]);
+
+  const fetchAllTrails = async () => {
     try {
       const { data, error } = await supabase
         .from('trails')
@@ -48,7 +66,45 @@ const Trails = () => {
         .order('name', { ascending: true });
 
       if (error) throw error;
+      setAllTrails(data || []);
+    } catch (error) {
+      console.error('Error fetching all trails:', error);
+    }
+  };
+
+  const fetchTrails = async () => {
+    try {
+      setLoading(true);
+      
+      let query = supabase
+        .from('trails')
+        .select('*', { count: 'exact' })
+        .order('name', { ascending: true });
+
+      // Apply filters
+      if (searchTerm) {
+        query = query.or(`name.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%,terrain.ilike.%${searchTerm}%`);
+      }
+
+      if (difficultyFilter !== 'all') {
+        query = query.eq('difficulty', difficultyFilter);
+      }
+
+      if (terrainFilter !== 'all') {
+        query = query.eq('terrain', terrainFilter);
+      }
+
+      // Apply pagination
+      const from = (currentPage - 1) * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+      query = query.range(from, to);
+
+      const { data, error, count } = await query;
+
+      if (error) throw error;
+      
       setTrails(data || []);
+      setTotalCount(count || 0);
     } catch (error) {
       console.error('Error fetching trails:', error);
     } finally {
@@ -56,26 +112,27 @@ const Trails = () => {
     }
   };
 
-  const filterTrails = () => {
-    let filtered = trails;
-
-    if (searchTerm) {
-      filtered = filtered.filter(trail =>
-        trail.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        trail.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        trail.terrain.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (difficultyFilter !== 'all') {
-      filtered = filtered.filter(trail => trail.difficulty === difficultyFilter);
-    }
-
-    if (terrainFilter !== 'all') {
-      filtered = filtered.filter(trail => trail.terrain === terrainFilter);
-    }
-
-    setFilteredTrails(filtered);
+  const getImageUrl = (trail: Trail) => {
+    // Use placeholder images based on terrain type
+    const placeholderImages = {
+      'Mountain': 'photo-1469474968028-56623f02e42e',
+      'Alpine': 'photo-1470071459604-3b5ec3a7fe05',
+      'Sandstone': 'photo-1426604966848-d7adac402bff',
+      'Rock': 'photo-1513836279014-a89f7a76ae86',
+      'Desert': 'photo-1472396961693-142e6e269027',
+      'Forest': 'photo-1509316975850-ff9c5deb0cd9',
+      'Canyon': 'photo-1482938289607-e9573fc25ebb',
+      'Coastal': 'photo-1500375592092-40eb2168fd21',
+      'Water': 'photo-1506744038136-46273834b3fb'
+    };
+    
+    const terrainKey = Object.keys(placeholderImages).find(key => 
+      trail.terrain?.toLowerCase().includes(key.toLowerCase())
+    );
+    
+    const fallbackImage = placeholderImages[terrainKey as keyof typeof placeholderImages] || 'photo-1469474968028-56623f02e42e';
+    
+    return `https://images.unsplash.com/${fallbackImage}?w=800&h=600&fit=crop`;
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -102,8 +159,10 @@ const Trails = () => {
     }
   };
 
-  const uniqueDifficulties = [...new Set(trails.map(t => t.difficulty))];
-  const uniqueTerrains = [...new Set(trails.map(t => t.terrain))];
+  const uniqueDifficulties = [...new Set(allTrails.map(t => t.difficulty))];
+  const uniqueTerrains = [...new Set(allTrails.map(t => t.terrain))];
+  
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   if (loading) {
     return (
@@ -181,22 +240,26 @@ const Trails = () => {
         {/* Results Count */}
         <div className="mb-6">
           <p className="text-muted-foreground">
-            Showing {filteredTrails.length} of {trails.length} trails
+            Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} of {totalCount} trails
           </p>
         </div>
 
         {/* Trails Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTrails.map((trail) => {
+          {trails.map((trail) => {
             const TerrainIcon = getTerrainIcon(trail.terrain);
             
             return (
               <Card key={trail.id} className="group hover:shadow-primary transition-smooth hover:-translate-y-1 overflow-hidden">
                 <div className="relative">
                   <img
-                    src={trail.image_url}
+                    src={getImageUrl(trail)}
                     alt={trail.name}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-smooth"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop';
+                    }}
                   />
                   <div className="absolute top-4 left-4">
                     <Badge className={`text-white ${getDifficultyColor(trail.difficulty)}`}>
@@ -253,13 +316,77 @@ const Trails = () => {
           })}
         </div>
 
-        {filteredTrails.length === 0 && (
+        {trails.length === 0 && !loading && (
           <div className="text-center py-12">
             <Route className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-xl font-semibold mb-2">No trails found</h3>
             <p className="text-muted-foreground">
               Try adjusting your search or filter criteria.
             </p>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-8 flex justify-center">
+            <Pagination>
+              <PaginationContent>
+                {currentPage > 1 && (
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      href="#" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(currentPage - 1);
+                      }}
+                    />
+                  </PaginationItem>
+                )}
+                
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  const pageNum = currentPage <= 3 
+                    ? i + 1 
+                    : currentPage >= totalPages - 2 
+                    ? totalPages - 4 + i 
+                    : currentPage - 2 + i;
+                  
+                  if (pageNum < 1 || pageNum > totalPages) return null;
+                  
+                  return (
+                    <PaginationItem key={pageNum}>
+                      <PaginationLink
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setCurrentPage(pageNum);
+                        }}
+                        isActive={currentPage === pageNum}
+                      >
+                        {pageNum}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
+                
+                {currentPage < totalPages - 3 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+                
+                {currentPage < totalPages && (
+                  <PaginationItem>
+                    <PaginationNext 
+                      href="#" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(currentPage + 1);
+                      }}
+                    />
+                  </PaginationItem>
+                )}
+              </PaginationContent>
+            </Pagination>
           </div>
         )}
       </div>
