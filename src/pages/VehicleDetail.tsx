@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Car, Gauge, Fuel, TrendingUp, Users, Calendar, Award, Cog, Zap, Shield, Mountain, Wrench, Info, Star, Heart, Share2, Download } from 'lucide-react';
 import Navigation from '@/components/Navigation';
-import Modern3DViewer from '@/components/Modern3DViewer';
+import Real3DViewer from '@/components/Real3DViewer';
 
 // Import vehicle images
 import fordBroncoRaptor from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
@@ -241,7 +241,7 @@ const VehicleDetail = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5 pt-20 pb-12">
+      <div className="relative bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5 pt-20 pb-16">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4 mb-6">
             <Button asChild variant="ghost" size="sm">
@@ -252,7 +252,7 @@ const VehicleDetail = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start lg:items-center">
             {/* Vehicle Info */}
             <div className="space-y-6">
               <div>
@@ -307,21 +307,21 @@ const VehicleDetail = () => {
               </div>
             </div>
 
-            {/* Modern 3D Vehicle Viewer */}
-            <Modern3DViewer 
+            {/* Real 3D Vehicle Viewer */}
+            <Real3DViewer 
               vehicleName={vehicle.name}
               fallbackImage={vehicle.image_url}
               autoRotate={true}
               enableControls={true}
               theme="dark"
-              className="h-[400px]"
+              className="w-full"
             />
           </div>
         </div>
       </div>
 
       {/* Detailed Information */}
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-16">
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="overview" className="flex items-center gap-2">
