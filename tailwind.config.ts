@@ -66,7 +66,7 @@ export default {
 					orange: 'hsl(var(--adventure-orange))',
 					'orange-light': 'hsl(var(--adventure-orange-light))',
 					stone: 'hsl(var(--adventure-stone))',
-					emerald: 'hsl(var(--adventure-emerald))'
+					blue: 'hsl(var(--adventure-blue))'
 				}
 			},
 			fontFamily: {
