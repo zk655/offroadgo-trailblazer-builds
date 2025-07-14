@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Mountain, Github, Twitter, Instagram } from 'lucide-react';
+import footerBg from '@/assets/footer-bg-1.jpg';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -43,8 +44,14 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-gradient-to-t from-muted/20 to-background border-t border-border">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="relative bg-gradient-to-t from-muted/20 to-background border-t border-border overflow-hidden">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10"
+        style={{ backgroundImage: `url(${footerBg})` }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/85 to-background/95" />
+      <div className="relative z-10 container mx-auto px-4 py-12">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8 mb-8">
           {/* Brand Column */}

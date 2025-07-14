@@ -12,6 +12,7 @@ import {
   Route,
   ArrowRight 
 } from 'lucide-react';
+import featuresBg from '@/assets/features-bg-1.jpg';
 
 const features = [
   {
@@ -96,8 +97,14 @@ const FeatureCards = () => {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-b from-background to-muted/30">
-      <div className="container mx-auto px-4">
+    <section className="relative py-20 bg-gradient-to-b from-background to-muted/30 overflow-hidden">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-5"
+        style={{ backgroundImage: `url(${featuresBg})` }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/80 to-background/95" />
+      <div className="relative z-10 container mx-auto px-4">
         {/* Section Header */}
         <motion.div 
           className="text-center mb-16"
