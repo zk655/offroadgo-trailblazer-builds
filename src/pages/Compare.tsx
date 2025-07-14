@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
-import { Scale, Plus, X, Car, Fuel, Mountain, DollarSign } from 'lucide-react';
+import { Scale, Plus, X, Car, Fuel, Mountain, DollarSign, Gauge, Users, Truck, Zap, Clock, Shield, Award } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
 
@@ -18,11 +18,30 @@ interface Vehicle {
   mpg: number;
   towing_capacity: number;
   ground_clearance: number;
-  approach_angle: number;
-  departure_angle: number;
+  approach_angle?: number;
+  departure_angle?: number;
   engine: string;
   tire_size: string;
   image_url: string;
+  // New detailed specifications
+  drivetrain?: string;
+  transmission?: string;
+  fuel_tank_capacity?: number;
+  seating_capacity?: number;
+  cargo_capacity?: number;
+  approach_angle_degrees?: number;
+  departure_angle_degrees?: number;
+  breakover_angle?: number;
+  wading_depth?: number;
+  horsepower?: number;
+  torque?: number;
+  zero_to_sixty?: number;
+  top_speed?: number;
+  fuel_type?: string;
+  safety_rating?: number;
+  warranty?: string;
+  starting_price?: number;
+  max_payload?: number;
 }
 
 const Compare = () => {
@@ -170,19 +189,23 @@ const Compare = () => {
                       <th className="text-left p-4 font-medium">Specification</th>
                       {selectedVehicles.map(vehicle => (
                         <th key={vehicle.id} className="text-center p-4 min-w-[250px]">
-                          <div className="space-y-2">
+                          <div className="space-y-2 relative">
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => removeVehicleFromCompare(vehicle.id)}
-                              className="absolute top-2 right-2"
+                              className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90 z-10"
+                              title="Remove from comparison"
                             >
-                              <X className="h-4 w-4" />
+                              <X className="h-3 w-3" />
                             </Button>
                             <img
                               src={vehicle.image_url}
                               alt={`${vehicle.brand} ${vehicle.name}`}
                               className="w-full h-32 object-cover rounded-lg mb-2"
+                              onError={(e) => {
+                                e.currentTarget.src = '/placeholder.svg';
+                              }}
                             />
                             <div>
                               <h3 className="font-semibold">{vehicle.year} {vehicle.brand}</h3>
@@ -225,57 +248,215 @@ const Compare = () => {
                         </td>
                       ))}
                     </tr>
+                    
                     <tr className="border-b border-border">
-                      <td className="p-4 font-medium">Towing Capacity (lbs)</td>
+                      <td className="p-4 font-medium flex items-center gap-2">
+                        <Zap className="h-4 w-4" />
+                        Horsepower
+                      </td>
+                      {selectedVehicles.map(vehicle => (
+                        <td key={vehicle.id} className="text-center p-4">
+                          <span className={`font-semibold ${
+                            getBestInCategory('horsepower', true) === vehicle.id ? 'text-primary' : ''
+                          }`}>
+                            {getComparisonValue(vehicle, 'horsepower')} hp
+                          </span>
+                        </td>
+                      ))}
+                    </tr>
+                    
+                    <tr className="border-b border-border">
+                      <td className="p-4 font-medium flex items-center gap-2">
+                        <Gauge className="h-4 w-4" />
+                        Torque
+                      </td>
+                      {selectedVehicles.map(vehicle => (
+                        <td key={vehicle.id} className="text-center p-4">
+                          <span className={`font-semibold ${
+                            getBestInCategory('torque', true) === vehicle.id ? 'text-primary' : ''
+                          }`}>
+                            {getComparisonValue(vehicle, 'torque')} lb-ft
+                          </span>
+                        </td>
+                      ))}
+                    </tr>
+                    
+                    <tr className="border-b border-border">
+                      <td className="p-4 font-medium flex items-center gap-2">
+                        <Clock className="h-4 w-4" />
+                        0-60 mph
+                      </td>
+                      {selectedVehicles.map(vehicle => (
+                        <td key={vehicle.id} className="text-center p-4">
+                          <span className={`font-semibold ${
+                            getBestInCategory('zero_to_sixty', false) === vehicle.id ? 'text-primary' : ''
+                          }`}>
+                            {getComparisonValue(vehicle, 'zero_to_sixty')} sec
+                          </span>
+                        </td>
+                      ))}
+                    </tr>
+                    
+                    <tr className="border-b border-border">
+                      <td className="p-4 font-medium flex items-center gap-2">
+                        <Truck className="h-4 w-4" />
+                        Towing Capacity
+                      </td>
                       {selectedVehicles.map(vehicle => (
                         <td key={vehicle.id} className="text-center p-4">
                           <span className={`font-semibold ${
                             getBestInCategory('towing_capacity', true) === vehicle.id ? 'text-primary' : ''
                           }`}>
-                            {getComparisonValue(vehicle, 'towing_capacity')?.toLocaleString() || 'N/A'}
+                            {(getComparisonValue(vehicle, 'towing_capacity') as number)?.toLocaleString() || 'N/A'} lbs
                           </span>
                         </td>
                       ))}
                     </tr>
+                    
                     <tr className="border-b border-border">
                       <td className="p-4 font-medium flex items-center gap-2">
                         <Mountain className="h-4 w-4" />
-                        Ground Clearance (in)
+                        Ground Clearance
                       </td>
                       {selectedVehicles.map(vehicle => (
                         <td key={vehicle.id} className="text-center p-4">
                           <span className={`font-semibold ${
                             getBestInCategory('ground_clearance', true) === vehicle.id ? 'text-primary' : ''
                           }`}>
-                            {getComparisonValue(vehicle, 'ground_clearance')}
+                            {getComparisonValue(vehicle, 'ground_clearance')}"
                           </span>
                         </td>
                       ))}
                     </tr>
+                    
                     <tr className="border-b border-border">
-                      <td className="p-4 font-medium">Approach Angle (°)</td>
+                      <td className="p-4 font-medium">Approach Angle</td>
                       {selectedVehicles.map(vehicle => (
                         <td key={vehicle.id} className="text-center p-4">
                           <span className={`font-semibold ${
-                            getBestInCategory('approach_angle', true) === vehicle.id ? 'text-primary' : ''
+                            getBestInCategory('approach_angle_degrees', true) === vehicle.id ? 'text-primary' : ''
                           }`}>
-                            {getComparisonValue(vehicle, 'approach_angle')}
+                            {getComparisonValue(vehicle, 'approach_angle_degrees')}°
                           </span>
                         </td>
                       ))}
                     </tr>
+                    
                     <tr className="border-b border-border">
-                      <td className="p-4 font-medium">Departure Angle (°)</td>
+                      <td className="p-4 font-medium">Departure Angle</td>
                       {selectedVehicles.map(vehicle => (
                         <td key={vehicle.id} className="text-center p-4">
                           <span className={`font-semibold ${
-                            getBestInCategory('departure_angle', true) === vehicle.id ? 'text-primary' : ''
+                            getBestInCategory('departure_angle_degrees', true) === vehicle.id ? 'text-primary' : ''
                           }`}>
-                            {getComparisonValue(vehicle, 'departure_angle')}
+                            {getComparisonValue(vehicle, 'departure_angle_degrees')}°
                           </span>
                         </td>
                       ))}
                     </tr>
+                    
+                    <tr className="border-b border-border">
+                      <td className="p-4 font-medium">Breakover Angle</td>
+                      {selectedVehicles.map(vehicle => (
+                        <td key={vehicle.id} className="text-center p-4">
+                          <span className={`font-semibold ${
+                            getBestInCategory('breakover_angle', true) === vehicle.id ? 'text-primary' : ''
+                          }`}>
+                            {getComparisonValue(vehicle, 'breakover_angle')}°
+                          </span>
+                        </td>
+                      ))}
+                    </tr>
+                    
+                    <tr className="border-b border-border">
+                      <td className="p-4 font-medium flex items-center gap-2">
+                        <Users className="h-4 w-4" />
+                        Seating Capacity
+                      </td>
+                      {selectedVehicles.map(vehicle => (
+                        <td key={vehicle.id} className="text-center p-4">
+                          <span className={`font-semibold ${
+                            getBestInCategory('seating_capacity', true) === vehicle.id ? 'text-primary' : ''
+                          }`}>
+                            {getComparisonValue(vehicle, 'seating_capacity')} seats
+                          </span>
+                        </td>
+                      ))}
+                    </tr>
+                    
+                    <tr className="border-b border-border">
+                      <td className="p-4 font-medium">Cargo Capacity</td>
+                      {selectedVehicles.map(vehicle => (
+                        <td key={vehicle.id} className="text-center p-4">
+                          <span className={`font-semibold ${
+                            getBestInCategory('cargo_capacity', true) === vehicle.id ? 'text-primary' : ''
+                          }`}>
+                            {getComparisonValue(vehicle, 'cargo_capacity')} cu ft
+                          </span>
+                        </td>
+                      ))}
+                    </tr>
+                    
+                    <tr className="border-b border-border">
+                      <td className="p-4 font-medium">Fuel Tank</td>
+                      {selectedVehicles.map(vehicle => (
+                        <td key={vehicle.id} className="text-center p-4">
+                          <span className={`font-semibold ${
+                            getBestInCategory('fuel_tank_capacity', true) === vehicle.id ? 'text-primary' : ''
+                          }`}>
+                            {getComparisonValue(vehicle, 'fuel_tank_capacity')} gal
+                          </span>
+                        </td>
+                      ))}
+                    </tr>
+                    
+                    <tr className="border-b border-border">
+                      <td className="p-4 font-medium">Wading Depth</td>
+                      {selectedVehicles.map(vehicle => (
+                        <td key={vehicle.id} className="text-center p-4">
+                          <span className={`font-semibold ${
+                            getBestInCategory('wading_depth', true) === vehicle.id ? 'text-primary' : ''
+                          }`}>
+                            {getComparisonValue(vehicle, 'wading_depth')}"
+                          </span>
+                        </td>
+                      ))}
+                    </tr>
+                    
+                    <tr className="border-b border-border">
+                      <td className="p-4 font-medium">Transmission</td>
+                      {selectedVehicles.map(vehicle => (
+                        <td key={vehicle.id} className="text-center p-4">
+                          {getComparisonValue(vehicle, 'transmission')}
+                        </td>
+                      ))}
+                    </tr>
+                    
+                    <tr className="border-b border-border">
+                      <td className="p-4 font-medium">Drivetrain</td>
+                      {selectedVehicles.map(vehicle => (
+                        <td key={vehicle.id} className="text-center p-4">
+                          {getComparisonValue(vehicle, 'drivetrain')}
+                        </td>
+                      ))}
+                    </tr>
+                    
+                    <tr className="border-b border-border">
+                      <td className="p-4 font-medium flex items-center gap-2">
+                        <Shield className="h-4 w-4" />
+                        Safety Rating
+                      </td>
+                      {selectedVehicles.map(vehicle => (
+                        <td key={vehicle.id} className="text-center p-4">
+                          <span className={`font-semibold ${
+                            getBestInCategory('safety_rating', true) === vehicle.id ? 'text-primary' : ''
+                          }`}>
+                            {getComparisonValue(vehicle, 'safety_rating')}/5
+                          </span>
+                        </td>
+                      ))}
+                    </tr>
+                    
                     <tr className="border-b border-border">
                       <td className="p-4 font-medium">Engine</td>
                       {selectedVehicles.map(vehicle => (
@@ -284,11 +465,24 @@ const Compare = () => {
                         </td>
                       ))}
                     </tr>
-                    <tr>
+                    
+                    <tr className="border-b border-border">
                       <td className="p-4 font-medium">Tire Size</td>
                       {selectedVehicles.map(vehicle => (
                         <td key={vehicle.id} className="text-center p-4">
                           {getComparisonValue(vehicle, 'tire_size')}
+                        </td>
+                      ))}
+                    </tr>
+                    
+                    <tr>
+                      <td className="p-4 font-medium flex items-center gap-2">
+                        <Award className="h-4 w-4" />
+                        Warranty
+                      </td>
+                      {selectedVehicles.map(vehicle => (
+                        <td key={vehicle.id} className="text-center p-4">
+                          {getComparisonValue(vehicle, 'warranty')}
                         </td>
                       ))}
                     </tr>
