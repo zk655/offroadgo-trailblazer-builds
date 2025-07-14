@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Play, Compass, Settings } from 'lucide-react';
+import { ArrowRight, Compass, Settings } from 'lucide-react';
 
 // Hero background images for rotation
 const heroImages = [
@@ -96,61 +96,8 @@ const HeroSection = () => {
               Build Vehicle
             </Button>
           </motion.div>
-
-          {/* Stats Row */}
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.0 }}
-          >
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">500+</div>
-              <div className="text-gray-300">Epic Trails</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-accent mb-2">50k+</div>
-              <div className="text-gray-300">Adventurers</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-2">1000+</div>
-              <div className="text-gray-300">Builds Shared</div>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Image Indicators */}
-        <motion.div 
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-        >
-          {heroImages.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentImageIndex(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentImageIndex 
-                  ? 'bg-primary scale-125' 
-                  : 'bg-white/50 hover:bg-white/80'
-              }`}
-            />
-          ))}
         </motion.div>
       </div>
-
-      {/* Floating Video Play Button */}
-      <motion.button
-        className="absolute bottom-20 right-8 bg-white/10 backdrop-blur-md text-white p-4 rounded-full hover:bg-white/20 transition-all duration-300 group"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 1.4 }}
-      >
-        <Play className="w-6 h-6 group-hover:scale-110 transition-transform" />
-      </motion.button>
     </section>
   );
 };
