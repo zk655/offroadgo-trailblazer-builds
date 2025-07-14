@@ -7,12 +7,12 @@ const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { href: '/vehicles', label: 'Vehicles' },
-    { href: '/compare', label: 'Compare' },
-    { href: '/build', label: 'Build' },
-    { href: '/parts', label: 'Parts' },
-    { href: '/trails', label: 'Trails' },
-    { href: '/blog', label: 'Blog' },
+    { href: '/', label: 'Home' },
+    { href: '/vehicles', label: 'Our Vehicles' },
+    { href: '/parts', label: 'Services' },
+    { href: '/build', label: 'Our Builds' },
+    { href: '/blog', label: 'Blogs' },
+    { href: '/trails', label: 'Contact Us' },
   ];
 
   return (
@@ -22,7 +22,7 @@ const Navigation = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 font-bold text-xl">
             <Mountain className="h-8 w-8 text-primary" />
-            <span className="bg-gradient-primary bg-clip-text text-transparent">
+            <span className="text-foreground">
               OffRoadGo
             </span>
           </Link>
@@ -38,8 +38,8 @@ const Navigation = () => {
                 {item.label}
               </Link>
             ))}
-            <Button variant="hero" size="sm">
-              Get Started
+            <Button className="bg-primary hover:bg-primary/90 text-white">
+              Book Now
             </Button>
           </div>
 
@@ -71,8 +71,8 @@ const Navigation = () => {
                   {item.label}
                 </Link>
               ))}
-              <Button variant="hero" size="sm" className="self-start">
-                Get Started
+              <Button className="bg-primary hover:bg-primary/90 text-white self-start">
+                Book Now
               </Button>
             </div>
           </div>

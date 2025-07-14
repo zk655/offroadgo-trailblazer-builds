@@ -8,7 +8,68 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* OffRoadGo Design System - Black Modern Theme */
+    /* OffRoadGo Design System - Clean Modern Theme */
+    --background: 0 0% 100%;
+    --foreground: 222 14% 13%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 14% 13%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 14% 13%;
+
+    /* Primary: Orange */
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 25 95% 60%;
+
+    /* Secondary: Light Grays */
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 14% 13%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    /* Accent: Orange */
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 25 95% 53%;
+
+    --radius: 0.5rem;
+
+    /* Clean Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 50%, hsl(25 95% 53%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(25 95% 53%) 0%, hsl(25 95% 60%) 100%);
+    --gradient-accent: linear-gradient(145deg, hsl(210 40% 96%) 0%, hsl(0 0% 100%) 100%);
+
+    /* Clean Shadows */
+    --shadow-glow: 0 0 20px hsl(25 95% 53% / 0.2);
+    --shadow-card: 0 4px 12px hsl(0 0% 0% / 0.1);
+    --shadow-primary: 0 8px 25px hsl(25 95% 53% / 0.3);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 14% 13%;
+    --sidebar-primary: 25 95% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222 14% 13%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 25 95% 53%;
+  }
+
+  .dark {
+    /* Dark mode - still clean but with dark colors */
     --background: 222 14% 5%;
     --foreground: 210 40% 98%;
 
@@ -18,21 +79,17 @@ All colors MUST be HSL.
     --popover: 222 14% 8%;
     --popover-foreground: 210 40% 98%;
 
-    /* Primary: Electric Orange */
     --primary: 25 95% 53%;
-    --primary-foreground: 222 14% 5%;
-    --primary-glow: 25 95% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Secondary: Dark Grays */
     --secondary: 217 32% 17%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217 32% 17%;
     --muted-foreground: 215 20% 65%;
 
-    /* Accent: Bright Orange */
     --accent: 25 95% 53%;
-    --accent-foreground: 222 14% 5%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -41,71 +98,14 @@ All colors MUST be HSL.
     --input: 217 32% 17%;
     --ring: 25 95% 53%;
 
-    --radius: 0.75rem;
-
-    /* Modern Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(222 14% 5%) 0%, hsl(217 32% 10%) 50%, hsl(25 95% 53%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(222 14% 8%) 0%, hsl(217 32% 12%) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(25 95% 53%) 0%, hsl(25 95% 60%) 100%);
-    --gradient-accent: linear-gradient(145deg, hsl(217 32% 17%) 0%, hsl(222 14% 8%) 100%);
-
-    /* Modern Shadows */
-    --shadow-glow: 0 0 40px hsl(25 95% 53% / 0.3);
-    --shadow-card: 0 10px 30px hsl(222 14% 5% / 0.5);
-    --shadow-primary: 0 20px 40px hsl(25 95% 53% / 0.4);
-
-    /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
     --sidebar-background: 222 14% 8%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 25 95% 53%;
-    --sidebar-primary-foreground: 222 14% 5%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 217 32% 17%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217 32% 17%;
     --sidebar-ring: 25 95% 53%;
-  }
-
-  .dark {
-    /* Dark mode uses the same modern black theme */
-    --background: 222 14% 3%;
-    --foreground: 210 40% 98%;
-
-    --card: 222 14% 6%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222 14% 6%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 25 95% 60%;
-    --primary-foreground: 222 14% 3%;
-
-    --secondary: 217 32% 15%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217 32% 15%;
-    --muted-foreground: 215 20% 70%;
-
-    --accent: 25 95% 60%;
-    --accent-foreground: 222 14% 3%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217 32% 15%;
-    --input: 217 32% 15%;
-    --ring: 25 95% 60%;
-
-    --sidebar-background: 222 14% 6%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 25 95% 60%;
-    --sidebar-primary-foreground: 222 14% 3%;
-    --sidebar-accent: 217 32% 15%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 32% 15%;
-    --sidebar-ring: 25 95% 60%;
   }
 }
 
