@@ -123,6 +123,42 @@ const ProductsSection = () => {
       category: "Tools",
       badge: "Portable",
       description: "12V compressor for tire inflation"
+    },
+    {
+      id: 10,
+      name: "Tactical Floor Mats",
+      price: "$159.99",
+      originalPrice: "$199.99",
+      image: airCompressorImage, // Reusing image for demo
+      rating: 4.5,
+      reviews: 167,
+      category: "Interior",
+      badge: "Durable",
+      description: "Heavy-duty rubber mats with drainage"
+    },
+    {
+      id: 11,
+      name: "Off-Road Tool Kit",
+      price: "$249.99",
+      originalPrice: "$299.99",
+      image: recoveryTracksImage, // Reusing image for demo
+      rating: 4.7,
+      reviews: 98,
+      category: "Tools",
+      badge: "Complete",
+      description: "Essential tools for trail maintenance"
+    },
+    {
+      id: 12,
+      name: "Cargo Net System",
+      price: "$89.99",
+      originalPrice: "$119.99",
+      image: roofRackImage, // Reusing image for demo
+      rating: 4.4,
+      reviews: 145,
+      category: "Storage",
+      badge: "Flexible",
+      description: "Adjustable cargo retention system"
     }
   ];
 
@@ -194,35 +230,35 @@ const ProductsSection = () => {
                 </div>
               </div>
 
-              <CardContent className="p-4">
-                {/* Product Info */}
-                <div className="mb-3">
-                  <h3 className="text-lg font-semibold leading-tight group-hover:text-primary transition-colors line-clamp-2">
+              <CardContent className="p-3">
+                {/* Product Info - More Compact */}
+                <div className="mb-2">
+                  <h3 className="text-base font-semibold leading-tight group-hover:text-primary transition-colors line-clamp-1">
                     {product.name}
                   </h3>
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
                     {product.description}
                   </p>
                 </div>
 
-                {/* Rating - Compact */}
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="flex items-center gap-1">
+                {/* Rating - More Compact */}
+                <div className="flex items-center gap-1.5 mb-2">
+                  <div className="flex items-center gap-0.5">
                     {renderStars(product.rating)}
                   </div>
                   <span className="text-xs font-medium">{product.rating}</span>
                   <span className="text-xs text-muted-foreground">({product.reviews})</span>
                 </div>
 
-                {/* Price - Compact */}
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="text-xl font-bold text-primary">{product.price}</span>
-                  <span className="text-sm text-muted-foreground line-through">{product.originalPrice}</span>
+                {/* Price - More Compact */}
+                <div className="flex items-center gap-1.5 mb-3">
+                  <span className="text-lg font-bold text-primary">{product.price}</span>
+                  <span className="text-xs text-muted-foreground line-through">{product.originalPrice}</span>
                 </div>
 
-                {/* Add to Cart Button - Small */}
-                <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium h-8">
-                  <ShoppingCart className="h-3 w-3 mr-2" />
+                {/* Add to Cart Button - Smaller */}
+                <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium h-7 text-xs">
+                  <ShoppingCart className="h-3 w-3 mr-1.5" />
                   Add to Cart
                 </Button>
               </CardContent>
