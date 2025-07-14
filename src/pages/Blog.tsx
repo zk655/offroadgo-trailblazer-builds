@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { Search, Calendar, User, BookOpen, ArrowRight } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import PageHero from '@/components/PageHero';
 
 interface BlogPost {
   id: string;
@@ -113,17 +114,11 @@ const Blog = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="bg-gradient-hero text-white py-20 mt-16">
-        <div className="container mx-auto px-4 text-center">
-          <BookOpen className="mx-auto mb-4 h-16 w-16" />
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Off-Road Blog
-          </h1>
-          <p className="text-xl md:text-2xl opacity-90 max-w-3xl mx-auto">
-            Stories, guides, and insights from the off-road community. Learn from experts and fellow adventurers.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title="Off-Road Adventure Blog"
+        subtitle="Stories, guides, and insights from the 4x4 community. Learn from experts and fellow off-road adventurers."
+        icon={BookOpen}
+      />
 
       <div className="container mx-auto px-4 py-8">
         {/* Search and Filters */}

@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { Wrench, Plus, X, Save, Car, DollarSign, Package } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import PageHero from '@/components/PageHero';
 
 interface Vehicle {
   id: string;
@@ -162,17 +163,11 @@ const Build = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="bg-gradient-hero text-white py-20 mt-16">
-        <div className="container mx-auto px-4 text-center">
-          <Wrench className="mx-auto mb-4 h-16 w-16" />
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Build Your Rig
-          </h1>
-          <p className="text-xl md:text-2xl opacity-90 max-w-3xl mx-auto">
-            Create your perfect off-road setup by choosing a vehicle and adding modifications.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title="Build Your Ultimate Rig"
+        subtitle="Create your perfect 4x4 off-road setup by choosing a vehicle and adding modifications for maximum adventure capability."
+        icon={Wrench}
+      />
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

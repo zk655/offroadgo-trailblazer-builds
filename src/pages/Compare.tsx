@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { Scale, Plus, X, Car, Fuel, Mountain, DollarSign } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import PageHero from '@/components/PageHero';
 
 interface Vehicle {
   id: string;
@@ -120,17 +121,11 @@ const Compare = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="bg-gradient-hero text-white py-20 mt-16">
-        <div className="container mx-auto px-4 text-center">
-          <Scale className="mx-auto mb-4 h-16 w-16" />
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Compare Vehicles
-          </h1>
-          <p className="text-xl md:text-2xl opacity-90 max-w-3xl mx-auto">
-            Compare up to 4 off-road vehicles side by side to find the perfect match for your adventure.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title="Compare 4x4 Vehicles"
+        subtitle="Compare up to 4 off-road vehicles side by side to find the perfect 4x4 match for your adventure needs."
+        icon={Scale}
+      />
 
       <div className="container mx-auto px-4 py-8">
         {/* Vehicle Selector */}

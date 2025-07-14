@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { Search, Filter, Star, ShoppingCart, ExternalLink, Wrench } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import PageHero from '@/components/PageHero';
 
 interface Mod {
   id: string;
@@ -130,17 +131,11 @@ const Mods = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="bg-gradient-hero text-white py-20 mt-16">
-        <div className="container mx-auto px-4 text-center">
-          <Wrench className="mx-auto mb-4 h-16 w-16" />
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Off-Road Modifications
-          </h1>
-          <p className="text-xl md:text-2xl opacity-90 max-w-3xl mx-auto">
-            Upgrade your ride with the best off-road gear and modifications. From tires to lighting, find everything you need.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title="4x4 Modifications & Upgrades"
+        subtitle="Upgrade your 4x4 with the best off-road gear and modifications. From tires to lighting, build the ultimate adventure machine."
+        icon={Wrench}
+      />
 
       <div className="container mx-auto px-4 py-8">
         {/* Filters */}

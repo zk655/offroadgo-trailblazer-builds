@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { Search, Filter, MapPin, Mountain, Compass, Route } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import PageHero from '@/components/PageHero';
 
 interface Trail {
   id: string;
@@ -130,17 +131,11 @@ const Trails = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="bg-gradient-hero text-white py-20 mt-16">
-        <div className="container mx-auto px-4 text-center">
-          <Route className="mx-auto mb-4 h-16 w-16" />
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Off-Road Trails
-          </h1>
-          <p className="text-xl md:text-2xl opacity-90 max-w-3xl mx-auto">
-            Discover epic off-road trails and adventure routes. From beginner-friendly paths to expert challenges.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title="Epic 4x4 Trails"
+        subtitle="Discover epic off-road trails and adventure routes. From beginner-friendly paths to expert 4x4 challenges."
+        icon={Route}
+      />
 
       <div className="container mx-auto px-4 py-8">
         {/* Filters */}

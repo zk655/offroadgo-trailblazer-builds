@@ -6,8 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
-import { Car, Search, Filter, Star, Fuel, Gauge, TrendingUp } from 'lucide-react';
+import { Car, Search, Filter, Star, Fuel, Gauge, TrendingUp, Zap, Shield } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import PageHero from '@/components/PageHero';
 
 interface Vehicle {
   id: string;
@@ -48,6 +49,8 @@ const Vehicles = () => {
       const { data, error } = await supabase
         .from('vehicles')
         .select('*')
+        .in('type', ['SUV', 'Truck', 'Pickup']) // Only 4x4 vehicles
+        .gte('ground_clearance', 8.0) // Minimum ground clearance for off-road
         .order('brand', { ascending: true });
 
       if (error) throw error;
@@ -123,17 +126,11 @@ const Vehicles = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="bg-gradient-hero text-white py-20 mt-16">
-        <div className="container mx-auto px-4 text-center">
-          <Car className="mx-auto mb-4 h-16 w-16" />
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Off-Road Vehicles
-          </h1>
-          <p className="text-xl md:text-2xl opacity-90 max-w-3xl mx-auto">
-            Discover the perfect vehicle for your next adventure. Compare specs, features, and find your ideal off-road companion.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title="4x4 Off-Road Vehicles"
+        subtitle="Discover the perfect 4x4 vehicle for your next adventure. Compare specs, features, and find your ideal off-road companion built to conquer any terrain."
+        icon={Car}
+      />
 
       <div className="container mx-auto px-4 py-8">
         {/* Filters */}
@@ -184,74 +181,94 @@ const Vehicles = () => {
         </div>
 
         {/* Vehicle Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredVehicles.map((vehicle) => (
-            <Card key={vehicle.id} className="group hover:shadow-primary transition-smooth hover:-translate-y-1 overflow-hidden">
+            <Card key={vehicle.id} className="group hover:shadow-lg transition-smooth hover:-translate-y-2 overflow-hidden bg-card/50 backdrop-blur-sm border-2 hover:border-primary/20">
               <div className="relative">
                 <img
                   src={vehicle.image_url}
                   alt={vehicle.name}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-smooth"
+                  className="w-full h-56 object-cover group-hover:scale-105 transition-smooth"
                 />
-                <div className="absolute top-4 left-4">
-                  <Badge className={`text-white ${getDifficultyColor(vehicle.ground_clearance)}`}>
-                    {vehicle.ground_clearance}"
+                <div className="absolute top-4 left-4 flex gap-2">
+                  <Badge className={`text-white ${getDifficultyColor(vehicle.ground_clearance)} font-medium`}>
+                    <Shield className="w-3 h-3 mr-1" />
+                    {vehicle.ground_clearance}" clearance
                   </Badge>
                 </div>
                 <div className="absolute top-4 right-4">
-                  <Badge variant="secondary" className="bg-white/90 text-black">
+                  <Badge variant="secondary" className="bg-black/20 text-white border-white/20 backdrop-blur-sm">
                     {vehicle.year}
+                  </Badge>
+                </div>
+                <div className="absolute bottom-4 right-4">
+                  <Badge className="bg-accent text-white font-bold">
+                    {formatPrice(vehicle.price)}
                   </Badge>
                 </div>
               </div>
 
-              <CardHeader className="pb-2">
+              <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-sm text-muted-foreground">{vehicle.brand}</p>
-                    <CardTitle className="text-lg leading-tight">{vehicle.name}</CardTitle>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-primary">{vehicle.brand}</p>
+                    <CardTitle className="text-xl leading-tight font-bold">{vehicle.name}</CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">{vehicle.type}</p>
                   </div>
-                  <p className="text-lg font-bold text-primary">{formatPrice(vehicle.price)}</p>
                 </div>
               </CardHeader>
 
-              <CardContent className="py-2">
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center text-muted-foreground">
-                      <Gauge className="mr-1 h-3 w-3" />
-                      Engine
-                    </span>
-                    <span className="font-medium">{vehicle.engine}</span>
+              <CardContent className="py-0">
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
+                    <Gauge className="h-4 w-4 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Engine</p>
+                      <p className="font-medium">{vehicle.engine}</p>
+                    </div>
                   </div>
                   
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center text-muted-foreground">
-                      <Fuel className="mr-1 h-3 w-3" />
-                      MPG
-                    </span>
-                    <span className="font-medium">{vehicle.mpg}</span>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
+                    <Fuel className="h-4 w-4 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">MPG</p>
+                      <p className="font-medium">{vehicle.mpg}</p>
+                    </div>
                   </div>
                   
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center text-muted-foreground">
-                      <TrendingUp className="mr-1 h-3 w-3" />
-                      Towing
-                    </span>
-                    <span className="font-medium">{vehicle.towing_capacity?.toLocaleString()} lbs</span>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
+                    <TrendingUp className="h-4 w-4 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Towing</p>
+                      <p className="font-medium">{vehicle.towing_capacity?.toLocaleString()} lbs</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
+                    <Zap className="h-4 w-4 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Tire Size</p>
+                      <p className="font-medium">{vehicle.tire_size}</p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-3 pt-3 border-t">
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Approach: {vehicle.approach_angle}°</span>
-                    <span>Departure: {vehicle.departure_angle}°</span>
+                <div className="mt-4 p-3 rounded-lg bg-primary/5 border border-primary/10">
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div className="text-center">
+                      <p className="text-muted-foreground">Approach</p>
+                      <p className="font-bold text-primary">{vehicle.approach_angle}°</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-muted-foreground">Departure</p>
+                      <p className="font-bold text-primary">{vehicle.departure_angle}°</p>
+                    </div>
                   </div>
                 </div>
               </CardContent>
 
-              <CardFooter className="pt-2 flex gap-2">
-                <Button asChild variant="outline" size="sm" className="flex-1">
+              <CardFooter className="pt-4 flex gap-3">
+                <Button asChild variant="outline" size="sm" className="flex-1 group-hover:border-primary">
                   <Link to={`/vehicle/${vehicle.id}`}>
                     View Details
                   </Link>
