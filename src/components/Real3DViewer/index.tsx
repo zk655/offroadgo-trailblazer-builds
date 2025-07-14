@@ -1,6 +1,6 @@
 import { Suspense, useState, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows, Html, useProgress, useGLTF } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,151 +12,12 @@ import {
   Pause, 
   Maximize2,
   Move3D,
-  Loader2,
   AlertTriangle
 } from 'lucide-react';
-import * as THREE from 'three';
-
-interface Real3DViewerProps {
-  vehicleName: string;
-  vehicleId?: string;
-  modelUrl?: string;
-  fallbackImage?: string;
-  autoRotate?: boolean;
-  enableControls?: boolean;
-  theme?: 'light' | 'dark';
-  className?: string;
-}
-
-// Car model URLs from free sources
-const CAR_MODEL_URLS: Record<string, string> = {
-  '1': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Ford Bronco Raptor
-  '2': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Ford F-150 Raptor (using same model for demo)
-  '6': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Ram TRX
-  '10': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Jeep Wrangler
-  '15': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Toyota 4Runner
-  '20': 'https://crudblobs.blob.core.windows.net/models/fordfigo.glb', // Chevy Colorado
-};
-
-// 3D Car Model component with error handling
-function CarModel({ vehicleId, modelUrl }: { vehicleId?: string; modelUrl?: string }) {
-  const meshRef = useRef<THREE.Group>(null);
-  
-  // Determine which model URL to use
-  const finalModelUrl = modelUrl || (vehicleId ? CAR_MODEL_URLS[vehicleId] : null);
-  
-  let gltf;
-  let error = false;
-  
-  try {
-    if (finalModelUrl) {
-      gltf = useGLTF(finalModelUrl);
-    }
-  } catch (err) {
-    console.warn('Failed to load 3D model:', err);
-    error = true;
-  }
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime) * 0.1;
-    }
-  });
-
-  // If model loaded successfully, display it
-  if (gltf && gltf.scene && !error) {
-    return (
-      <group ref={meshRef} position={[0, -1, 0]}>
-        <primitive 
-          object={gltf.scene.clone()} 
-          scale={[2, 2, 2]}
-          position={[0, 0, 0]}
-        />
-      </group>
-    );
-  }
-  
-  // Fallback to SimpleCar for missing models or errors
-  return <SimpleCar />;
-}
-
-// Error boundary component for 3D models
-function ModelErrorBoundary({ children, onError }: { children: React.ReactNode; onError: () => void }) {
-  try {
-    return <>{children}</>;
-  } catch (error) {
-    console.error('3D Model Error:', error);
-    onError();
-    return <SimpleCar />;
-  }
-}
-
-// Simple car geometry as fallback when no model is provided
-function SimpleCar() {
-  const meshRef = useRef<THREE.Group>(null);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime) * 0.1;
-    }
-  });
-
-  return (
-    <group ref={meshRef} position={[0, -0.5, 0]}>
-      {/* Car Body */}
-      <mesh position={[0, 0.5, 0]}>
-        <boxGeometry args={[4, 1, 2]} />
-        <meshStandardMaterial color="#ff4444" metalness={0.8} roughness={0.2} />
-      </mesh>
-      
-      {/* Car Cabin */}
-      <mesh position={[0, 1.2, 0]}>
-        <boxGeometry args={[2.5, 0.8, 1.8]} />
-        <meshStandardMaterial color="#222222" metalness={0.9} roughness={0.1} />
-      </mesh>
-      
-      {/* Wheels */}
-      {([[-1.3, 0, 1], [1.3, 0, 1], [-1.3, 0, -1], [1.3, 0, -1]] as const).map((pos, i) => (
-        <mesh key={i} position={pos} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.4, 0.4, 0.3]} />
-          <meshStandardMaterial color="#111111" />
-        </mesh>
-      ))}
-      
-      {/* Headlights */}
-      <mesh position={[1.8, 0.6, 0.7]}>
-        <sphereGeometry args={[0.2]} />
-        <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.5} />
-      </mesh>
-      <mesh position={[1.8, 0.6, -0.7]}>
-        <sphereGeometry args={[0.2]} />
-        <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.5} />
-      </mesh>
-    </group>
-  );
-}
-
-// Loading component
-function Loader() {
-  const { progress } = useProgress();
-  return (
-    <Html center>
-      <div className="flex flex-col items-center space-y-4 text-white">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <div className="text-center">
-          <p className="text-lg font-semibold mb-2">Loading 3D Model</p>
-          <div className="w-48 h-2 bg-white/20 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-primary transition-all duration-300" 
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <p className="text-sm text-gray-300 mt-2">{Math.round(progress)}% loaded</p>
-        </div>
-      </div>
-    </Html>
-  );
-}
+import { Real3DViewerProps } from './types';
+import { CarModel } from './CarModel';
+import { Loader } from './Loader';
+import { ModelErrorBoundary } from './ModelErrorBoundary';
 
 const Real3DViewer = ({ 
   vehicleName, 
