@@ -97,13 +97,13 @@ const FeatureCards = () => {
   };
 
   return (
-    <section className="relative py-20 bg-gradient-to-b from-background to-muted/30 overflow-hidden">
+    <section className="relative py-20 bg-muted/50 overflow-hidden">
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-5"
         style={{ backgroundImage: `url(${featuresBg})` }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/80 to-background/95" />
+      <div className="absolute inset-0 bg-gradient-to-b from-muted/50 via-muted/30 to-muted/50" />
       <div className="relative z-10 container mx-auto px-4">
         {/* Section Header */}
         <motion.div 
@@ -153,7 +153,8 @@ const FeatureCards = () => {
                   </p>
                   <Button 
                     variant="ghost" 
-                    className="w-full justify-between group-hover:bg-primary/10 transition-all duration-300"
+                    size="sm"
+                    className="w-full justify-between group-hover:bg-primary/5 transition-all duration-300 text-sm font-normal"
                   >
                     Learn More
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -171,9 +172,9 @@ const FeatureCards = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <Button size="lg" className="adventure-button text-lg px-8 py-4">
+          <Button size="default" variant="outline" className="bg-primary text-primary-foreground hover:bg-primary/90 border-primary font-medium px-6 py-2">
             Start Your Adventure
-            <ArrowRight className="w-5 h-5 ml-2" />
+            <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </motion.div>
       </div>

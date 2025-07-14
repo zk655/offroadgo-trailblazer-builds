@@ -185,7 +185,7 @@ const ProductsSection = () => {
                 </div>
 
                 {/* Add to Cart Button */}
-                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium">
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   Add to Cart
                 </Button>
@@ -197,9 +197,9 @@ const ProductsSection = () => {
         {/* View All Products Button */}
         <div className="text-center mt-16">
           <Button 
-            size="lg" 
+            size="default" 
             variant="outline" 
-            className="bg-primary text-primary-foreground hover:bg-primary/90 border-primary font-semibold px-8 py-3"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 border-primary font-medium px-6 py-2"
           >
             View All Products
           </Button>
