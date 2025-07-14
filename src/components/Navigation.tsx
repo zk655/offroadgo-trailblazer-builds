@@ -49,29 +49,29 @@ const Navigation = () => {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled 
-        ? 'glass-effect border-b border-border/20 py-2' 
-        : 'bg-transparent py-4'
+        ? 'glass-effect border-b border-border/20 py-1' 
+        : 'bg-transparent py-2'
     }`}>
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Link to="/" className="flex items-center space-x-3 font-heading font-black text-2xl group">
-              <div className="w-12 h-12 rounded-2xl premium-gradient flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <Mountain className="h-7 w-7 text-white" />
+            <Link to="/" className="flex items-center space-x-2 md:space-x-3 font-heading font-black text-xl md:text-2xl group">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl premium-gradient flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <Mountain className="h-5 w-5 md:h-7 md:w-7 text-white" />
               </div>
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent hidden sm:block">
                 OffRoadGo
               </span>
             </Link>
           </motion.div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-4 lg:space-x-8">
             {navItems.map((item, index) => (
               <motion.div
                 key={item.href}
@@ -112,16 +112,16 @@ const Navigation = () => {
               </motion.div>
             ))}
             
-            <div className="flex items-center gap-3 ml-4">
+            <div className="flex items-center gap-2 lg:gap-3 ml-2 lg:ml-4">
               <ThemeToggle />
-              <Button variant="outline" size="sm" className="border-primary/20 hover:border-primary">
+              <Button variant="outline" size="sm" className="border-primary/20 hover:border-primary text-xs lg:text-sm px-2 lg:px-3">
                 Sign In
               </Button>
             </div>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="lg:hidden flex items-center gap-3">
+          <div className="md:hidden flex items-center gap-2">
             <ThemeToggle />
             <motion.button
               className="p-2 rounded-xl hover:bg-primary/10 transition-colors"
@@ -160,7 +160,7 @@ const Navigation = () => {
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              className="lg:hidden mt-4 glass-effect rounded-2xl border border-border/20"
+              className="md:hidden mt-4 glass-effect rounded-2xl border border-border/20"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}

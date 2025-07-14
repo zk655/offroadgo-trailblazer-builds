@@ -181,104 +181,101 @@ const Vehicles = () => {
         </div>
 
         {/* Vehicle Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredVehicles.map((vehicle) => (
-            <Card key={vehicle.id} className="group hover:shadow-lg transition-smooth hover:-translate-y-2 overflow-hidden bg-card/50 backdrop-blur-sm border-2 hover:border-primary/20">
+            <Card key={vehicle.id} className="group hover:shadow-xl transition-smooth hover:-translate-y-1 overflow-hidden bg-card/80 backdrop-blur-sm border hover:border-primary/30">
               <div className="relative">
                 <img
                   src={vehicle.image_url}
                   alt={vehicle.name}
-                  className="w-full h-56 object-cover group-hover:scale-105 transition-smooth"
+                  className="w-full h-44 object-cover group-hover:scale-105 transition-smooth"
+                  onError={(e) => {
+                    e.currentTarget.src = '/placeholder.svg';
+                  }}
                 />
-                <div className="absolute top-4 left-4 flex gap-2">
-                  <Badge className={`text-white ${getDifficultyColor(vehicle.ground_clearance)} font-medium`}>
-                    <Shield className="w-3 h-3 mr-1" />
+                <div className="absolute top-3 left-3">
+                  <Badge className={`text-white text-xs ${getDifficultyColor(vehicle.ground_clearance)} font-medium`}>
                     {vehicle.ground_clearance}" clearance
                   </Badge>
                 </div>
-                <div className="absolute top-4 right-4">
-                  <Badge variant="secondary" className="bg-black/20 text-white border-white/20 backdrop-blur-sm">
+                <div className="absolute top-3 right-3">
+                  <Badge variant="secondary" className="bg-black/30 text-white border-white/20 backdrop-blur-sm text-xs">
                     {vehicle.year}
                   </Badge>
                 </div>
-                <div className="absolute bottom-4 right-4">
-                  <Badge className="bg-accent text-white font-bold">
+                <div className="absolute bottom-3 right-3">
+                  <Badge className="bg-primary text-white font-bold text-xs">
                     {formatPrice(vehicle.price)}
                   </Badge>
                 </div>
               </div>
 
-              <CardHeader className="pb-3">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-primary">{vehicle.brand}</p>
-                    <CardTitle className="text-xl leading-tight font-bold">{vehicle.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground mt-1">{vehicle.type}</p>
-                  </div>
+              <CardContent className="p-4">
+                <div className="mb-3">
+                  <p className="text-xs font-medium text-primary uppercase tracking-wide">{vehicle.brand}</p>
+                  <h3 className="text-lg font-bold leading-tight mt-1 mb-1">{vehicle.name}</h3>
+                  <p className="text-xs text-muted-foreground">{vehicle.type}</p>
                 </div>
-              </CardHeader>
 
-              <CardContent className="py-0">
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
-                    <Gauge className="h-4 w-4 text-primary" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Engine</p>
-                      <p className="font-medium">{vehicle.engine}</p>
+                <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                  <div className="flex items-center gap-1.5 p-2 rounded-md bg-muted/40">
+                    <Gauge className="h-3 w-3 text-primary flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-muted-foreground text-xs">Engine</p>
+                      <p className="font-medium text-xs truncate">{vehicle.engine}</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
-                    <Fuel className="h-4 w-4 text-primary" />
+                  <div className="flex items-center gap-1.5 p-2 rounded-md bg-muted/40">
+                    <Fuel className="h-3 w-3 text-primary flex-shrink-0" />
                     <div>
-                      <p className="text-xs text-muted-foreground">MPG</p>
-                      <p className="font-medium">{vehicle.mpg}</p>
+                      <p className="text-muted-foreground text-xs">MPG</p>
+                      <p className="font-medium text-xs">{vehicle.mpg}</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
-                    <TrendingUp className="h-4 w-4 text-primary" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Towing</p>
-                      <p className="font-medium">{vehicle.towing_capacity?.toLocaleString()} lbs</p>
+                  <div className="flex items-center gap-1.5 p-2 rounded-md bg-muted/40">
+                    <TrendingUp className="h-3 w-3 text-primary flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-muted-foreground text-xs">Towing</p>
+                      <p className="font-medium text-xs">{(vehicle.towing_capacity / 1000).toFixed(1)}K lbs</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
-                    <Zap className="h-4 w-4 text-primary" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Tire Size</p>
-                      <p className="font-medium">{vehicle.tire_size}</p>
+                  <div className="flex items-center gap-1.5 p-2 rounded-md bg-muted/40">
+                    <Zap className="h-3 w-3 text-primary flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-muted-foreground text-xs">Tires</p>
+                      <p className="font-medium text-xs truncate">{vehicle.tire_size}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-4 p-3 rounded-lg bg-primary/5 border border-primary/10">
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div className="text-center">
-                      <p className="text-muted-foreground">Approach</p>
-                      <p className="font-bold text-primary">{vehicle.approach_angle}°</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-muted-foreground">Departure</p>
-                      <p className="font-bold text-primary">{vehicle.departure_angle}°</p>
-                    </div>
+                <div className="flex justify-between items-center p-2 rounded-md bg-primary/5 border border-primary/10 mb-3">
+                  <div className="text-center flex-1">
+                    <p className="text-muted-foreground text-xs">Approach</p>
+                    <p className="font-bold text-primary text-sm">{vehicle.approach_angle}°</p>
                   </div>
+                  <div className="w-px h-8 bg-border mx-2"></div>
+                  <div className="text-center flex-1">
+                    <p className="text-muted-foreground text-xs">Departure</p>
+                    <p className="font-bold text-primary text-sm">{vehicle.departure_angle}°</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button asChild variant="outline" size="sm" className="flex-1 group-hover:border-primary text-xs h-8">
+                    <Link to={`/vehicle/${vehicle.id}`}>
+                      Details
+                    </Link>
+                  </Button>
+                  <Button asChild size="sm" className="flex-1 text-xs h-8">
+                    <Link to={`/compare?vehicles=${vehicle.id}`}>
+                      Compare
+                    </Link>
+                  </Button>
                 </div>
               </CardContent>
-
-              <CardFooter className="pt-4 flex gap-3">
-                <Button asChild variant="outline" size="sm" className="flex-1 group-hover:border-primary">
-                  <Link to={`/vehicle/${vehicle.id}`}>
-                    View Details
-                  </Link>
-                </Button>
-                <Button asChild size="sm" className="flex-1">
-                  <Link to={`/compare?vehicles=${vehicle.id}`}>
-                    Compare
-                  </Link>
-                </Button>
-              </CardFooter>
             </Card>
           ))}
         </div>
