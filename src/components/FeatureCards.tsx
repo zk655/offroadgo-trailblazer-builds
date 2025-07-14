@@ -1,139 +1,174 @@
+import { motion } from 'framer-motion';
+import { useInView } from 'framer-motion';
+import { useRef } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
-  GitCompare, 
-  Wrench, 
-  Map, 
-  BookOpen, 
-  Car, 
-  Mountain,
-  ArrowRight,
-  Zap
+  Mountain, 
+  Settings, 
+  MapPin, 
+  Camera, 
+  Users, 
+  Route,
+  ArrowRight 
 } from 'lucide-react';
-import offroadBg1 from '@/assets/offroad-bg-1.jpg';
+
+const features = [
+  {
+    icon: Mountain,
+    title: 'Epic Trails',
+    description: 'Discover hand-picked off-road adventures with detailed maps, difficulty ratings, and GPS coordinates.',
+    color: 'text-primary',
+    bgGradient: 'from-primary/10 to-primary/5',
+    href: '/trails'
+  },
+  {
+    icon: Settings,
+    title: 'Build Planner',
+    description: 'Design your dream off-road vehicle with our comprehensive mod calculator and compatibility checker.',
+    color: 'text-accent',
+    bgGradient: 'from-accent/10 to-accent/5',
+    href: '/build'
+  },
+  {
+    icon: MapPin,
+    title: 'Trail Finder',
+    description: 'Find nearby trails based on your location, skill level, and vehicle capabilities.',
+    color: 'text-primary',
+    bgGradient: 'from-primary/10 to-primary/5',
+    href: '/trails'
+  },
+  {
+    icon: Camera,
+    title: 'Adventure Gallery',
+    description: 'Share your epic moments and get inspired by the off-road community\'s best shots.',
+    color: 'text-accent',
+    bgGradient: 'from-accent/10 to-accent/5',
+    href: '/gallery'
+  },
+  {
+    icon: Users,
+    title: 'Community',
+    description: 'Connect with fellow adventurers, share build tips, and plan group expeditions.',
+    color: 'text-primary',
+    bgGradient: 'from-primary/10 to-primary/5',
+    href: '/blog'
+  },
+  {
+    icon: Route,
+    title: 'Trip Planner',
+    description: 'Plan multi-day adventures with waypoints, camping spots, and fuel stops.',
+    color: 'text-accent',
+    bgGradient: 'from-accent/10 to-accent/5',
+    href: '/trip-planner'
+  }
+];
 
 const FeatureCards = () => {
-  const features = [
-    {
-      icon: GitCompare,
-      title: 'Compare Vehicles',
-      description: 'Side-by-side comparison of off-road specs, performance metrics, and terrain suitability ratings.',
-      link: '/compare',
-      badge: 'Popular',
-      gradient: 'from-primary/20 to-accent/20'
-    },
-    {
-      icon: Wrench,
-      title: 'Plan Modifications',
-      description: 'Visual mod builder with real pricing, compatibility checks, and performance impact analysis.',
-      link: '/build',
-      badge: 'New',
-      gradient: 'from-accent/20 to-secondary/20'
-    },
-    {
-      icon: Map,
-      title: 'Explore Trails',
-      description: 'Interactive trail maps with difficulty ratings, terrain types, and community reviews.',
-      link: '/trails',
-      badge: 'Featured',
-      gradient: 'from-secondary/20 to-primary/20'
-    },
-    {
-      icon: BookOpen,
-      title: 'Read Blog',
-      description: 'Latest off-road news, vehicle reviews, modification guides, and adventure stories.',
-      link: '/blog',
-      badge: null,
-      gradient: 'from-muted/20 to-accent/20'
-    }
-  ];
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  const stats = [
-    { icon: Car, label: 'Vehicles', value: '500+' },
-    { icon: Mountain, label: 'Trails', value: '1,200+' },
-    { icon: Wrench, label: 'Mods', value: '2,500+' },
-    { icon: Zap, label: 'Builds', value: '850+' }
-  ];
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 60,
+      scale: 0.8
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: [0.4, 0, 0.2, 1] as const
+      }
+    }
+  };
 
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden">
-      {/* 4x4 Background */}
-      <div className="absolute inset-0">
-        <div 
-          className="w-full h-full bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${offroadBg1})` }}
-        />
-        <div className="absolute inset-0 bg-background/90 dark:bg-background/95" />
-      </div>
-      
-      <div className="relative z-10 container mx-auto px-4">
+    <section className="py-20 bg-gradient-to-b from-background to-muted/30">
+      <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Everything You Need for{' '}
-            <span className="bg-gradient-primary bg-clip-text text-transparent">
-              Off-Road Adventures
-            </span>
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+        >
+          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6">
+            Your Off-Road <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Journey</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Comprehensive tools and resources for planning, building, and exploring the great outdoors.
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Everything you need to plan, build, and conquer the world's most challenging terrain
           </p>
-        </div>
+        </motion.div>
 
         {/* Feature Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12 md:mb-16">
+        <motion.div 
+          ref={ref}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+        >
           {features.map((feature, index) => (
-            <Card key={index} className="group relative overflow-hidden glass-effect border-border/50 hover:shadow-card hover:scale-105 transition-bounce bg-card/80 backdrop-blur-sm">
-              {/* Background Gradient */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-100 transition-smooth`} />
-              
-              {/* Badge */}
-              {feature.badge && (
-                <div className="absolute top-4 right-4 z-10">
-                  <span className="px-2 py-1 text-xs font-medium bg-primary text-primary-foreground rounded-full">
-                    {feature.badge}
-                  </span>
-                </div>
-              )}
-
-              <CardHeader className="relative z-10">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-smooth">
-                  <feature.icon className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle className="text-xl">{feature.title}</CardTitle>
-                <CardDescription className="text-sm leading-relaxed">
-                  {feature.description}
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent className="relative z-10">
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-between group-hover:text-primary transition-smooth"
-                  asChild
-                >
-                  <a href={feature.link}>
-                    Get Started
-                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
+            <motion.div
+              key={feature.title}
+              variants={cardVariants}
+              whileHover={{ 
+                y: -8, 
+                scale: 1.02,
+                transition: { duration: 0.2 }
+              }}
+            >
+              <Card className="adventure-card h-full group cursor-pointer">
+                <CardHeader className="pb-4">
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.bgGradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <feature.icon className={`w-8 h-8 ${feature.color}`} />
+                  </div>
+                  <CardTitle className="text-xl font-heading font-bold group-hover:text-primary transition-colors">
+                    {feature.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-muted-foreground leading-relaxed">
+                    {feature.description}
+                  </p>
+                  <Button 
+                    variant="ghost" 
+                    className="w-full justify-between group-hover:bg-primary/10 transition-all duration-300"
+                  >
+                    Learn More
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        {/* Stats Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-          {stats.map((stat, index) => (
-            <div key={index} className="text-center group">
-              <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 rounded-full glass-effect flex items-center justify-center group-hover:bg-primary/20 transition-smooth">
-                <stat.icon className="h-6 w-6 md:h-8 md:w-8 text-primary" />
-              </div>
-              <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">{stat.value}</div>
-              <div className="text-xs md:text-sm text-muted-foreground">{stat.label}</div>
-            </div>
-          ))}
-        </div>
+        {/* Bottom CTA */}
+        <motion.div 
+          className="text-center mt-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          <Button size="lg" className="adventure-button text-lg px-8 py-4">
+            Start Your Adventure
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </Button>
+        </motion.div>
       </div>
     </section>
   );

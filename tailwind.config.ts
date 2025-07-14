@@ -61,7 +61,17 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				adventure: {
+					orange: 'hsl(var(--adventure-orange))',
+					'orange-light': 'hsl(var(--adventure-orange-light))',
+					stone: 'hsl(var(--adventure-stone))',
+					emerald: 'hsl(var(--adventure-emerald))'
 				}
+			},
+			fontFamily: {
+				'sans': ['Inter', 'system-ui', 'sans-serif'],
+				'heading': ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
 			},
 			backgroundImage: {
 				'gradient-hero': 'var(--gradient-hero)',

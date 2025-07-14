@@ -2,160 +2,198 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    /* 2025 Modern Design System - Premium Light Theme */
-    --background: 0 0% 99%;
-    --foreground: 210 11% 15%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 210 11% 15%;
-
+    /* Light theme - White & Orange Adventure */
+    --background: 0 0% 100%;
+    --foreground: 20 14.3% 4.1%;
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
     --popover: 0 0% 100%;
-    --popover-foreground: 210 11% 15%;
+    --popover-foreground: 20 14.3% 4.1%;
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 14.3% 4.1%;
+    --primary: 24.6 95% 53.1%;
+    --primary-foreground: 60 9.1% 97.8%;
+    --secondary: 60 4.8% 95.9%;
+    --secondary-foreground: 24 9.8% 10%;
+    --accent: 37.7 92.1% 50.2%;
+    --accent-foreground: 26 83.3% 14.1%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --ring: 24.6 95% 53.1%;
+    --radius: 1rem;
 
-    /* Premium Orange Palette */
-    --primary: 25 95% 53%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 25 100% 60%;
-    --primary-dark: 25 85% 45%;
+    /* Adventure theme colors */
+    --adventure-orange: 24.6 95% 53.1%;
+    --adventure-orange-light: 25 100% 94%;
+    --adventure-stone: 20 5.9% 90%;
+    --adventure-emerald: 142.1 76.2% 36.3%;
 
-    /* Modern Neutrals */
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 210 11% 15%;
+    /* Sidebar colors */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 20 14.3% 4.1%;
+    --sidebar-primary: 24.6 95% 53.1%;
+    --sidebar-primary-foreground: 60 9.1% 97.8%;
+    --sidebar-accent: 60 4.8% 95.9%;
+    --sidebar-accent-foreground: 24 9.8% 10%;
+    --sidebar-border: 20 5.9% 90%;
+    --sidebar-ring: 24.6 95% 53.1%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 210 11% 46%;
+    /* Adventure gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(24.6, 95%, 53.1%) 0%, hsl(37.7, 92.1%, 50.2%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0, 0%, 100%) 0%, hsl(60, 4.8%, 95.9%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(24.6, 95%, 53.1%) 0%, hsl(37.7, 92.1%, 50.2%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(37.7, 92.1%, 50.2%) 0%, hsl(24.6, 95%, 53.1%) 100%);
+    
+    /* Adventure shadows */
+    --shadow-glow: 0 0 40px hsl(24.6, 95%, 53.1% / 0.2);
+    --shadow-card: 0 4px 16px hsl(20, 14.3%, 4.1% / 0.08);
+    --shadow-primary: 0 8px 32px hsl(24.6, 95%, 53.1% / 0.15);
+    --shadow-premium: 0 16px 64px hsl(24.6, 95%, 53.1% / 0.2);
 
-    --accent: 25 95% 53%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 210 20% 92%;
-    --input: 210 20% 96%;
-    --ring: 25 95% 53%;
-
-    --radius: 0.75rem;
-
-    /* 2025 Premium Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(0 0% 99%) 0%, hsl(210 20% 98%) 30%, hsl(25 95% 53% / 0.1) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(210 20% 98%) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(25 95% 53%) 0%, hsl(25 100% 60%) 100%);
-    --gradient-accent: linear-gradient(145deg, hsl(210 20% 96%) 0%, hsl(0 0% 100%) 100%);
-    --gradient-dark: linear-gradient(135deg, hsl(210 11% 15%) 0%, hsl(210 11% 8%) 100%);
-
-    /* Modern Shadows & Effects */
-    --shadow-glow: 0 0 40px hsl(25 95% 53% / 0.25);
-    --shadow-card: 0 8px 32px hsl(210 11% 15% / 0.08);
-    --shadow-primary: 0 20px 40px hsl(25 95% 53% / 0.3);
-    --shadow-premium: 0 25px 50px hsl(210 11% 15% / 0.15);
-
-    /* Animations */
+    /* Smooth animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    --transition-premium: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-
-    /* Sidebar */
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 210 11% 15%;
-    --sidebar-primary: 25 95% 53%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 20% 96%;
-    --sidebar-accent-foreground: 210 11% 15%;
-    --sidebar-border: 210 20% 92%;
-    --sidebar-ring: 25 95% 53%;
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
   .dark {
-    /* 2025 Modern Dark Theme - Premium */
-    --background: 210 11% 4%;
-    --foreground: 210 20% 98%;
+    /* Dark theme - Zinc & Orange Adventure */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --primary: 20.5 90.2% 48.2%;
+    --primary-foreground: 60 9.1% 97.8%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --accent: 142.1 70.6% 45.3%;
+    --accent-foreground: 144.9 80.4% 10%;
+    --destructive: 0 72.2% 50.6%;
+    --destructive-foreground: 0 0% 98%;
+    --ring: 20.5 90.2% 48.2%;
 
-    --card: 210 11% 6%;
-    --card-foreground: 210 20% 98%;
+    /* Adventure dark theme colors */
+    --adventure-orange: 20.5 90.2% 48.2%;
+    --adventure-orange-light: 25 100% 94%;
+    --adventure-stone: 240 3.7% 15.9%;
+    --adventure-emerald: 142.1 70.6% 45.3%;
 
-    --popover: 210 11% 6%;
-    --popover-foreground: 210 20% 98%;
+    /* Sidebar dark colors */
+    --sidebar-background: 240 10% 3.9%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 20.5 90.2% 48.2%;
+    --sidebar-primary-foreground: 60 9.1% 97.8%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 20.5 90.2% 48.2%;
 
-    --primary: 25 95% 53%;
-    --primary-foreground: 210 11% 4%;
-
-    --secondary: 210 11% 10%;
-    --secondary-foreground: 210 20% 98%;
-
-    --muted: 210 11% 10%;
-    --muted-foreground: 210 11% 65%;
-
-    --accent: 25 95% 53%;
-    --accent-foreground: 210 11% 4%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 20% 98%;
-
-    --border: 210 11% 15%;
-    --input: 210 11% 10%;
-    --ring: 25 95% 53%;
-
-    /* Dark Theme Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(210 11% 4%) 0%, hsl(210 11% 8%) 30%, hsl(25 95% 53% / 0.1) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(210 11% 6%) 0%, hsl(210 11% 8%) 100%);
-    --gradient-accent: linear-gradient(145deg, hsl(210 11% 10%) 0%, hsl(210 11% 6%) 100%);
-
-    --sidebar-background: 210 11% 6%;
-    --sidebar-foreground: 210 20% 98%;
-    --sidebar-primary: 25 95% 53%;
-    --sidebar-primary-foreground: 210 11% 4%;
-    --sidebar-accent: 210 11% 10%;
-    --sidebar-accent-foreground: 210 20% 98%;
-    --sidebar-border: 210 11% 15%;
-    --sidebar-ring: 25 95% 53%;
+    /* Dark adventure gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(20.5, 90.2%, 48.2%) 0%, hsl(142.1, 70.6%, 45.3%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(240, 10%, 3.9%) 0%, hsl(240, 3.7%, 15.9%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(20.5, 90.2%, 48.2%) 0%, hsl(142.1, 70.6%, 45.3%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(142.1, 70.6%, 45.3%) 0%, hsl(20.5, 90.2%, 48.2%) 100%);
+    
+    /* Dark adventure shadows */
+    --shadow-glow: 0 0 40px hsl(20.5, 90.2%, 48.2% / 0.3);
+    --shadow-card: 0 4px 16px hsl(0, 0%, 0% / 0.3);
+    --shadow-primary: 0 8px 32px hsl(20.5, 90.2%, 48.2% / 0.2);
+    --shadow-premium: 0 16px 64px hsl(20.5, 90.2%, 48.2% / 0.3);
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
-    font-feature-settings: "cv11", "ss01";
-    font-variation-settings: "opsz" 32;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  /* Modern Typography */
+  /* Adventure Typography */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight;
+    font-family: 'Poppins', 'Inter', sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
   }
 
   h1 {
-    @apply text-4xl md:text-5xl lg:text-6xl;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin-bottom: 1rem;
+    background: var(--gradient-primary);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   h2 {
-    @apply text-3xl md:text-4xl lg:text-5xl;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    margin-bottom: 0.75rem;
   }
 
-  h3 {
-    @apply text-2xl md:text-3xl;
-  }
-
-  /* Premium Effects */
+  /* Adventure Effects */
   .glass-effect {
-    @apply bg-card/80 backdrop-blur-xl border border-border/50;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .glass-effect {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   .premium-gradient {
     background: var(--gradient-primary);
   }
 
-  .hover-lift {
-    @apply transform transition-all duration-300 hover:-translate-y-2 hover:shadow-premium;
+  .adventure-card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    transition: var(--transition-smooth);
+  }
+
+  .adventure-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--shadow-premium);
+  }
+
+  .adventure-button {
+    background: var(--gradient-primary);
+    color: hsl(var(--primary-foreground));
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: var(--transition-smooth);
+    box-shadow: var(--shadow-primary);
+  }
+
+  .adventure-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-premium);
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .adventure-card:hover {
+      transform: translateY(-2px) scale(1.01);
+    }
   }
 }
