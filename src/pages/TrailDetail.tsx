@@ -1,42 +1,143 @@
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, MapPin, Clock, Users, Star, Navigation as NavigationIcon, Mountain, Gauge } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+
+interface Trail {
+  id: string;
+  name: string;
+  location: string;
+  difficulty: string;
+  distance: number;
+  elevation_gain: number;
+  terrain: string;
+  description: string;
+  image_url: string;
+  latitude: number;
+  longitude: number;
+}
 
 const TrailDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [trail, setTrail] = useState<Trail | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mock trail data - in a real app, this would be fetched from an API
-  const trail = {
-    id: id || '1',
-    name: 'Moab Rim Trail',
-    location: 'Moab, Utah',
-    difficulty: 'Moderate',
-    distance: '6.2 miles',
-    elevation: '1,280 ft',
-    rating: 4.8,
-    reviews: 1243,
-    duration: '3-4 hours',
-    terrain: 'Rock, Sand',
-    image: '/src/assets/hero-offroad-1.jpg',
-    description: 'A spectacular trail offering breathtaking views of the Colorado River and Arches National Park. This moderate trail features challenging rock formations and technical sections that will test your driving skills.',
-    highlights: [
-      'Panoramic views of Moab Valley',
-      'Technical rock crawling sections',
-      'Historic mining equipment',
-      'Wildlife viewing opportunities'
-    ],
-    requirements: [
-      '4WD vehicle required',
-      'AT or MT tires recommended',
-      'Minimum 8" ground clearance',
-      'Recovery gear suggested'
-    ]
+  useEffect(() => {
+    if (id) {
+      fetchTrail(id);
+    }
+  }, [id]);
+
+  const fetchTrail = async (trailId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('trails')
+        .select('*')
+        .eq('id', trailId)
+        .single();
+
+      if (error) throw error;
+      setTrail(data);
+    } catch (error) {
+      console.error('Error fetching trail:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const getImageUrl = (trail: Trail) => {
+    // Use placeholder images based on terrain type
+    const placeholderImages = {
+      'Mountain': 'photo-1469474968028-56623f02e42e',
+      'Alpine': 'photo-1470071459604-3b5ec3a7fe05',
+      'Sandstone': 'photo-1426604966848-d7adac402bff',
+      'Rock': 'photo-1513836279014-a89f7a76ae86',
+      'Desert': 'photo-1472396961693-142e6e269027',
+      'Forest': 'photo-1509316975850-ff9c5deb0cd9',
+      'Canyon': 'photo-1482938289607-e9573fc25ebb',
+      'Coastal': 'photo-1500375592092-40eb2168fd21',
+      'Water': 'photo-1506744038136-46273834b3fb',
+      'Hoodoos': 'photo-1426604966848-d7adac402bff',
+      'Slot Canyon': 'photo-1482938289607-e9573fc25ebb',
+      'Geothermal': 'photo-1469474968028-56623f02e42e',
+      'Volcanic Rock': 'photo-1513836279014-a89f7a76ae86',
+      'Red Rock': 'photo-1426604966848-d7adac402bff',
+      'Glacier': 'photo-1470071459604-3b5ec3a7fe05'
+    };
+    
+    const terrainKey = Object.keys(placeholderImages).find(key => 
+      trail.terrain?.toLowerCase().includes(key.toLowerCase())
+    );
+    
+    const fallbackImage = placeholderImages[terrainKey as keyof typeof placeholderImages] || 'photo-1469474968028-56623f02e42e';
+    
+    return `https://images.unsplash.com/${fallbackImage}?w=1200&h=800&fit=crop`;
+  };
+
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty?.toLowerCase()) {
+      case 'easy':
+        return 'bg-green-500 text-white';
+      case 'moderate':
+        return 'bg-orange-500 text-white';
+      case 'difficult':
+        return 'bg-red-500 text-white';
+      case 'expert':
+        return 'bg-purple-500 text-white';
+      default:
+        return 'bg-gray-500 text-white';
+    }
+  };
+
+  const getEstimatedDuration = (distance: number, difficulty: string) => {
+    const baseSpeed = difficulty?.toLowerCase() === 'difficult' || difficulty?.toLowerCase() === 'expert' ? 2 : 
+                     difficulty?.toLowerCase() === 'moderate' ? 3 : 4; // mph
+    const hours = Math.round(distance / baseSpeed);
+    return hours <= 1 ? '1-2 hours' : `${Math.max(2, hours-1)}-${hours+1} hours`;
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="pt-16">
+          <div className="h-96 bg-muted animate-pulse" />
+          <div className="container mx-auto px-4 py-16">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 space-y-8">
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="h-4 bg-muted rounded mb-4 animate-pulse" />
+                    <div className="h-4 bg-muted rounded w-2/3 animate-pulse" />
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!trail) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto px-4 pt-32 text-center">
+          <h1 className="text-2xl font-bold mb-4">Trail not found</h1>
+          <Button onClick={() => navigate('/trails')}>
+            Back to Trails
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -46,21 +147,21 @@ const TrailDetail = () => {
         {/* Hero Section */}
         <section className="relative h-96 overflow-hidden">
           <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${trail.image})` }}
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-500"
+            style={{ backgroundImage: `url(${getImageUrl(trail)})` }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/70" />
           <div className="relative z-10 container mx-auto px-4 h-full flex items-center">
-            <div className="text-white">
+            <div className="text-white animate-fade-in">
               <Button 
                 variant="ghost" 
                 onClick={() => navigate(-1)}
-                className="text-white hover:bg-white/20 mb-4"
+                className="text-white hover:bg-white/20 mb-4 transition-smooth"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back
               </Button>
-              <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4">
+              <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 drop-shadow-lg">
                 {trail.name}
               </h1>
               <div className="flex items-center gap-4 text-lg">
@@ -68,7 +169,9 @@ const TrailDetail = () => {
                   <MapPin className="w-5 h-5" />
                   {trail.location}
                 </div>
-                <Badge variant="secondary">{trail.difficulty}</Badge>
+                <Badge className={getDifficultyColor(trail.difficulty)}>
+                  {trail.difficulty}
+                </Badge>
               </div>
             </div>
           </div>
@@ -92,34 +195,78 @@ const TrailDetail = () => {
                       {trail.description}
                     </p>
                     
-                    <h3 className="text-xl font-semibold mb-4">Trail Highlights</h3>
-                    <ul className="space-y-2">
-                      {trail.highlights.map((highlight, index) => (
-                        <li key={index} className="flex items-center gap-2">
-                          <Star className="w-4 h-4 text-primary" />
-                          {highlight}
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                          <Star className="w-5 h-5 text-primary" />
+                          Trail Features
+                        </h3>
+                        <ul className="space-y-2 text-sm">
+                          <li className="flex items-center gap-2">
+                            <Mountain className="w-4 h-4 text-muted-foreground" />
+                            {trail.terrain} terrain
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <NavigationIcon className="w-4 h-4 text-muted-foreground" />
+                            {trail.distance} miles total distance
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <Gauge className="w-4 h-4 text-muted-foreground" />
+                            {trail.elevation_gain?.toLocaleString()} ft elevation gain
+                          </li>
+                        </ul>
+                      </div>
+                      
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                          <Gauge className="w-5 h-5 text-primary" />
+                          Recommendations
+                        </h3>
+                        <ul className="space-y-2 text-sm">
+                          <li className="flex items-center gap-2">
+                            <Star className="w-4 h-4 text-accent" />
+                            4WD vehicle required
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <Star className="w-4 h-4 text-accent" />
+                            AT or MT tires recommended
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <Star className="w-4 h-4 text-accent" />
+                            Recovery gear suggested
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Gauge className="w-6 h-6 text-primary" />
-                      Vehicle Requirements
+                      <MapPin className="w-6 h-6 text-primary" />
+                      Location Details
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2">
-                      {trail.requirements.map((requirement, index) => (
-                        <li key={index} className="flex items-center gap-2">
-                          <NavigationIcon className="w-4 h-4 text-accent" />
-                          {requirement}
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="space-y-4">
+                      {trail.latitude && trail.longitude && (
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-2">Coordinates</p>
+                          <p className="font-mono text-sm">
+                            {trail.latitude.toFixed(4)}, {trail.longitude.toFixed(4)}
+                          </p>
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-2">Full Location</p>
+                        <p>{trail.location}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-2">Terrain Type</p>
+                        <Badge variant="outline">{trail.terrain}</Badge>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -133,27 +280,25 @@ const TrailDetail = () => {
                   <CardContent className="space-y-4">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Distance</span>
-                      <span className="font-semibold">{trail.distance}</span>
+                      <span className="font-semibold">{trail.distance} miles</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Elevation Gain</span>
-                      <span className="font-semibold">{trail.elevation}</span>
+                      <span className="font-semibold">{trail.elevation_gain?.toLocaleString()} ft</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Duration</span>
-                      <span className="font-semibold">{trail.duration}</span>
+                      <span className="text-muted-foreground">Estimated Duration</span>
+                      <span className="font-semibold">{getEstimatedDuration(trail.distance, trail.difficulty)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Terrain</span>
                       <span className="font-semibold">{trail.terrain}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Rating</span>
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 fill-primary text-primary" />
-                        <span className="font-semibold">{trail.rating}</span>
-                        <span className="text-sm text-muted-foreground">({trail.reviews})</span>
-                      </div>
+                      <span className="text-muted-foreground">Difficulty</span>
+                      <Badge className={getDifficultyColor(trail.difficulty)} variant="secondary">
+                        {trail.difficulty}
+                      </Badge>
                     </div>
                   </CardContent>
                 </Card>
