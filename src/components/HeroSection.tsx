@@ -53,24 +53,24 @@ const HeroSection = () => {
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[0.9] mb-8">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-[0.9] mb-6 md:mb-8">
                 <span className="block">Adventure</span>
                 <span className="block text-primary">Without</span>
                 <span className="block">Limits</span>
               </h1>
 
               {/* Subheadline */}
-              <p className="text-xl text-muted-foreground max-w-xl leading-relaxed mb-8 font-medium">
+              <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-xl leading-relaxed mb-6 md:mb-8 font-medium">
                 Push boundaries. Conquer terrain. Create memories that last forever with our premium 4x4 experience.
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-6">
-                <Button size="lg" className="premium-gradient text-white hover:shadow-glow hover-lift border-0 h-14 px-8 text-lg font-semibold">
+              <div className="flex flex-col sm:flex-row gap-4 md:gap-6">
+                <Button size="lg" className="premium-gradient text-white hover:shadow-glow hover-lift border-0 h-12 md:h-14 px-6 md:px-8 text-base md:text-lg font-semibold">
                   Start Your Journey
                 </Button>
                 
-                <Button variant="outline" size="lg" className="glass-effect text-foreground hover:bg-primary hover:text-white h-14 px-8 text-lg font-semibold border-2">
+                <Button variant="outline" size="lg" className="glass-effect text-foreground hover:bg-primary hover:text-white h-12 md:h-14 px-6 md:px-8 text-base md:text-lg font-semibold border-2">
                   Explore Vehicles
                 </Button>
               </div>
@@ -126,51 +126,51 @@ const HeroSection = () => {
             </div>
 
             {/* Modern Form */}
-            <div className="grid md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               <div className="space-y-3">
-                <label className="text-sm font-semibold text-foreground uppercase tracking-wide">
+                <label className="text-xs md:text-sm font-semibold text-foreground uppercase tracking-wide">
                   {activeTab === 'explore' ? '📍 Destination' : '🚗 Vehicle'}
                 </label>
                 <div className="relative">
-                  <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary" />
+                  <MapPin className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-primary" />
                   <input
                     type="text"
                     placeholder={activeTab === 'explore' ? 'Where to explore?' : 'Choose your ride'}
-                    className="w-full pl-12 pr-4 py-4 rounded-xl glass-effect focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-lg font-medium"
+                    className="w-full pl-10 md:pl-12 pr-3 md:pr-4 py-3 md:py-4 rounded-xl glass-effect focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-base md:text-lg font-medium"
                   />
                 </div>
               </div>
 
               <div className="space-y-3">
-                <label className="text-sm font-semibold text-foreground uppercase tracking-wide">
+                <label className="text-xs md:text-sm font-semibold text-foreground uppercase tracking-wide">
                   {activeTab === 'explore' ? '📅 When' : '💰 Budget'}
                 </label>
                 <div className="relative">
-                  <Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary" />
+                  <Calendar className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-primary" />
                   <input
                     type="text"
                     placeholder={activeTab === 'explore' ? 'Pick a date' : 'Set your range'}
-                    className="w-full pl-12 pr-4 py-4 rounded-xl glass-effect focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-lg font-medium"
+                    className="w-full pl-10 md:pl-12 pr-3 md:pr-4 py-3 md:py-4 rounded-xl glass-effect focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-base md:text-lg font-medium"
                   />
                 </div>
               </div>
 
               <div className="space-y-3">
-                <label className="text-sm font-semibold text-foreground uppercase tracking-wide">
+                <label className="text-xs md:text-sm font-semibold text-foreground uppercase tracking-wide">
                   {activeTab === 'explore' ? '⚡ Level' : '🔧 Mods'}
                 </label>
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary" />
+                  <Search className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-primary" />
                   <input
                     type="text"
                     placeholder={activeTab === 'explore' ? 'Difficulty' : 'Modifications'}
-                    className="w-full pl-12 pr-4 py-4 rounded-xl glass-effect focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-lg font-medium"
+                    className="w-full pl-10 md:pl-12 pr-3 md:pr-4 py-3 md:py-4 rounded-xl glass-effect focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-base md:text-lg font-medium"
                   />
                 </div>
               </div>
 
-              <div className="flex items-end">
-                <Button className="w-full premium-gradient text-white hover:shadow-glow hover-lift py-4 text-lg font-bold border-0 rounded-xl">
+              <div className="flex items-end sm:col-span-2 lg:col-span-1">
+                <Button className="w-full premium-gradient text-white hover:shadow-glow hover-lift py-3 md:py-4 text-base md:text-lg font-bold border-0 rounded-xl">
                   {activeTab === 'explore' ? '🚀 Let\'s Go!' : '⚡ Build It!'}
                 </Button>
               </div>

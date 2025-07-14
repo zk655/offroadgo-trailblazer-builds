@@ -10,6 +10,7 @@ import {
   ArrowRight,
   Zap
 } from 'lucide-react';
+import offroadBg1 from '@/assets/offroad-bg-1.jpg';
 
 const FeatureCards = () => {
   const features = [
@@ -55,8 +56,17 @@ const FeatureCards = () => {
   ];
 
   return (
-    <section className="py-24 bg-gradient-to-b from-background to-muted/20">
-      <div className="container mx-auto px-4">
+    <section className="relative py-16 md:py-24 overflow-hidden">
+      {/* 4x4 Background */}
+      <div className="absolute inset-0">
+        <div 
+          className="w-full h-full bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${offroadBg1})` }}
+        />
+        <div className="absolute inset-0 bg-background/90 dark:bg-background/95" />
+      </div>
+      
+      <div className="relative z-10 container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -71,9 +81,9 @@ const FeatureCards = () => {
         </div>
 
         {/* Feature Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12 md:mb-16">
           {features.map((feature, index) => (
-            <Card key={index} className="group relative overflow-hidden bg-gradient-card border-border/50 hover:shadow-card hover:scale-105 transition-bounce">
+            <Card key={index} className="group relative overflow-hidden glass-effect border-border/50 hover:shadow-card hover:scale-105 transition-bounce bg-card/80 backdrop-blur-sm">
               {/* Background Gradient */}
               <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-100 transition-smooth`} />
               
@@ -113,14 +123,14 @@ const FeatureCards = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {stats.map((stat, index) => (
             <div key={index} className="text-center group">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-smooth">
-                <stat.icon className="h-8 w-8 text-primary" />
+              <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 rounded-full glass-effect flex items-center justify-center group-hover:bg-primary/20 transition-smooth">
+                <stat.icon className="h-6 w-6 md:h-8 md:w-8 text-primary" />
               </div>
-              <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
-              <div className="text-sm text-muted-foreground">{stat.label}</div>
+              <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">{stat.value}</div>
+              <div className="text-xs md:text-sm text-muted-foreground">{stat.label}</div>
             </div>
           ))}
         </div>

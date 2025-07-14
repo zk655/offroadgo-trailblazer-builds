@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Mountain } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,7 +31,7 @@ const Navigation = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-10">
+          <div className="hidden md:flex items-center space-x-6">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -41,23 +42,29 @@ const Navigation = () => {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 premium-gradient group-hover:w-full transition-all duration-300"></span>
               </Link>
             ))}
-            <Button className="premium-gradient text-white hover:shadow-glow hover-lift border-0 font-bold px-6">
-              🚀 Book Now
-            </Button>
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <Button className="premium-gradient text-white hover:shadow-glow hover-lift border-0 font-bold px-6">
+                🚀 Book Now
+              </Button>
+            </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
+          {/* Mobile Navigation */}
+          <div className="md:hidden flex items-center gap-3">
+            <ThemeToggle />
+            <button
+              className="p-2"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
