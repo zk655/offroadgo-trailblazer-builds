@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Car, Gauge, Fuel, TrendingUp, Users, Calendar, Award, Cog, Zap, Shield, Mountain, Wrench, Info, Star, Heart, Share2, Download } from 'lucide-react';
 import Navigation from '@/components/Navigation';
-import Real3DViewer from '@/components/Real3DViewer';
 import { supabase } from '@/integrations/supabase/client';
 
 // Import vehicle images
@@ -216,17 +215,44 @@ const VehicleDetail = () => {
               </div>
             </div>
 
-            {/* Real 3D Vehicle Viewer */}
-            <Real3DViewer 
-              vehicleName={vehicle.name}
-              vehicleId={vehicle.id}
-              vehicleBrand={vehicle.brand}
-              fallbackImage={vehicleImageUrl}
-              autoRotate={true}
-              enableControls={true}
-              theme="dark"
-              className="w-full"
-            />
+            {/* Vehicle Image Display */}
+            <div className="relative">
+              <Card className="relative overflow-hidden rounded-3xl border-border/30 shadow-2xl bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm">
+                <div className="relative h-[500px] overflow-hidden">
+                  <img
+                    src={vehicleImageUrl}
+                    alt={vehicle.name}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                    onError={(e) => {
+                      e.currentTarget.src = '/placeholder.svg';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                  
+                  {/* Image Info Overlay */}
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <div className="bg-background/90 backdrop-blur-sm rounded-lg p-3 border border-border/30">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-sm text-foreground">{vehicle.name}</p>
+                          <p className="text-xs text-muted-foreground">High-Quality Vehicle Image</p>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">
+                            <Car className="w-3 h-3 mr-1" />
+                            {vehicle.year}
+                          </Badge>
+                          <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 border-green-200">
+                            HD Image
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
           </div>
         </div>
       </div>
