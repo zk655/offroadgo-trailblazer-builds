@@ -11,19 +11,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <HeroSection />
-      
-      {/* Section Separator */}
-      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-      
       <FeatureCards />
-      
-      {/* Section Separator with spacing */}
-      <div className="py-8 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-        </div>
-      </div>
-      
       <VehiclesShowcase />
       <ProductsSection />
       <CTASection />

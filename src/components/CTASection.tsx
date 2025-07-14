@@ -28,13 +28,13 @@ const CTASection = () => {
             Join thousands of off-road enthusiasts who trust OffRoadGo for their next adventure.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center max-w-md sm:max-w-none mx-auto">
-            <Button size="lg" className="premium-gradient text-white hover:shadow-glow hover-lift group">
-              <Compass className="mr-2 h-5 w-5" />
+            <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-6 py-2 group">
+              <Compass className="mr-2 h-4 w-4" />
               Explore Trails Now
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <Button variant="outline" size="lg" className="glass-effect border-2 hover:bg-primary hover:text-white">
-              <Users className="mr-2 h-5 w-5" />
+            <Button variant="outline" size="sm" className="font-medium px-6 py-2">
+              <Users className="mr-2 h-4 w-4" />
               Join Community
             </Button>
           </div>

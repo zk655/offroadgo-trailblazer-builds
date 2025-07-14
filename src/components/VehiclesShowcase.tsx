@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Gauge, Mountain, Fuel, Settings } from 'lucide-react';
@@ -9,6 +9,10 @@ import jeepWranglerImage from '@/assets/vehicles/jeep-wrangler-rubicon.jpg';
 import fordBroncoImage from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
 import chevyColoradoImage from '@/assets/vehicles/chevy-colorado-zr2.jpg';
 import toyota4RunnerImage from '@/assets/vehicles/toyota-4runner-trd-pro.jpg';
+import ramTRXImage from '@/assets/vehicles/ram-1500-trx.jpg';
+import gmcSierraImage from '@/assets/vehicles/gmc-sierra-at4x.jpg';
+import nissanFrontierImage from '@/assets/vehicles/nissan-frontier-pro4x.jpg';
+import subaruOutbackImage from '@/assets/vehicles/subaru-outback-wilderness.jpg';
 
 const VehiclesShowcase = () => {
   const vehicles = [
@@ -21,19 +25,12 @@ const VehiclesShowcase = () => {
       image: jeepWranglerImage,
       type: 'SUV',
       badge: 'Most Popular',
-      description: 'The ultimate off-road machine with legendary capability',
       specs: {
         engine: '3.6L V6',
         horsepower: '285 HP',
-        torque: '260 lb-ft',
-        mpg: '17/25',
         groundClearance: '10.8"',
-        approachAngle: '44°',
-        departureAngle: '37°',
-        towingCapacity: '3,500 lbs',
-        transmission: '8-Speed Auto'
-      },
-      features: ['Rock-Trac 4WD', 'Electronic Sway Bar', 'Rock Rails', 'Skid Plates']
+        mpg: '17/25'
+      }
     },
     {
       id: 'ford-bronco-wildtrak',
@@ -44,19 +41,44 @@ const VehiclesShowcase = () => {
       image: fordBroncoImage,
       type: 'SUV',
       badge: 'Editor\'s Choice',
-      description: 'Built wild for the most extreme adventures',
       specs: {
         engine: '2.7L EcoBoost V6',
         horsepower: '330 HP',
-        torque: '415 lb-ft',
-        mpg: '19/22',
         groundClearance: '11.6"',
-        approachAngle: '43.2°',
-        departureAngle: '26.3°',
-        towingCapacity: '3,500 lbs',
-        transmission: '10-Speed Auto'
-      },
-      features: ['Terrain Management', 'Bilstein Shocks', 'Bash Plates', 'Rock Crawl Mode']
+        mpg: '19/22'
+      }
+    },
+    {
+      id: 'ram-1500-trx',
+      name: 'RAM 1500 TRX',
+      brand: 'RAM',
+      year: 2024,
+      price: '$75,540',
+      image: ramTRXImage,
+      type: 'Pickup Truck',
+      badge: 'Most Powerful',
+      specs: {
+        engine: '6.2L Supercharged V8',
+        horsepower: '702 HP',
+        groundClearance: '11.8"',
+        mpg: '10/14'
+      }
+    },
+    {
+      id: 'gmc-sierra-at4x',
+      name: 'GMC Sierra AT4X',
+      brand: 'GMC',
+      year: 2024,
+      price: '$68,500',
+      image: gmcSierraImage,
+      type: 'Pickup Truck',
+      badge: 'Luxury Off-Road',
+      specs: {
+        engine: '6.2L V8',
+        horsepower: '420 HP',
+        groundClearance: '11.2"',
+        mpg: '14/18'
+      }
     },
     {
       id: 'chevy-colorado-zr2',
@@ -67,19 +89,12 @@ const VehiclesShowcase = () => {
       image: chevyColoradoImage,
       type: 'Pickup Truck',
       badge: 'Best Value',
-      description: 'Mid-size truck with serious off-road credentials',
       specs: {
         engine: '3.6L V6',
         horsepower: '308 HP',
-        torque: '275 lb-ft',
-        mpg: '17/24',
         groundClearance: '9.6"',
-        approachAngle: '30°',
-        departureAngle: '23.5°',
-        towingCapacity: '5,000 lbs',
-        transmission: '8-Speed Auto'
-      },
-      features: ['Multimatic DSSV Dampers', 'Electronic Locking Diffs', 'Skid Plates', 'Hill Descent Control']
+        mpg: '17/24'
+      }
     },
     {
       id: 'toyota-4runner-trd-pro',
@@ -90,45 +105,69 @@ const VehiclesShowcase = () => {
       image: toyota4RunnerImage,
       type: 'SUV',
       badge: 'Most Reliable',
-      description: 'Proven reliability meets serious off-road capability',
       specs: {
         engine: '4.0L V6',
         horsepower: '270 HP',
-        torque: '278 lb-ft',
-        mpg: '16/19',
         groundClearance: '9.6"',
-        approachAngle: '33°',
-        departureAngle: '26°',
-        towingCapacity: '5,000 lbs',
-        transmission: '5-Speed Auto'
-      },
-      features: ['Fox Racing Shocks', 'Crawl Control', 'Multi-Terrain Select', 'Kinetic Dynamic Suspension']
+        mpg: '16/19'
+      }
+    },
+    {
+      id: 'nissan-frontier-pro4x',
+      name: 'Nissan Frontier Pro-4X',
+      brand: 'Nissan',
+      year: 2024,
+      price: '$38,650',
+      image: nissanFrontierImage,
+      type: 'Pickup Truck',
+      badge: 'Budget Pick',
+      specs: {
+        engine: '3.8L V6',
+        horsepower: '310 HP',
+        groundClearance: '10.0"',
+        mpg: '18/24'
+      }
+    },
+    {
+      id: 'subaru-outback-wilderness',
+      name: 'Subaru Outback Wilderness',
+      brand: 'Subaru',
+      year: 2024,
+      price: '$37,895',
+      image: subaruOutbackImage,
+      type: 'SUV',
+      badge: 'Adventure Ready',
+      specs: {
+        engine: '2.4L Turbo',
+        horsepower: '260 HP',
+        groundClearance: '9.5"',
+        mpg: '22/30'
+      }
     }
   ];
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background border-t border-border/50">
+    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/20">
       <div className="container mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <Badge variant="outline" className="mb-4 text-primary border-primary/20 bg-primary/5">
+        <div className="text-center mb-12">
+          <Badge variant="outline" className="mb-3 text-primary border-primary/20 bg-primary/5 text-xs font-medium">
             Top 4x4 Vehicles
           </Badge>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
             Best <span className="text-primary">Off-Road</span> Machines
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Discover the most capable 4x4 vehicles built for extreme adventures, 
-            from legendary Jeeps to powerful pickup trucks.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Discover the most capable 4x4 vehicles built for extreme adventures
           </p>
         </div>
 
-        {/* Vehicles Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Vehicles Grid - More Compact */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {vehicles.map((vehicle) => (
-            <Card key={vehicle.id} className="group bg-background border border-border hover:shadow-primary/10 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-              {/* Vehicle Image */}
-              <div className="relative overflow-hidden aspect-[16/10] bg-muted/20">
+            <Card key={vehicle.id} className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+              {/* Vehicle Image - Smaller */}
+              <div className="relative overflow-hidden aspect-[4/3] bg-muted/10">
                 <img 
                   src={vehicle.image} 
                   alt={vehicle.name}
@@ -138,94 +177,51 @@ const VehiclesShowcase = () => {
                 {/* Badge */}
                 <Badge 
                   variant="secondary" 
-                  className="absolute top-4 left-4 bg-primary text-primary-foreground border-0 font-semibold"
+                  className="absolute top-2 left-2 bg-primary text-primary-foreground border-0 text-xs font-medium"
                 >
                   {vehicle.badge}
                 </Badge>
 
                 {/* Price */}
-                <div className="absolute top-4 right-4 bg-background/90 backdrop-blur-sm rounded-lg px-3 py-2">
-                  <span className="text-lg font-bold text-primary">{vehicle.price}</span>
-                </div>
-
-                {/* Vehicle Type */}
-                <div className="absolute bottom-4 left-4">
-                  <Badge variant="outline" className="bg-background/80 backdrop-blur-sm border-border">
-                    {vehicle.type}
-                  </Badge>
+                <div className="absolute top-2 right-2 bg-background/90 backdrop-blur-sm rounded-md px-2 py-1">
+                  <span className="text-sm font-semibold text-primary">{vehicle.price}</span>
                 </div>
               </div>
 
-              <CardHeader className="pb-4">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <CardTitle className="text-2xl font-bold leading-tight group-hover:text-primary transition-colors">
-                      {vehicle.name}
-                    </CardTitle>
-                    <p className="text-muted-foreground">{vehicle.year} {vehicle.brand}</p>
-                  </div>
+              <CardContent className="p-4">
+                {/* Vehicle Info */}
+                <div className="mb-3">
+                  <h3 className="text-lg font-semibold leading-tight group-hover:text-primary transition-colors line-clamp-1">
+                    {vehicle.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">{vehicle.year} {vehicle.brand}</p>
                 </div>
-                
-                <p className="text-muted-foreground leading-relaxed mt-2">
-                  {vehicle.description}
-                </p>
-              </CardHeader>
 
-              <CardContent className="space-y-6">
-                {/* Key Specs */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-2">
-                    <Settings className="h-4 w-4 text-primary" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Engine</p>
-                      <p className="font-semibold">{vehicle.specs.engine}</p>
-                    </div>
+                {/* Compact Specs */}
+                <div className="grid grid-cols-2 gap-2 mb-4 text-xs">
+                  <div className="flex items-center gap-1">
+                    <Settings className="h-3 w-3 text-primary" />
+                    <span className="font-medium">{vehicle.specs.horsepower}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Gauge className="h-4 w-4 text-primary" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Power</p>
-                      <p className="font-semibold">{vehicle.specs.horsepower}</p>
-                    </div>
+                  <div className="flex items-center gap-1">
+                    <Mountain className="h-3 w-3 text-primary" />
+                    <span className="font-medium">{vehicle.specs.groundClearance}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Mountain className="h-4 w-4 text-primary" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Clearance</p>
-                      <p className="font-semibold">{vehicle.specs.groundClearance}</p>
-                    </div>
+                  <div className="flex items-center gap-1">
+                    <Gauge className="h-3 w-3 text-primary" />
+                    <span className="font-medium">{vehicle.specs.engine}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Fuel className="h-4 w-4 text-primary" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">MPG</p>
-                      <p className="font-semibold">{vehicle.specs.mpg}</p>
-                    </div>
+                  <div className="flex items-center gap-1">
+                    <Fuel className="h-3 w-3 text-primary" />
+                    <span className="font-medium">{vehicle.specs.mpg}</span>
                   </div>
                 </div>
 
-                {/* Key Features */}
-                <div>
-                  <p className="text-sm font-semibold text-foreground mb-2">Key Features:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {vehicle.features.slice(0, 3).map((feature, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        {feature}
-                      </Badge>
-                    ))}
-                    {vehicle.features.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{vehicle.features.length - 3} more
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-
-                {/* View Details Button */}
+                {/* View Details Button - Compact */}
                 <Link to={`/vehicles/${vehicle.id}`}>
-                  <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium">
-                    View Full Specifications
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                  <Button size="sm" variant="outline" className="w-full text-xs font-medium h-8">
+                    View Details
+                    <ArrowRight className="h-3 w-3 ml-1" />
                   </Button>
                 </Link>
               </CardContent>
@@ -234,12 +230,11 @@ const VehiclesShowcase = () => {
         </div>
 
         {/* View All Vehicles Button */}
-        <div className="text-center mt-16">
+        <div className="text-center mt-12">
           <Link to="/vehicles">
             <Button 
-              size="default" 
-              variant="outline" 
-              className="bg-primary text-primary-foreground hover:bg-primary/90 border-primary font-medium px-6 py-2"
+              size="sm" 
+              className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-6 py-2"
             >
               View All Vehicles
               <ArrowRight className="h-4 w-4 ml-2" />
