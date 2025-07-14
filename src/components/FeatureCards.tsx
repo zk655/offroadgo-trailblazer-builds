@@ -12,6 +12,7 @@ import {
   Route,
   ArrowRight 
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import featuresBg from '@/assets/features-bg-1.jpg';
 
 const features = [
@@ -138,29 +139,31 @@ const FeatureCards = () => {
                 transition: { duration: 0.2 }
               }}
             >
-              <Card className="adventure-card h-full group cursor-pointer">
-                <CardHeader className="pb-4">
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.bgGradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <feature.icon className={`w-8 h-8 ${feature.color}`} />
-                  </div>
-                  <CardTitle className="text-xl font-heading font-bold group-hover:text-primary transition-colors">
-                    {feature.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-muted-foreground leading-relaxed">
-                    {feature.description}
-                  </p>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    className="w-full justify-between group-hover:bg-primary/5 transition-all duration-300 text-sm font-normal"
-                  >
-                    Learn More
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </CardContent>
-              </Card>
+              <Link to={feature.href}>
+                <Card className="adventure-card h-full group cursor-pointer">
+                  <CardHeader className="pb-4">
+                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.bgGradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                      <feature.icon className={`w-8 h-8 ${feature.color}`} />
+                    </div>
+                    <CardTitle className="text-xl font-heading font-bold group-hover:text-primary transition-colors">
+                      {feature.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-muted-foreground leading-relaxed">
+                      {feature.description}
+                    </p>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="w-full justify-between group-hover:bg-primary/5 transition-all duration-300 text-sm font-normal"
+                    >
+                      Learn More
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Link>
             </motion.div>
           ))}
         </motion.div>
@@ -172,10 +175,12 @@ const FeatureCards = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <Button size="default" variant="outline" className="bg-primary text-primary-foreground hover:bg-primary/90 border-primary font-medium px-6 py-2">
-            Start Your Adventure
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+          <Link to="/adventure-start">
+            <Button size="default" variant="outline" className="bg-primary text-primary-foreground hover:bg-primary/90 border-primary font-medium px-6 py-2">
+              Start Your Adventure
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </Link>
         </motion.div>
       </div>
     </section>

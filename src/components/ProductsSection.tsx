@@ -2,6 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, ShoppingCart, Heart, Eye } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Import product images
 import winchImage from '@/assets/products/winch-12000lb.jpg';
@@ -195,85 +196,115 @@ const ProductsSection = () => {
         {/* Products Grid - More Compact */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map((product) => (
-            <Card key={product.id} className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-              {/* Product Image - Compact */}
-              <div className="relative overflow-hidden aspect-square bg-muted/10 p-4">
-                <img 
-                  src={product.image} 
-                  alt={product.name}
-                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                />
-                
-                {/* Badge */}
-                <Badge 
-                  variant="secondary" 
-                  className="absolute top-2 left-2 bg-primary text-primary-foreground border-0 text-xs font-medium"
-                >
-                  {product.badge}
-                </Badge>
-
-                {/* Action Buttons */}
-                <div className="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Button size="sm" variant="secondary" className="h-7 w-7 p-0 bg-background/80 backdrop-blur-sm">
-                    <Heart className="h-3 w-3" />
-                  </Button>
-                  <Button size="sm" variant="secondary" className="h-7 w-7 p-0 bg-background/80 backdrop-blur-sm">
-                    <Eye className="h-3 w-3" />
-                  </Button>
-                </div>
-
-                {/* Category */}
-                <div className="absolute bottom-2 left-2">
-                  <Badge variant="outline" className="bg-background/80 backdrop-blur-sm border-border text-xs">
-                    {product.category}
+            <Link key={product.id} to={`/product/${product.id}`}>
+              <Card className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer">
+                {/* Product Image - Compact */}
+                <div className="relative overflow-hidden aspect-square bg-muted/10 p-4">
+                  <img 
+                    src={product.image} 
+                    alt={product.name}
+                    className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                  />
+                  
+                  {/* Badge */}
+                  <Badge 
+                    variant="secondary" 
+                    className="absolute top-2 left-2 bg-primary text-primary-foreground border-0 text-xs font-medium"
+                  >
+                    {product.badge}
                   </Badge>
-                </div>
-              </div>
 
-              <CardContent className="p-3">
-                {/* Product Info - More Compact */}
-                <div className="mb-2">
-                  <h3 className="text-base font-semibold leading-tight group-hover:text-primary transition-colors line-clamp-1">
-                    {product.name}
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
-                    {product.description}
-                  </p>
-                </div>
-
-                {/* Rating - More Compact */}
-                <div className="flex items-center gap-1.5 mb-2">
-                  <div className="flex items-center gap-0.5">
-                    {renderStars(product.rating)}
+                  {/* Action Buttons */}
+                  <div className="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Button 
+                      size="sm" 
+                      variant="secondary" 
+                      className="h-7 w-7 p-0 bg-background/80 backdrop-blur-sm"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // Handle add to favorites
+                      }}
+                    >
+                      <Heart className="h-3 w-3" />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="secondary" 
+                      className="h-7 w-7 p-0 bg-background/80 backdrop-blur-sm"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // Handle quick view
+                      }}
+                    >
+                      <Eye className="h-3 w-3" />
+                    </Button>
                   </div>
-                  <span className="text-xs font-medium">{product.rating}</span>
-                  <span className="text-xs text-muted-foreground">({product.reviews})</span>
+
+                  {/* Category */}
+                  <div className="absolute bottom-2 left-2">
+                    <Badge variant="outline" className="bg-background/80 backdrop-blur-sm border-border text-xs">
+                      {product.category}
+                    </Badge>
+                  </div>
                 </div>
 
-                {/* Price - More Compact */}
-                <div className="flex items-center gap-1.5 mb-3">
-                  <span className="text-lg font-bold text-primary">{product.price}</span>
-                  <span className="text-xs text-muted-foreground line-through">{product.originalPrice}</span>
-                </div>
+                <CardContent className="p-3">
+                  {/* Product Info - More Compact */}
+                  <div className="mb-2">
+                    <h3 className="text-base font-semibold leading-tight group-hover:text-primary transition-colors line-clamp-1">
+                      {product.name}
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                      {product.description}
+                    </p>
+                  </div>
 
-                {/* Add to Cart Button - Smaller */}
-                <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium h-7 text-xs">
-                  <ShoppingCart className="h-3 w-3 mr-1.5" />
-                  Add to Cart
-                </Button>
-              </CardContent>
-            </Card>
+                  {/* Rating - More Compact */}
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <div className="flex items-center gap-0.5">
+                      {renderStars(product.rating)}
+                    </div>
+                    <span className="text-xs font-medium">{product.rating}</span>
+                    <span className="text-xs text-muted-foreground">({product.reviews})</span>
+                  </div>
+
+                  {/* Price - More Compact */}
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <span className="text-lg font-bold text-primary">{product.price}</span>
+                    <span className="text-xs text-muted-foreground line-through">{product.originalPrice}</span>
+                  </div>
+
+                  {/* Add to Cart Button - Smaller */}
+                  <Button 
+                    size="sm" 
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium h-7 text-xs"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // Handle add to cart action
+                    }}
+                  >
+                    <ShoppingCart className="h-3 w-3 mr-1.5" />
+                    Add to Cart
+                  </Button>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
 
         {/* View All Products Button */}
         <div className="text-center mt-12">
-          <Button 
-            size="sm" 
-            className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-6 py-2"
-          >
-            View All Products
-          </Button>
+          <Link to="/parts">
+            <Button 
+              size="sm" 
+              className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-6 py-2"
+            >
+              View All Products
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Compass, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Hero background images for rotation
 const heroImages = [
@@ -78,23 +79,27 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
           >
-            <Button 
-              size="default" 
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-6 py-2 group"
-            >
-              <Compass className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
-              Explore Trails
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <Link to="/trails">
+              <Button 
+                size="default" 
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-6 py-2 group"
+              >
+                <Compass className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
+                Explore Trails
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
             
-            <Button 
-              size="default" 
-              variant="outline"
-              className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-medium px-6 py-2 group backdrop-blur-sm"
-            >
-              <Settings className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-300" />
-              Build Vehicle
-            </Button>
+            <Link to="/build">
+              <Button 
+                size="default" 
+                variant="outline"
+                className="bg-white/10 text-white border-white/30 hover:bg-white/20 font-medium px-6 py-2 group backdrop-blur-sm"
+              >
+                <Settings className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+                Build Vehicle
+              </Button>
+            </Link>
           </motion.div>
         </motion.div>
       </div>
