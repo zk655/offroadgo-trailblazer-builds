@@ -71,7 +71,7 @@ const Trails = () => {
       if (error) throw error;
       setAllTrails(data || []);
     } catch (error) {
-      console.error('Error fetching all trails:', error);
+      // Handle error silently in production
     }
   };
 
@@ -109,7 +109,7 @@ const Trails = () => {
       setTrails(data || []);
       setTotalCount(count || 0);
     } catch (error) {
-      console.error('Error fetching trails:', error);
+      // Handle error silently in production
     } finally {
       setLoading(false);
     }

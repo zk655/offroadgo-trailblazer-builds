@@ -23,7 +23,6 @@ export function CarModel({ vehicleId, vehicleBrand, modelUrl }: { vehicleId?: st
       gltf = useGLTF(finalModelUrl);
     }
   } catch (err) {
-    console.warn('Failed to load 3D model:', err);
     error = true;
   }
   

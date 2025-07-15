@@ -45,7 +45,7 @@ const TrailDetail = () => {
       if (error) throw error;
       setTrail(data);
     } catch (error) {
-      console.error('Error fetching trail:', error);
+      // Handle error silently in production
     } finally {
       setLoading(false);
     }

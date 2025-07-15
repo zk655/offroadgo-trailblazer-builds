@@ -74,7 +74,7 @@ const ProductDetail = () => {
         setRelatedProducts(relatedData || []);
       }
     } catch (error) {
-      console.error('Error fetching product:', error);
+      // Handle error silently in production
     } finally {
       setLoading(false);
     }

@@ -67,7 +67,7 @@ const Build = () => {
       setMods(modsResponse.data || []);
       setBuilds(buildsResponse.data || []);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      // Handle error silently in production
     } finally {
       setLoading(false);
     }
@@ -119,7 +119,7 @@ const Build = () => {
       // Refresh builds
       fetchData();
     } catch (error) {
-      console.error('Error saving build:', error);
+      // Handle error silently in production
     } finally {
       setSaving(false);
     }

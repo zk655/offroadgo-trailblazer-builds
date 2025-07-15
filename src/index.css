@@ -208,4 +208,15 @@
   .adsbygoogle[data-ad-format="auto"] {
     height: auto !important;
   }
+
+  /* Production optimizations */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Optimize fonts loading */
+  @font-face {
+    font-display: swap;
+  }
 }

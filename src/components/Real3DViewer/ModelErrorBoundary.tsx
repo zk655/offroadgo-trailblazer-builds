@@ -6,7 +6,6 @@ export function ModelErrorBoundary({ children, onError }: { children: React.Reac
   try {
     return <>{children}</>;
   } catch (error) {
-    console.error('3D Model Error:', error);
     onError();
     return <SimpleCar />;
   }

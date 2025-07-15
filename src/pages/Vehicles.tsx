@@ -80,7 +80,6 @@ const Vehicles = () => {
           .order('brand, name');
           
         if (error) {
-          console.error('Error fetching vehicles:', error);
           return;
         }
         
@@ -89,7 +88,7 @@ const Vehicles = () => {
           setFilteredVehicles(data);
         }
       } catch (error) {
-        console.error('Error:', error);
+        // Handle error silently in production
       } finally {
         setLoading(false);
       }

@@ -85,7 +85,6 @@ const VehicleDetail = () => {
           .single();
           
         if (error) {
-          console.error('Error fetching vehicle:', error);
           return;
         }
         
@@ -93,7 +92,7 @@ const VehicleDetail = () => {
           setVehicle(data);
         }
       } catch (error) {
-        console.error('Error:', error);
+        // Handle error silently in production
       } finally {
         setLoading(false);
       }

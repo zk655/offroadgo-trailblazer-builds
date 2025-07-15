@@ -23,10 +23,8 @@ const AdSenseAd = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       try {
-        console.log('AdSense: Attempting to load ad for slot:', slot);
         // @ts-ignore
         (window.adsbygoogle = window.adsbygoogle || []).push({});
-        console.log('AdSense: Ad push successful for slot:', slot);
         
         // Check if ad loaded after a delay
         setTimeout(() => {
@@ -41,7 +39,6 @@ const AdSenseAd = ({
         }, 2000);
         
       } catch (err) {
-        console.error('AdSense error for slot', slot, ':', err);
         setShowPlaceholder(false); // Hide on error
       }
     }, 100);

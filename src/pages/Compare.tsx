@@ -65,7 +65,7 @@ const Compare = () => {
       setVehicles(data || []);
       setAvailableVehicles(data || []);
     } catch (error) {
-      console.error('Error fetching vehicles:', error);
+      // Handle error silently in production
     } finally {
       setLoading(false);
     }
