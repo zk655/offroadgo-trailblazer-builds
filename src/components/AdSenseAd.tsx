@@ -18,6 +18,7 @@ const AdSenseAd = ({
   layout = 'in-article'
 }: AdSenseAdProps) => {
   const [adLoaded, setAdLoaded] = useState(false);
+  const [showContainer, setShowContainer] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -27,38 +28,52 @@ const AdSenseAd = ({
         
         // Check if ad loaded after a longer delay
         setTimeout(() => {
-          const adElement = document.querySelector(`[data-ad-slot="${slot}"]`);
+          const adElement = document.querySelector(`[data-ad-slot="${slot}"]`) as HTMLElement;
           if (adElement) {
             const hasContent = adElement.innerHTML.trim().length > 0;
-            setAdLoaded(hasContent);
+            const hasChildren = adElement.children.length > 0;
+            const hasHeight = adElement.offsetHeight > 10;
+            
+            const isAdLoaded = hasContent && (hasChildren || hasHeight);
+            setAdLoaded(isAdLoaded);
+            setShowContainer(isAdLoaded);
           }
-        }, 3000);
+        }, 2000);
         
       } catch (err) {
         console.log('AdSense error:', err);
+        setShowContainer(false);
       }
     }, 100);
 
     return () => clearTimeout(timer);
   }, [slot]);
 
+  // Don't render anything if no ad is loaded
+  if (!showContainer && !adLoaded) {
+    return null;
+  }
+
   return (
     <div className={`adsense-container w-full ${className}`} style={{ 
-      minHeight: '100px',
-      maxHeight: '300px',
-      padding: '8px',
+      minHeight: adLoaded ? 'auto' : '0',
+      maxHeight: 'none',
+      padding: adLoaded ? '8px' : '0',
       backgroundColor: 'transparent',
-      margin: '12px 0'
+      margin: adLoaded ? '12px 0' : '0',
+      overflow: 'hidden',
+      transition: 'all 0.3s ease'
     }}>
       <ins
         className="adsbygoogle"
         style={{
           display: 'block',
           width: '100%',
-          minHeight: '90px',
-          maxHeight: '280px',
+          minHeight: '0',
           height: 'auto',
           backgroundColor: 'transparent',
+          opacity: adLoaded ? 1 : 0,
+          transition: 'opacity 0.3s ease'
         }}
         data-ad-client="ca-pub-6402737863827515"
         data-ad-slot={slot}
