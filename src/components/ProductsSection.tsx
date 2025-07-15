@@ -256,11 +256,6 @@ const ProductsSection = () => {
                   <Button 
                     size="sm" 
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium h-7 text-xs"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      // Navigation handled by Link wrapper
-                    }}
                   >
                     <Eye className="h-3 w-3 mr-1.5" />
                     View Details
