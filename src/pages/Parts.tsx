@@ -237,7 +237,7 @@ const Parts = () => {
       <section className="py-8 px-4">
         <div className="container mx-auto text-center">
           <AdSenseAd 
-            slot="1357902468" 
+            slot="8773228071"
             style={{ display: 'block', textAlign: 'center', minHeight: '250px' }}
             format="auto"
             responsive={true}

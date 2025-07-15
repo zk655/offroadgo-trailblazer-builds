@@ -161,9 +161,9 @@ const Vehicles = () => {
       <section className="py-8 px-4 bg-muted/20">
         <div className="container mx-auto text-center">
           <AdSenseAd 
-            slot="5678901234" 
+            slot="8773228071" 
             style={{ display: 'block', textAlign: 'center', minHeight: '250px' }}
-            format="rectangle"
+            format="auto"
             responsive={true}
           />
         </div>
