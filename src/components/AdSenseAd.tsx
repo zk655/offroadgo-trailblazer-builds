@@ -29,7 +29,7 @@ const AdSenseAd = ({
       <ins
         className="adsbygoogle"
         style={style}
-        data-ad-client="ca-pub-XXXXXXXXXX" // Replace with your AdSense Publisher ID
+        data-ad-client="ca-pub-6402737863827515"
         data-ad-slot={slot}
         data-ad-format={format}
         data-full-width-responsive={responsive.toString()}
