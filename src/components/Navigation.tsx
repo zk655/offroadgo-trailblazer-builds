@@ -97,13 +97,13 @@ const Navigation = () => {
 
                 {/* Submenu */}
                 {item.submenu && (
-                  <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-                    <div className="glass-effect rounded-xl border border-border/20 py-2 min-w-[160px]">
+                  <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                    <div className="bg-background border border-border rounded-xl shadow-lg py-2 min-w-[180px] backdrop-blur-sm">
                       {item.submenu.map((subItem) => (
                         <Link
                           key={subItem.href}
                           to={subItem.href}
-                          className="block px-4 py-2 text-sm text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors"
+                          className="block px-4 py-3 text-sm text-foreground hover:text-primary hover:bg-primary/10 transition-colors border-b border-border/10 last:border-b-0"
                         >
                           {subItem.label}
                         </Link>
