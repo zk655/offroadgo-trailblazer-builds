@@ -193,4 +193,19 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* AdSense responsive fixes */
+  .adsense-container {
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+  
+  .adsbygoogle {
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+  
+  .adsbygoogle[data-ad-format="auto"] {
+    height: auto !important;
+  }
 }

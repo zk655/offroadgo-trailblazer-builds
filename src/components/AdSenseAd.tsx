@@ -19,32 +19,28 @@ const AdSenseAd = ({
 }: AdSenseAdProps) => {
   useEffect(() => {
     try {
+      console.log('AdSense: Attempting to load ad for slot:', slot);
       // @ts-ignore
       (window.adsbygoogle = window.adsbygoogle || []).push({});
+      console.log('AdSense: Ad push successful for slot:', slot);
     } catch (err) {
-      console.error('AdSense error:', err);
+      console.error('AdSense error for slot', slot, ':', err);
     }
-  }, []);
+  }, [slot]);
 
   return (
-    <div className={`adsense-container w-full max-w-none ${className}`}>
-      <div className="w-full max-w-4xl mx-auto px-4">
-        <ins
-          className="adsbygoogle block w-full"
-          style={{
-            display: 'block',
-            width: '100%',
-            height: 'auto',
-            minHeight: '90px',
-            maxHeight: '280px',
-          }}
-          data-ad-layout={layout}
-          data-ad-format="auto"
-          data-ad-client="ca-pub-6402737863827515"
-          data-ad-slot={slot}
-          data-full-width-responsive="true"
-        />
-      </div>
+    <div className={`adsense-container w-full ${className}`}>
+      <ins
+        className="adsbygoogle"
+        style={{
+          display: 'block',
+          width: '100%',
+        }}
+        data-ad-client="ca-pub-6402737863827515"
+        data-ad-slot={slot}
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
     </div>
   );
 };
