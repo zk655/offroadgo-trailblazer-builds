@@ -18,7 +18,6 @@ const AdSenseAd = ({
   layout = 'in-article'
 }: AdSenseAdProps) => {
   const [adLoaded, setAdLoaded] = useState(false);
-  const [showPlaceholder, setShowPlaceholder] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -26,40 +25,22 @@ const AdSenseAd = ({
         // @ts-ignore
         (window.adsbygoogle = window.adsbygoogle || []).push({});
         
-        // Check if ad loaded after a delay
+        // Check if ad loaded after a longer delay
         setTimeout(() => {
           const adElement = document.querySelector(`[data-ad-slot="${slot}"]`);
           if (adElement) {
             const hasContent = adElement.innerHTML.trim().length > 0;
             setAdLoaded(hasContent);
-            if (hasContent) {
-              setShowPlaceholder(false);
-            }
           }
-        }, 2000);
+        }, 3000);
         
       } catch (err) {
-        setShowPlaceholder(false); // Hide on error
+        console.log('AdSense error:', err);
       }
     }, 100);
 
     return () => clearTimeout(timer);
   }, [slot]);
-
-  // Hide completely if no ad content after timeout
-  useEffect(() => {
-    const hideTimer = setTimeout(() => {
-      if (!adLoaded) {
-        setShowPlaceholder(false);
-      }
-    }, 5000);
-
-    return () => clearTimeout(hideTimer);
-  }, [adLoaded]);
-
-  if (!showPlaceholder) {
-    return null; // Don't render anything if ad failed to load
-  }
 
   return (
     <div className={`adsense-container w-full ${className}`} style={{ minHeight: '0' }}>

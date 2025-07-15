@@ -180,6 +180,10 @@ const ProductsSection = () => {
                     src={product.image} 
                     alt={product.name}
                     className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                    onError={(e) => {
+                      console.error('Product image loading error for:', product.name);
+                      e.currentTarget.src = '/placeholder.svg';
+                    }}
                   />
                   
                   {/* Badge */}

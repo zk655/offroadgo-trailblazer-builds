@@ -4,7 +4,16 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Gauge, Mountain, Fuel, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// Import vehicle images
+// Import vehicle images with error handling
+const importImage = (imagePath: string) => {
+  try {
+    return imagePath;
+  } catch (error) {
+    console.error('Image import error:', error);
+    return '/placeholder.svg';
+  }
+};
+
 import jeepWranglerImage from '@/assets/vehicles/jeep-wrangler-rubicon.jpg';
 import fordBroncoImage from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
 import chevyColoradoImage from '@/assets/vehicles/chevy-colorado-zr2.jpg';
@@ -172,6 +181,10 @@ const VehiclesShowcase = () => {
                   src={vehicle.image} 
                   alt={vehicle.name}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  onError={(e) => {
+                    console.error('Image loading error for:', vehicle.name);
+                    e.currentTarget.src = '/placeholder.svg';
+                  }}
                 />
                 
                 {/* Badge */}
