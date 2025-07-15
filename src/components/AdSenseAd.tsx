@@ -43,14 +43,22 @@ const AdSenseAd = ({
   }, [slot]);
 
   return (
-    <div className={`adsense-container w-full ${className}`} style={{ minHeight: '0' }}>
+    <div className={`adsense-container w-full ${className}`} style={{ 
+      minHeight: '280px',
+      padding: '16px',
+      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+      borderRadius: '8px',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
+      margin: '16px 0'
+    }}>
       <ins
         className="adsbygoogle"
         style={{
           display: 'block',
           width: '100%',
-          minHeight: '0',
+          minHeight: '250px',
           height: 'auto',
+          backgroundColor: 'transparent',
         }}
         data-ad-client="ca-pub-6402737863827515"
         data-ad-slot={slot}
