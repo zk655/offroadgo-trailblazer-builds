@@ -24,7 +24,7 @@ const Index = () => {
       <section className="py-8 px-4">
         <div className="container mx-auto text-center">
           <AdSenseAd 
-            slot="1234567890" 
+            slot="8773228071"
             style={{ display: 'block', textAlign: 'center', minHeight: '250px' }}
             format="auto"
             responsive={true}
@@ -38,7 +38,7 @@ const Index = () => {
       <section className="py-8 px-4 bg-muted/20">
         <div className="container mx-auto text-center">
           <AdSenseAd 
-            slot="0987654321" 
+            slot="8773228071"
             style={{ display: 'block', textAlign: 'center', minHeight: '250px' }}
             format="rectangle"
             responsive={true}
