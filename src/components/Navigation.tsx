@@ -31,9 +31,7 @@ const Navigation = () => {
       label: 'Vehicles',
       submenu: [
         { href: '/vehicles', label: 'Browse All Models' },
-        { href: '/compare', label: 'Compare Vehicles' },
-        { href: '/vehicles?type=Pickup', label: 'Pickup Trucks' },
-        { href: '/vehicles?type=SUV', label: 'SUVs' }
+        { href: '/compare', label: 'Compare Vehicles' }
       ]
     },
     { href: '/trails', label: 'Trails' },
