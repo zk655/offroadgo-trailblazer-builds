@@ -158,13 +158,12 @@ const Vehicles = () => {
       />
 
       {/* Ad Section */}
-      <section className="py-8 px-4 bg-muted/20">
-        <div className="container mx-auto text-center">
+      <section className="py-2 md:py-4 bg-muted/10">
+        <div className="w-full overflow-hidden">
           <AdSenseAd 
             slot="8773228071"
-            style={{ display: 'block', textAlign: 'center', minHeight: '250px' }}
-            format="auto"
-            responsive={true}
+            layout="in-article"
+            className="w-full"
           />
         </div>
       </section>
