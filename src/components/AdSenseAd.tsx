@@ -6,14 +6,16 @@ interface AdSenseAdProps {
   className?: string;
   format?: string;
   responsive?: boolean;
+  layout?: string;
 }
 
 const AdSenseAd = ({ 
   slot, 
-  style = { display: 'block' }, 
+  style = { display: 'block', textAlign: 'center' }, 
   className = '',
-  format = 'auto',
-  responsive = true 
+  format = 'fluid',
+  responsive = true,
+  layout = 'in-article'
 }: AdSenseAdProps) => {
   useEffect(() => {
     try {
@@ -29,9 +31,10 @@ const AdSenseAd = ({
       <ins
         className="adsbygoogle"
         style={style}
+        data-ad-layout={layout}
+        data-ad-format={format}
         data-ad-client="ca-pub-6402737863827515"
         data-ad-slot={slot}
-        data-ad-format={format}
         data-full-width-responsive={responsive.toString()}
       />
     </div>
