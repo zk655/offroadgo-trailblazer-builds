@@ -23,8 +23,6 @@ const Sitemap = () => {
       category: "Vehicle Pages",
       icon: <Car className="h-5 w-5" />,
       links: [
-        { title: "Compare Vehicles", url: "/compare", description: "Side-by-side vehicle comparisons" },
-        { title: "Build Your Ride", url: "/build", description: "Custom vehicle build configurations" },
         { title: "Vehicle Reviews", url: "/vehicles", description: "In-depth vehicle reviews and specs" }
       ]
     },
@@ -44,9 +42,7 @@ const Sitemap = () => {
       category: "Trail Information",
       icon: <MapPin className="h-5 w-5" />,
       links: [
-        { title: "Trail Guides", url: "/trails", description: "Detailed trail maps and difficulty ratings" },
-        { title: "Adventure Planning", url: "/adventure-start", description: "Plan your next off-road adventure" },
-        { title: "Trail Reviews", url: "/trails", description: "Community reviews and trail conditions" }
+        { title: "Trail Guides", url: "/trails", description: "Detailed trail maps and difficulty ratings" }
       ]
     },
     {
@@ -62,9 +58,7 @@ const Sitemap = () => {
       category: "Resources",
       icon: <FileText className="h-5 w-5" />,
       links: [
-        { title: "Installation Guides", url: "/blog?category=guides", description: "Step-by-step installation tutorials" },
-        { title: "Maintenance Tips", url: "/blog?category=maintenance", description: "Keep your 4x4 in top condition" },
-        { title: "Safety Information", url: "/blog?category=safety", description: "Off-road safety tips and best practices" }
+        { title: "Blog & News", url: "/blog", description: "Latest off-road news and articles" }
       ]
     }
   ];

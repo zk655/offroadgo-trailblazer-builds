@@ -18,20 +18,20 @@ import airCompressorImage from '@/assets/products/air-compressor.jpg';
 const ProductsSection = () => {
   const products = [
     {
-      id: 1,
-      name: "Pro Series Winch 12000lb",
+      id: 'a9789ecd-8210-4d72-bff5-209e9df2a328',
+      name: "BFGoodrich All-Terrain T/A KO2",
       price: "$899.99",
       originalPrice: "$1,199.99",
-      image: winchImage,
+      image: tiresImage,
       rating: 4.8,
       reviews: 234,
-      category: "Recovery",
+      category: "Tires",
       badge: "Best Seller",
-      description: "Heavy-duty electric winch with synthetic rope"
+      description: "Heavy-duty all-terrain tires for extreme off-road performance"
     },
     {
-      id: 2,
-      name: "All-Terrain LED Light Bar 50\"",
+      id: 'c7ccf180-effa-4e3e-b243-5d014723f323',
+      name: "Rigid LED Light Bar",
       price: "$349.99",
       originalPrice: "$449.99",
       image: lightbarImage,
@@ -42,124 +42,100 @@ const ProductsSection = () => {
       description: "Ultra-bright LED with flood and spot combo"
     },
     {
-      id: 3,
-      name: "Heavy Duty Roof Rack System",
+      id: '9c4e97f7-d342-48d6-9c65-624d5700446d',
+      name: "ARB Bull Bar",
       price: "$599.99",
       originalPrice: "$749.99",
-      image: roofRackImage,
-      rating: 4.7,
-      reviews: 156,
-      category: "Storage",
-      badge: "Sale",
-      description: "Modular rack with integrated mounting points"
-    },
-    {
-      id: 4,
-      name: "Mud Terrain Tires Set (4)",
-      price: "$1,299.99",
-      originalPrice: "$1,599.99",
-      image: tiresImage,
-      rating: 4.6,
-      reviews: 298,
-      category: "Tires",
-      badge: "Popular",
-      description: "Premium tires for extreme off-road performance"
-    },
-    {
-      id: 5,
-      name: "Rock Sliders Protection Kit",
-      price: "$749.99",
-      originalPrice: "$899.99",
-      image: rockSlidersImage,
-      rating: 4.8,
-      reviews: 124,
-      category: "Protection",
-      badge: "Recommended",
-      description: "Heavy-duty sliders with integrated step plates"
-    },
-    {
-      id: 6,
-      name: "Suspension Lift Kit 6\"",
-      price: "$2,199.99",
-      originalPrice: "$2,599.99",
-      image: suspensionImage,
-      rating: 4.9,
-      reviews: 87,
-      category: "Suspension",
-      badge: "Premium",
-      description: "Complete kit with adjustable coilovers"
-    },
-    {
-      id: 7,
-      name: "Heavy Duty Bull Bar",
-      price: "$1,599.99",
-      originalPrice: "$1,899.99",
       image: bullBarImage,
       rating: 4.7,
       reviews: 156,
       category: "Protection",
-      badge: "Heavy Duty",
-      description: "Steel bull bar with LED light mounts"
+      badge: "Sale",
+      description: "Heavy-duty bull bar with integrated mounting points"
     },
     {
-      id: 8,
-      name: "Recovery Tracks Set",
+      id: '1cee57e6-43f7-4b7a-aa86-d7e9280afbab',
+      name: "Bilstein 5100 Shocks",
+      price: "$1,299.99",
+      originalPrice: "$1,599.99",
+      image: suspensionImage,
+      rating: 4.6,
+      reviews: 298,
+      category: "Suspension",
+      badge: "Popular",
+      description: "Premium shocks for extreme off-road performance"
+    },
+    {
+      id: '58144f95-dd6f-45db-9284-20d8dbdbfdbd',
+      name: "Teraflex Lift Kit",
+      price: "$749.99",
+      originalPrice: "$899.99",
+      image: suspensionImage,
+      rating: 4.8,
+      reviews: 124,
+      category: "Suspension",
+      badge: "Recommended",
+      description: "Complete suspension lift kit for enhanced clearance"
+    },
+    {
+      id: '207e1d46-88c3-4ffc-a2df-c837861e93e9',
+      name: "Rigid Industries 20\" LED Light Bar",
+      price: "$2,199.99",
+      originalPrice: "$2,599.99",
+      image: lightbarImage,
+      rating: 4.9,
+      reviews: 87,
+      category: "Lighting",
+      badge: "Premium",
+      description: "Professional-grade LED light bar with long-range visibility"
+    },
+    {
+      id: 'b748a731-1965-4667-a74b-c1ede3b24fcd',
+      name: "KC HiLiTES Flex LED Rock Light Kit",
+      price: "$1,599.99",
+      originalPrice: "$1,899.99",
+      image: lightbarImage,
+      rating: 4.7,
+      reviews: 156,
+      category: "Lighting",
+      badge: "Heavy Duty",
+      description: "Flexible LED rock light kit for undercarriage illumination"
+    },
+    {
+      id: '842635e6-2919-4c32-8774-65a865fa5f3c',
+      name: "Baja Designs Squadron Sport LED",
       price: "$299.99",
       originalPrice: "$399.99",
-      image: recoveryTracksImage,
+      image: lightbarImage,
       rating: 4.6,
       reviews: 203,
-      category: "Recovery",
+      category: "Lighting",
       badge: "Essential",
-      description: "Sand ladders for vehicle recovery"
+      description: "Compact LED lights for auxiliary lighting"
     },
     {
-      id: 9,
-      name: "Portable Air Compressor",
+      id: '6249ec13-948b-41b8-94f6-de1faaad1a32',
+      name: "ARB Front Bumper Deluxe",
       price: "$199.99",
       originalPrice: "$249.99",
-      image: airCompressorImage,
+      image: bullBarImage,
       rating: 4.8,
       reviews: 342,
-      category: "Tools",
+      category: "Protection",
       badge: "Portable",
-      description: "12V compressor for tire inflation"
+      description: "Heavy-duty front bumper with winch mount"
     },
     {
-      id: 10,
-      name: "Tactical Floor Mats",
+      id: '4840a073-dd78-4bfe-af0d-edcfa91f0940',
+      name: "Skid Row Engine Skid Plate",
       price: "$159.99",
       originalPrice: "$199.99",
-      image: airCompressorImage, // Reusing image for demo
+      image: bullBarImage,
       rating: 4.5,
       reviews: 167,
-      category: "Interior",
+      category: "Protection",
       badge: "Durable",
-      description: "Heavy-duty rubber mats with drainage"
-    },
-    {
-      id: 11,
-      name: "Off-Road Tool Kit",
-      price: "$249.99",
-      originalPrice: "$299.99",
-      image: recoveryTracksImage, // Reusing image for demo
-      rating: 4.7,
-      reviews: 98,
-      category: "Tools",
-      badge: "Complete",
-      description: "Essential tools for trail maintenance"
-    },
-    {
-      id: 12,
-      name: "Cargo Net System",
-      price: "$89.99",
-      originalPrice: "$119.99",
-      image: roofRackImage, // Reusing image for demo
-      rating: 4.4,
-      reviews: 145,
-      category: "Storage",
-      badge: "Flexible",
-      description: "Adjustable cargo retention system"
+      description: "Heavy-duty aluminum skid plate for engine protection"
     }
   ];
 

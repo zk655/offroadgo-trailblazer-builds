@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight, Compass, Users, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import offroadBg2 from '@/assets/offroad-bg-2.jpg';
 
 const CTASection = () => {
@@ -28,14 +29,18 @@ const CTASection = () => {
             Join thousands of off-road enthusiasts who trust OffRoadGo for their next adventure.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center max-w-md sm:max-w-none mx-auto">
-            <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-6 py-2 group">
-              <Compass className="mr-2 h-4 w-4" />
-              Explore Trails Now
-              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            <Button asChild size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-6 py-2 group">
+              <Link to="/trails">
+                <Compass className="mr-2 h-4 w-4" />
+                Explore Trails Now
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </Button>
-            <Button variant="outline" size="sm" className="font-medium px-6 py-2">
-              <Users className="mr-2 h-4 w-4" />
-              Join Community
+            <Button asChild variant="outline" size="sm" className="font-medium px-6 py-2">
+              <Link to="/blog">
+                <Users className="mr-2 h-4 w-4" />
+                Join Community
+              </Link>
             </Button>
           </div>
         </div>

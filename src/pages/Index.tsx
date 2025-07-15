@@ -6,6 +6,7 @@ import ProductsSection from '@/components/ProductsSection';
 import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
+import AdSenseAd from '@/components/AdSenseAd';
 
 const Index = () => {
   return (
@@ -18,7 +19,33 @@ const Index = () => {
       />
       <Navigation />
       <HeroSection />
+      
+      {/* Ad Section - After Hero */}
+      <section className="py-8 px-4">
+        <div className="container mx-auto text-center">
+          <AdSenseAd 
+            slot="1234567890" 
+            style={{ display: 'block', textAlign: 'center', minHeight: '250px' }}
+            format="auto"
+            responsive={true}
+          />
+        </div>
+      </section>
+      
       <FeatureCards />
+      
+      {/* Ad Section - Mid Page */}
+      <section className="py-8 px-4 bg-muted/20">
+        <div className="container mx-auto text-center">
+          <AdSenseAd 
+            slot="0987654321" 
+            style={{ display: 'block', textAlign: 'center', minHeight: '250px' }}
+            format="rectangle"
+            responsive={true}
+          />
+        </div>
+      </section>
+      
       <VehiclesShowcase />
       <ProductsSection />
       <CTASection />

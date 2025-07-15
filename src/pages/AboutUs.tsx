@@ -6,27 +6,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Users, Target, Award, Heart } from 'lucide-react';
 
 const AboutUs = () => {
-  const teamMembers = [
-    {
-      name: "Mike Johnson",
-      role: "Founder & CEO",
-      bio: "20+ years in off-road industry",
-      icon: <Users className="h-6 w-6" />
-    },
-    {
-      name: "Sarah Davis",
-      role: "Lead Designer",
-      bio: "Expert in 4x4 modifications",
-      icon: <Target className="h-6 w-6" />
-    },
-    {
-      name: "Tom Wilson",
-      role: "Technical Director",
-      bio: "Master mechanic and trail guide",
-      icon: <Award className="h-6 w-6" />
-    }
-  ];
-
   const values = [
     {
       title: "Quality First",
@@ -113,39 +92,6 @@ const AboutUs = () => {
           </div>
         </section>
 
-        {/* Team Section */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/20">
-          <div className="container mx-auto">
-            <div className="text-center mb-12">
-              <Badge variant="outline" className="mb-4 text-primary border-primary/20 bg-primary/5">
-                Meet The Team
-              </Badge>
-              <h2 className="text-3xl font-bold mb-4 text-foreground">
-                Off-Road <span className="text-primary">Experts</span>
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Our team combines decades of off-road experience with technical expertise
-              </p>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              {teamMembers.map((member, index) => (
-                <Card key={index} className="bg-background border border-border text-center p-6">
-                  <CardContent className="p-0">
-                    <div className="flex justify-center mb-4">
-                      <div className="bg-primary/10 p-4 rounded-full">
-                        {member.icon}
-                      </div>
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2 text-foreground">{member.name}</h3>
-                    <p className="text-primary font-medium mb-2">{member.role}</p>
-                    <p className="text-muted-foreground">{member.bio}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* Stats Section */}
         <section className="py-16 px-4 sm:px-6 lg:px-8">

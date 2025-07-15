@@ -11,6 +11,7 @@ import PageHero from '@/components/PageHero';
 import { supabase } from '@/integrations/supabase/client';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
+import AdSenseAd from '@/components/AdSenseAd';
 
 // Import vehicle images
 import fordBroncoRaptor from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
@@ -155,6 +156,18 @@ const Vehicles = () => {
         subtitle="Discover the perfect 4x4 vehicle for your next adventure. Compare specs, features, and find your ideal off-road companion built to conquer any terrain."
         icon={Car}
       />
+
+      {/* Ad Section */}
+      <section className="py-8 px-4 bg-muted/20">
+        <div className="container mx-auto text-center">
+          <AdSenseAd 
+            slot="5678901234" 
+            style={{ display: 'block', textAlign: 'center', minHeight: '250px' }}
+            format="rectangle"
+            responsive={true}
+          />
+        </div>
+      </section>
 
       <div className="container mx-auto px-4 py-8">
         {/* Filters */}

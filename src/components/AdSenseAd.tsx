@@ -1,36 +1,38 @@
 import { useEffect } from 'react';
 
 interface AdSenseAdProps {
-  adSlot: string;
-  adFormat?: 'auto' | 'rectangle' | 'vertical' | 'horizontal';
-  className?: string;
+  slot: string;
   style?: React.CSSProperties;
+  className?: string;
+  format?: string;
+  responsive?: boolean;
 }
 
 const AdSenseAd = ({ 
-  adSlot, 
-  adFormat = 'auto', 
+  slot, 
+  style = { display: 'block' }, 
   className = '',
-  style = {} 
+  format = 'auto',
+  responsive = true 
 }: AdSenseAdProps) => {
   useEffect(() => {
     try {
       // @ts-ignore
       (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (error) {
-      console.error('AdSense error:', error);
+    } catch (err) {
+      console.error('AdSense error:', err);
     }
   }, []);
 
   return (
-    <div className={className} style={style}>
+    <div className={`adsense-container ${className}`}>
       <ins
         className="adsbygoogle"
-        style={{ display: 'block' }}
-        data-ad-client="ca-pub-0000000000000000" // Replace with your AdSense ID
-        data-ad-slot={adSlot}
-        data-ad-format={adFormat}
-        data-full-width-responsive="true"
+        style={style}
+        data-ad-client="ca-pub-XXXXXXXXXX" // Replace with your AdSense Publisher ID
+        data-ad-slot={slot}
+        data-ad-format={format}
+        data-full-width-responsive={responsive.toString()}
       />
     </div>
   );

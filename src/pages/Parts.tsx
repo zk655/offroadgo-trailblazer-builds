@@ -20,6 +20,7 @@ import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
+import AdSenseAd from '@/components/AdSenseAd';
 
 interface Product {
   id: string;
@@ -229,6 +230,18 @@ const Parts = () => {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Ad Section */}
+      <section className="py-8 px-4">
+        <div className="container mx-auto text-center">
+          <AdSenseAd 
+            slot="1357902468" 
+            style={{ display: 'block', textAlign: 'center', minHeight: '250px' }}
+            format="auto"
+            responsive={true}
+          />
         </div>
       </section>
 

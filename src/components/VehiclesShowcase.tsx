@@ -17,7 +17,7 @@ import subaruOutbackImage from '@/assets/vehicles/subaru-outback-wilderness.jpg'
 const VehiclesShowcase = () => {
   const vehicles = [
     {
-      id: 'jeep-wrangler-rubicon',
+      id: 'c551e2f6-b64f-4a03-84fd-f50a9eb49fa8',
       name: 'Jeep Wrangler Rubicon',
       brand: 'Jeep',
       year: 2024,
@@ -33,8 +33,8 @@ const VehiclesShowcase = () => {
       }
     },
     {
-      id: 'ford-bronco-wildtrak',
-      name: 'Ford Bronco Wildtrak',
+      id: '073a8d5d-3540-41ec-b3a8-5ad8278937c5',
+      name: 'Ford Bronco Raptor',
       brand: 'Ford',
       year: 2024,
       price: '$52,405',
@@ -49,7 +49,7 @@ const VehiclesShowcase = () => {
       }
     },
     {
-      id: 'ram-1500-trx',
+      id: '20ec7cd3-5354-49f9-b5e7-ec13ee9065c5',
       name: 'RAM 1500 TRX',
       brand: 'RAM',
       year: 2024,
@@ -65,7 +65,7 @@ const VehiclesShowcase = () => {
       }
     },
     {
-      id: 'gmc-sierra-at4x',
+      id: '321d86ce-211e-4348-b06f-a5e8225e4365',
       name: 'GMC Sierra AT4X',
       brand: 'GMC',
       year: 2024,
@@ -81,7 +81,7 @@ const VehiclesShowcase = () => {
       }
     },
     {
-      id: 'chevy-colorado-zr2',
+      id: '318eb40b-e033-41e4-8c36-b96d6c3b86b4',
       name: 'Chevrolet Colorado ZR2',
       brand: 'Chevrolet',
       year: 2024,
@@ -97,7 +97,7 @@ const VehiclesShowcase = () => {
       }
     },
     {
-      id: 'toyota-4runner-trd-pro',
+      id: 'fce134a7-3158-44d7-b13d-955717e70ce5',
       name: 'Toyota 4Runner TRD Pro',
       brand: 'Toyota',
       year: 2024,
@@ -113,7 +113,7 @@ const VehiclesShowcase = () => {
       }
     },
     {
-      id: 'nissan-frontier-pro4x',
+      id: 'dd55d8ca-5ce3-43ff-8d3f-8db9717c80d7',
       name: 'Nissan Frontier Pro-4X',
       brand: 'Nissan',
       year: 2024,
@@ -129,7 +129,7 @@ const VehiclesShowcase = () => {
       }
     },
     {
-      id: 'subaru-outback-wilderness',
+      id: '609a4fbd-b40e-4dfb-95ce-a03b19111d77',
       name: 'Subaru Outback Wilderness',
       brand: 'Subaru',
       year: 2024,
