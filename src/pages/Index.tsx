@@ -20,8 +20,8 @@ const Index = () => {
       <Navigation />
       <HeroSection />
       
-      {/* Ad Section - After Hero */}
-      <section className="py-2 md:py-4 bg-muted/10">
+      {/* Ad Section 1 - After Hero */}
+      <section className="py-2 md:py-4 bg-muted/5">
         <div className="w-full overflow-hidden">
           <AdSenseAd 
             slot="8773228071"
@@ -33,7 +33,7 @@ const Index = () => {
       
       <FeatureCards />
       
-      {/* Ad Section - Mid Page */}
+      {/* Ad Section 2 - Mid Page */}
       <section className="py-2 md:py-4 bg-muted/10">
         <div className="w-full overflow-hidden">
           <AdSenseAd 
@@ -46,6 +46,18 @@ const Index = () => {
       
       <VehiclesShowcase />
       <ProductsSection />
+      
+      {/* Ad Section 3 - Before CTA */}
+      <section className="py-2 md:py-4 bg-muted/5">
+        <div className="w-full overflow-hidden">
+          <AdSenseAd 
+            slot="8773228071"
+            layout="in-article"
+            className="w-full"
+          />
+        </div>
+      </section>
+      
       <CTASection />
       <Footer />
     </div>

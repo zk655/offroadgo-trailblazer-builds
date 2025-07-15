@@ -20,6 +20,7 @@ import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
+import AdSenseAd from '@/components/AdSenseAd';
 
 interface Trail {
   id: string;
@@ -204,6 +205,17 @@ const Trails = () => {
         icon={Route}
       />
 
+      {/* Ad Section 1 - After Hero */}
+      <section className="py-2 md:py-4 bg-muted/5">
+        <div className="w-full overflow-hidden">
+          <AdSenseAd 
+            slot="8773228071"
+            layout="in-article"
+            className="w-full"
+          />
+        </div>
+      </section>
+
       <div className="container mx-auto px-4 py-8">
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 mb-8 bg-card p-6 rounded-lg shadow-card">
@@ -244,6 +256,17 @@ const Trails = () => {
             </SelectContent>
           </Select>
         </div>
+
+        {/* Ad Section 2 - After Filters */}
+        <section className="py-2 md:py-4 bg-muted/10 mb-8">
+          <div className="w-full overflow-hidden">
+            <AdSenseAd 
+              slot="8773228071"
+              layout="in-article"
+              className="w-full"
+            />
+          </div>
+        </section>
 
         {/* Results Count */}
         <div className="mb-6">
@@ -397,6 +420,17 @@ const Trails = () => {
             </Pagination>
           </div>
         )}
+
+        {/* Ad Section 3 - After Trails Grid */}
+        <section className="py-2 md:py-4 bg-muted/5 mb-8">
+          <div className="w-full overflow-hidden">
+            <AdSenseAd 
+              slot="8773228071"
+              layout="in-article"
+              className="w-full"
+            />
+          </div>
+        </section>
       </div>
       <Footer />
     </div>

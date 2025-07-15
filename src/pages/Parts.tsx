@@ -224,6 +224,17 @@ const Parts = () => {
         icon={Package}
       />
 
+      {/* Ad Section 1 - After Hero */}
+      <section className="py-2 md:py-4 bg-muted/5">
+        <div className="w-full overflow-hidden">
+          <AdSenseAd 
+            slot="8773228071"
+            layout="in-article"
+            className="w-full"
+          />
+        </div>
+      </section>
+
       {/* Featured Categories - Compact */}
       <section className="py-8 px-4 sm:px-6 lg:px-8 bg-muted/20">
         <div className="container mx-auto">
@@ -288,7 +299,7 @@ const Parts = () => {
         </div>
       </section>
 
-      {/* Ad Section - Fully Responsive */}
+      {/* Ad Section 2 - After Categories */}
       <section className="py-2 md:py-4 bg-muted/10">
         <div className="w-full overflow-hidden">
           <AdSenseAd 
@@ -566,6 +577,17 @@ const Parts = () => {
               </p>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Ad Section 3 - After Products */}
+      <section className="py-2 md:py-4 bg-muted/5">
+        <div className="w-full overflow-hidden">
+          <AdSenseAd 
+            slot="8773228071"
+            layout="in-article"
+            className="w-full"
+          />
         </div>
       </section>
 

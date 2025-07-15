@@ -157,8 +157,8 @@ const Vehicles = () => {
         icon={Car}
       />
 
-      {/* Ad Section */}
-      <section className="py-2 md:py-4 bg-muted/10">
+      {/* Ad Section 1 - After Hero */}
+      <section className="py-2 md:py-4 bg-muted/5">
         <div className="w-full overflow-hidden">
           <AdSenseAd 
             slot="8773228071"
@@ -208,6 +208,17 @@ const Vehicles = () => {
             </SelectContent>
           </Select>
         </div>
+
+        {/* Ad Section 2 - After Filters */}
+        <section className="py-2 md:py-4 bg-muted/10">
+          <div className="w-full overflow-hidden">
+            <AdSenseAd 
+              slot="8773228071"
+              layout="in-article"
+              className="w-full"
+            />
+          </div>
+        </section>
 
         {/* Results Count */}
         <div className="mb-6">
@@ -388,6 +399,17 @@ const Vehicles = () => {
             </p>
           </div>
         )}
+
+        {/* Ad Section 3 - After Vehicle Grid */}
+        <section className="py-2 md:py-4 bg-muted/5 mb-8">
+          <div className="w-full overflow-hidden">
+            <AdSenseAd 
+              slot="8773228071"
+              layout="in-article"
+              className="w-full"
+            />
+          </div>
+        </section>
       </div>
       <Footer />
     </div>
