@@ -224,48 +224,63 @@ const Parts = () => {
         icon={Package}
       />
 
-      {/* Featured Categories */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      {/* Featured Categories - Compact */}
+      <section className="py-8 px-4 sm:px-6 lg:px-8 bg-muted/20">
         <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <Badge variant="outline" className="mb-3 text-primary border-primary/20 bg-primary/5 text-xs font-medium">
+          <div className="text-center mb-6">
+            <Badge variant="outline" className="mb-2 text-primary border-primary/20 bg-primary/5 text-xs font-medium">
               Shop by Category
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
+            <h2 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">
               Find Your Perfect <span className="text-primary">Upgrade</span>
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Browse our curated collection of premium off-road parts and accessories
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Horizontal scrolling on mobile, grid on desktop */}
+          <div className="md:hidden">
+            <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+              {featuredCategories.map((category) => (
+                <div
+                  key={category.name}
+                  className="flex-shrink-0 cursor-pointer"
+                  onClick={() => setCategoryFilter(category.name)}
+                >
+                  <Card className="group hover:shadow-md transition-all duration-200 overflow-hidden border bg-background/80 backdrop-blur-sm w-32">
+                    <CardContent className="p-3 text-center">
+                      <div className={`p-2 rounded-full bg-gradient-to-r ${category.color} text-white mx-auto mb-2 w-10 h-10 flex items-center justify-center`}>
+                        <category.icon className="h-4 w-4" />
+                      </div>
+                      <h3 className="font-medium text-xs text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                        {category.name}
+                      </h3>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {products.filter(p => p.category === category.name).length}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Grid layout for desktop */}
+          <div className="hidden md:grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {featuredCategories.map((category) => (
               <Card 
                 key={category.name}
-                className="group cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden border-0 bg-gradient-to-r from-background to-muted/50"
+                className="group cursor-pointer hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 overflow-hidden border bg-background/80 backdrop-blur-sm"
                 onClick={() => setCategoryFilter(category.name)}
               >
-                <CardContent className="p-6 relative">
-                  <div className={`absolute inset-0 bg-gradient-to-r ${category.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
-                  <div className="relative z-10">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className={`p-3 rounded-full bg-gradient-to-r ${category.color} text-white`}>
-                        <category.icon className="h-6 w-6" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
-                          {category.name}
-                        </h3>
-                        <p className="text-sm text-muted-foreground">
-                          {products.filter(p => p.category === category.name).length} products
-                        </p>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {category.description}
-                    </p>
+                <CardContent className="p-4 text-center">
+                  <div className={`p-2.5 rounded-full bg-gradient-to-r ${category.color} text-white mx-auto mb-3 w-12 h-12 flex items-center justify-center`}>
+                    <category.icon className="h-5 w-5" />
                   </div>
+                  <h3 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-1">
+                    {category.name}
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    {products.filter(p => p.category === category.name).length} products
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -273,14 +288,20 @@ const Parts = () => {
         </div>
       </section>
 
-      {/* Ad Section */}
-      <section className="py-8 px-4">
-        <div className="container mx-auto text-center">
+      {/* Ad Section - Responsive */}
+      <section className="py-4 md:py-6 px-4">
+        <div className="container mx-auto">
           <AdSenseAd 
             slot="8773228071"
-            style={{ display: 'block', textAlign: 'center', minHeight: '250px' }}
+            style={{ 
+              display: 'block', 
+              textAlign: 'center', 
+              minHeight: '120px',
+              width: '100%'
+            }}
             format="auto"
             responsive={true}
+            className="max-w-full mx-auto"
           />
         </div>
       </section>

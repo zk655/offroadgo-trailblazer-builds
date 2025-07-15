@@ -27,10 +27,14 @@ const AdSenseAd = ({
   }, []);
 
   return (
-    <div className={`adsense-container ${className}`}>
+    <div className={`adsense-container w-full max-w-full overflow-hidden ${className}`}>
       <ins
-        className="adsbygoogle"
-        style={style}
+        className="adsbygoogle w-full block"
+        style={{
+          ...style,
+          minHeight: 'auto',
+          maxWidth: '100%',
+        }}
         data-ad-layout={layout}
         data-ad-format={format}
         data-ad-client="ca-pub-6402737863827515"
