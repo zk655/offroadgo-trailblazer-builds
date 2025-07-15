@@ -131,6 +131,12 @@ const Parts = () => {
       color: 'from-gray-500 to-slate-500'
     },
     { 
+      name: 'Wheels', 
+      icon: Package, 
+      description: 'Rims, beadlocks, and wheel accessories',
+      color: 'from-slate-500 to-gray-600'
+    },
+    { 
       name: 'Recovery', 
       icon: Wrench, 
       description: 'Winches, recovery tracks, and safety gear',
@@ -265,96 +271,234 @@ const Parts = () => {
             </Select>
           </div>
 
-          {/* Products Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <Link key={product.id} to={`/product/${product.id}`}>
-                <Card className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer">
-                  {/* Product Image */}
-                  <div className="relative overflow-hidden aspect-square bg-muted/10 p-4">
-                    <img 
-                      src={product.image_url} 
-                      alt={product.title}
-                      className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                    />
-                    
-                    {/* Badge */}
-                    <Badge 
-                      variant="secondary" 
-                      className="absolute top-2 left-2 bg-primary text-primary-foreground border-0 text-xs font-medium"
-                    >
-                      {product.category}
-                    </Badge>
-
-                    {/* Action Buttons */}
-                    <div className="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <Button 
-                        size="sm" 
-                        variant="secondary" 
-                        className="h-7 w-7 p-0 bg-background/80 backdrop-blur-sm"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          // Handle add to favorites
-                        }}
-                      >
-                        <Heart className="h-3 w-3" />
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="secondary" 
-                        className="h-7 w-7 p-0 bg-background/80 backdrop-blur-sm"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          // Handle quick view
-                        }}
-                      >
-                        <Eye className="h-3 w-3" />
-                      </Button>
+          {/* Products by Category */}
+          {categoryFilter === 'all' ? (
+            // Show all categories with sections
+            <div className="space-y-16">
+              {uniqueCategories.map((category) => {
+                const categoryProducts = filteredProducts.filter(p => p.category === category);
+                if (categoryProducts.length === 0) return null;
+                
+                const categoryInfo = featuredCategories.find(c => c.name === category);
+                const CategoryIcon = categoryInfo?.icon || Package;
+                
+                return (
+                  <div key={category} className="space-y-8">
+                    {/* Category Header */}
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-full bg-gradient-to-r ${categoryInfo?.color || 'from-gray-500 to-slate-500'} text-white`}>
+                        <CategoryIcon className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-bold text-foreground">{category}</h2>
+                        <p className="text-muted-foreground">{categoryProducts.length} products available</p>
+                      </div>
                     </div>
+                    
+                    {/* Category Products Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                      {categoryProducts.map((product) => (
+                        <Link key={product.id} to={`/product/${product.id}`}>
+                          <Card className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer">
+                            {/* Product Image */}
+                            <div className="relative overflow-hidden aspect-square bg-muted/10 p-4">
+                              <img 
+                                src={product.image_url} 
+                                alt={product.title}
+                                className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                              />
+                              
+                              {/* Badge */}
+                              <Badge 
+                                variant="secondary" 
+                                className="absolute top-2 left-2 bg-primary text-primary-foreground border-0 text-xs font-medium"
+                              >
+                                {product.category}
+                              </Badge>
 
-                    {/* Price Badge */}
-                    <div className="absolute bottom-2 right-2">
-                      <Badge className="bg-primary text-primary-foreground border-0 text-xs font-semibold">
-                        {formatPrice(product.price)}
-                      </Badge>
+                              {/* Action Buttons */}
+                              <div className="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <Button 
+                                  size="sm" 
+                                  variant="secondary" 
+                                  className="h-7 w-7 p-0 bg-background/80 backdrop-blur-sm"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    // Handle add to favorites
+                                  }}
+                                >
+                                  <Heart className="h-3 w-3" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="secondary" 
+                                  className="h-7 w-7 p-0 bg-background/80 backdrop-blur-sm"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    // Handle quick view
+                                  }}
+                                >
+                                  <Eye className="h-3 w-3" />
+                                </Button>
+                              </div>
+
+                              {/* Price Badge */}
+                              <div className="absolute bottom-2 right-2">
+                                <Badge className="bg-primary text-primary-foreground border-0 text-xs font-semibold">
+                                  {formatPrice(product.price)}
+                                </Badge>
+                              </div>
+                            </div>
+
+                            <CardContent className="p-4">
+                              {/* Product Info */}
+                              <div className="mb-3">
+                                <p className="text-xs text-muted-foreground font-medium mb-1">{product.brand}</p>
+                                <h3 className="text-base font-semibold leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                                  {product.title}
+                                </h3>
+                                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                  {product.description}
+                                </p>
+                              </div>
+
+                              {/* Rating */}
+                              <div className="flex items-center gap-1.5 mb-4">
+                                <div className="flex items-center gap-0.5">
+                                  {renderStars(product.rating)}
+                                </div>
+                                <span className="text-xs font-medium">{product.rating}</span>
+                              </div>
+
+                              {/* View Details Button */}
+                              <Button 
+                                size="sm" 
+                                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium h-8 text-xs"
+                              >
+                                <Eye className="h-3 w-3 mr-1.5" />
+                                View Details
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        </Link>
+                      ))}
                     </div>
                   </div>
+                );
+              })}
+            </div>
+          ) : (
+            // Show filtered category
+            <div className="space-y-8">
+              {/* Category Header */}
+              <div className="flex items-center gap-4">
+                <div className={`p-3 rounded-full bg-gradient-to-r ${featuredCategories.find(c => c.name === categoryFilter)?.color || 'from-gray-500 to-slate-500'} text-white`}>
+                  {(() => {
+                    const categoryInfo = featuredCategories.find(c => c.name === categoryFilter);
+                    const Icon = categoryInfo?.icon || Package;
+                    return <Icon className="h-6 w-6" />;
+                  })()}
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground">{categoryFilter}</h2>
+                  <p className="text-muted-foreground">{filteredProducts.length} products available</p>
+                </div>
+              </div>
+              
+              {/* Products Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredProducts.map((product) => (
+                  <Link key={product.id} to={`/product/${product.id}`}>
+                    <Card className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer">
+                      {/* Product Image */}
+                      <div className="relative overflow-hidden aspect-square bg-muted/10 p-4">
+                        <img 
+                          src={product.image_url} 
+                          alt={product.title}
+                          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                        />
+                        
+                        {/* Badge */}
+                        <Badge 
+                          variant="secondary" 
+                          className="absolute top-2 left-2 bg-primary text-primary-foreground border-0 text-xs font-medium"
+                        >
+                          {product.category}
+                        </Badge>
 
-                  <CardContent className="p-4">
-                    {/* Product Info */}
-                    <div className="mb-3">
-                      <p className="text-xs text-muted-foreground font-medium mb-1">{product.brand}</p>
-                      <h3 className="text-base font-semibold leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                        {product.title}
-                      </h3>
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                        {product.description}
-                      </p>
-                    </div>
+                        {/* Action Buttons */}
+                        <div className="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <Button 
+                            size="sm" 
+                            variant="secondary" 
+                            className="h-7 w-7 p-0 bg-background/80 backdrop-blur-sm"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              // Handle add to favorites
+                            }}
+                          >
+                            <Heart className="h-3 w-3" />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="secondary" 
+                            className="h-7 w-7 p-0 bg-background/80 backdrop-blur-sm"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              // Handle quick view
+                            }}
+                          >
+                            <Eye className="h-3 w-3" />
+                          </Button>
+                        </div>
 
-                    {/* Rating */}
-                    <div className="flex items-center gap-1.5 mb-4">
-                      <div className="flex items-center gap-0.5">
-                        {renderStars(product.rating)}
+                        {/* Price Badge */}
+                        <div className="absolute bottom-2 right-2">
+                          <Badge className="bg-primary text-primary-foreground border-0 text-xs font-semibold">
+                            {formatPrice(product.price)}
+                          </Badge>
+                        </div>
                       </div>
-                      <span className="text-xs font-medium">{product.rating}</span>
-                    </div>
 
-                    {/* View Details Button */}
-                    <Button 
-                      size="sm" 
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium h-8 text-xs"
-                    >
-                      <Eye className="h-3 w-3 mr-1.5" />
-                      View Details
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+                      <CardContent className="p-4">
+                        {/* Product Info */}
+                        <div className="mb-3">
+                          <p className="text-xs text-muted-foreground font-medium mb-1">{product.brand}</p>
+                          <h3 className="text-base font-semibold leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                            {product.title}
+                          </h3>
+                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                            {product.description}
+                          </p>
+                        </div>
+
+                        {/* Rating */}
+                        <div className="flex items-center gap-1.5 mb-4">
+                          <div className="flex items-center gap-0.5">
+                            {renderStars(product.rating)}
+                          </div>
+                          <span className="text-xs font-medium">{product.rating}</span>
+                        </div>
+
+                        {/* View Details Button */}
+                        <Button 
+                          size="sm" 
+                          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium h-8 text-xs"
+                        >
+                          <Eye className="h-3 w-3 mr-1.5" />
+                          View Details
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* No Products Found */}
           {filteredProducts.length === 0 && !loading && (
