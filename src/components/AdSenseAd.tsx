@@ -44,19 +44,19 @@ const AdSenseAd = ({
 
   return (
     <div className={`adsense-container w-full ${className}`} style={{ 
-      minHeight: '280px',
-      padding: '16px',
-      backgroundColor: 'rgba(255, 255, 255, 0.05)',
-      borderRadius: '8px',
-      border: '1px solid rgba(255, 255, 255, 0.1)',
-      margin: '16px 0'
+      minHeight: '100px',
+      maxHeight: '300px',
+      padding: '8px',
+      backgroundColor: 'transparent',
+      margin: '12px 0'
     }}>
       <ins
         className="adsbygoogle"
         style={{
           display: 'block',
           width: '100%',
-          minHeight: '250px',
+          minHeight: '90px',
+          maxHeight: '280px',
           height: 'auto',
           backgroundColor: 'transparent',
         }}
