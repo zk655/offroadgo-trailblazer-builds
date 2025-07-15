@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, ShoppingCart, Heart, Eye } from 'lucide-react';
+import { Star, Heart, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // Import product images
@@ -276,18 +276,18 @@ const ProductsSection = () => {
                     <span className="text-xs text-muted-foreground line-through">{product.originalPrice}</span>
                   </div>
 
-                  {/* Add to Cart Button - Smaller */}
+                  {/* View Details Button - Smaller */}
                   <Button 
                     size="sm" 
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium h-7 text-xs"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      // Handle add to cart action
+                      // Navigation handled by Link wrapper
                     }}
                   >
-                    <ShoppingCart className="h-3 w-3 mr-1.5" />
-                    Add to Cart
+                    <Eye className="h-3 w-3 mr-1.5" />
+                    View Details
                   </Button>
                 </CardContent>
               </Card>

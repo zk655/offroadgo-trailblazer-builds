@@ -40,6 +40,7 @@ const Navigation = () => {
     { href: '/build', label: 'Build' },
     { href: '/products', label: 'Products' },
     { href: '/blog', label: 'Blog' },
+    { href: '/about', label: 'About' },
   ];
 
   const isActiveRoute = (href: string) => {

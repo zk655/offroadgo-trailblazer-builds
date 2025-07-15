@@ -1,0 +1,9 @@
+# Google AdSense
+google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+
+# Replace pub-0000000000000000 with your actual AdSense publisher ID
+# This file helps verify your ownership for AdSense approval
+
+# Example entries for other ad networks (remove if not used):
+# facebook.com, 0000000000000000, DIRECT, c3e20eee3f780d68
+# amazon-adsystem.com, 0000-0000-0000-0000, DIRECT
