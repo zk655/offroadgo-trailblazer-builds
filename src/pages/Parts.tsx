@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
-import { Search, Filter, Star, Eye, Heart, Package, Zap, Shield, Lightbulb, Settings, Wrench } from 'lucide-react';
+import { Search, Filter, Star, Eye, Heart, Package, Zap, Shield, Lightbulb, Settings, Wrench, Music, Archive, Tent, Armchair, AlertTriangle } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
 import SEO from '@/components/SEO';
@@ -137,10 +137,52 @@ const Parts = () => {
       color: 'from-slate-500 to-gray-600'
     },
     { 
-      name: 'Recovery', 
+      name: 'Recovery/Towing', 
       icon: Wrench, 
-      description: 'Winches, recovery tracks, and safety gear',
+      description: 'Winches, recovery straps, and towing gear',
       color: 'from-indigo-500 to-purple-500'
+    },
+    { 
+      name: 'Audio/Electronics', 
+      icon: Music, 
+      description: 'CB radios, GPS units, and communication gear',
+      color: 'from-cyan-500 to-blue-500'
+    },
+    { 
+      name: 'Storage/Organization', 
+      icon: Archive, 
+      description: 'Roof boxes, bed organizers, and storage solutions',
+      color: 'from-amber-500 to-orange-500'
+    },
+    { 
+      name: 'Exterior/Styling', 
+      icon: Star, 
+      description: 'Fender flares, running boards, and styling accessories',
+      color: 'from-purple-500 to-pink-500'
+    },
+    { 
+      name: 'Camping/Outdoor', 
+      icon: Tent, 
+      description: 'Roof tents, awnings, and camping equipment',
+      color: 'from-green-600 to-emerald-500'
+    },
+    { 
+      name: 'Interior', 
+      icon: Armchair, 
+      description: 'Seat covers, floor mats, and interior accessories',
+      color: 'from-rose-500 to-red-500'
+    },
+    { 
+      name: 'Maintenance/Fluids', 
+      icon: Wrench, 
+      description: 'Oils, filters, and maintenance supplies',
+      color: 'from-orange-500 to-yellow-500'
+    },
+    { 
+      name: 'Safety/Emergency', 
+      icon: AlertTriangle, 
+      description: 'First aid, fire extinguishers, and emergency gear',
+      color: 'from-red-600 to-orange-600'
     }
   ];
 
