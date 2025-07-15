@@ -288,20 +288,13 @@ const Parts = () => {
         </div>
       </section>
 
-      {/* Ad Section - Responsive */}
-      <section className="py-4 md:py-6 px-4">
-        <div className="container mx-auto">
+      {/* Ad Section - Fully Responsive */}
+      <section className="py-2 md:py-4 bg-muted/10">
+        <div className="w-full overflow-hidden">
           <AdSenseAd 
             slot="8773228071"
-            style={{ 
-              display: 'block', 
-              textAlign: 'center', 
-              minHeight: '120px',
-              width: '100%'
-            }}
-            format="auto"
-            responsive={true}
-            className="max-w-full mx-auto"
+            layout="in-article"
+            className="w-full"
           />
         </div>
       </section>

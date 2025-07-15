@@ -27,20 +27,24 @@ const AdSenseAd = ({
   }, []);
 
   return (
-    <div className={`adsense-container w-full max-w-full overflow-hidden ${className}`}>
-      <ins
-        className="adsbygoogle w-full block"
-        style={{
-          ...style,
-          minHeight: 'auto',
-          maxWidth: '100%',
-        }}
-        data-ad-layout={layout}
-        data-ad-format={format}
-        data-ad-client="ca-pub-6402737863827515"
-        data-ad-slot={slot}
-        data-full-width-responsive={responsive.toString()}
-      />
+    <div className={`adsense-container w-full max-w-none ${className}`}>
+      <div className="w-full max-w-4xl mx-auto px-4">
+        <ins
+          className="adsbygoogle block w-full"
+          style={{
+            display: 'block',
+            width: '100%',
+            height: 'auto',
+            minHeight: '90px',
+            maxHeight: '280px',
+          }}
+          data-ad-layout={layout}
+          data-ad-format="auto"
+          data-ad-client="ca-pub-6402737863827515"
+          data-ad-slot={slot}
+          data-full-width-responsive="true"
+        />
+      </div>
     </div>
   );
 };
