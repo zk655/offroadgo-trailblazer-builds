@@ -96,7 +96,7 @@ async function fetchRealRallyClubs() {
     club_type: "championship",
     founded_year: 1973,
     member_count: 3500,
-    image_url: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&h=600&fit=crop"
+    image_url: "/src/assets/rally-event-1.jpg"
   })
 
   // American Rally Association
@@ -110,7 +110,7 @@ async function fetchRealRallyClubs() {
     club_type: "rally",
     founded_year: 2017,
     member_count: 850,
-    image_url: "https://images.unsplash.com/photo-1592853625511-ad0bbf75549b?w=800&h=600&fit=crop"
+    image_url: "/src/assets/rally-event-2.jpg"
   })
 
   // Canadian Rally Championship
@@ -124,7 +124,7 @@ async function fetchRealRallyClubs() {
     club_type: "rally",
     founded_year: 1957,
     member_count: 650,
-    image_url: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&h=600&fit=crop"
+    image_url: "/src/assets/rally-event-3.jpg"
   })
 
   // European Rally Championship
@@ -138,7 +138,7 @@ async function fetchRealRallyClubs() {
     club_type: "championship",
     founded_year: 1953,
     member_count: 2100,
-    image_url: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&h=600&fit=crop"
+    image_url: "/src/assets/rally-event-4.jpg"
   })
 
   // Australian Rally Championship
@@ -152,7 +152,7 @@ async function fetchRealRallyClubs() {
     club_type: "rally",
     founded_year: 1968,
     member_count: 420,
-    image_url: "https://images.unsplash.com/photo-1592853625511-ad0bbf75549b?w=800&h=600&fit=crop"
+    image_url: "/src/assets/rally-event-5.jpg"
   })
 
   // British Rally Championship
@@ -166,7 +166,7 @@ async function fetchRealRallyClubs() {
     club_type: "rally",
     founded_year: 1958,
     member_count: 780,
-    image_url: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&h=600&fit=crop"
+    image_url: "/src/assets/rally-event-6.jpg"
   })
 
   return clubs
@@ -192,7 +192,7 @@ async function fetchRealRallyEvents() {
     max_participants: 75,
     current_participants: 68,
     external_url: "https://www.acm.mc/en/rallye-monte-carlo",
-    image_url: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&h=600&fit=crop",
+    image_url: "/src/assets/rally-event-6.jpg",
     difficulty_level: "professional",
     terrain_type: "tarmac"
   })
@@ -212,7 +212,7 @@ async function fetchRealRallyEvents() {
     max_participants: 65,
     current_participants: 58,
     external_url: "https://www.rallysweden.com",
-    image_url: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&h=600&fit=crop",
+    image_url: "/src/assets/rally-event-2.jpg",
     difficulty_level: "professional",
     terrain_type: "snow"
   })
@@ -232,7 +232,7 @@ async function fetchRealRallyEvents() {
     max_participants: 55,
     current_participants: 45,
     external_url: "https://www.wrc-safari.com",
-    image_url: "https://images.unsplash.com/photo-1592853625511-ad0bbf75549b?w=800&h=600&fit=crop",
+    image_url: "/src/assets/rally-event-4.jpg",
     difficulty_level: "extreme",
     terrain_type: "gravel"
   })
@@ -252,7 +252,7 @@ async function fetchRealRallyEvents() {
     max_participants: 70,
     current_participants: 67,
     external_url: "https://www.rallye-weltmeisterschaft.de",
-    image_url: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&h=600&fit=crop",
+    image_url: "/src/assets/rally-event-1.jpg",
     difficulty_level: "professional",
     terrain_type: "gravel"
   })
@@ -272,7 +272,7 @@ async function fetchRealRallyEvents() {
     max_participants: 85,
     current_participants: 72,
     external_url: "https://www.oregontrailrally.com",
-    image_url: "https://images.unsplash.com/photo-1592853625511-ad0bbf75549b?w=800&h=600&fit=crop",
+    image_url: "/src/assets/rally-event-3.jpg",
     difficulty_level: "intermediate",
     terrain_type: "gravel"
   })
@@ -291,7 +291,7 @@ async function fetchRealRallyEvents() {
     max_participants: 90,
     current_participants: 78,
     external_url: "https://www.newenglandforestrally.com",
-    image_url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop",
+    image_url: "/src/assets/rally-event-5.jpg",
     difficulty_level: "intermediate",
     terrain_type: "gravel"
   })
