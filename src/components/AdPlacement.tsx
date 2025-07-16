@@ -16,17 +16,17 @@ const AdPlacement: React.FC<AdPlacementProps> = ({
   const getAdSlot = () => {
     switch (position) {
       case 'top':
-        return '1234567890'; // Top banner ads
+        return '8773228071'; // Top banner ads
       case 'middle':
-        return '2345678901'; // Middle content ads
+        return '8773228071'; // Middle content ads
       case 'bottom':
-        return '3456789012'; // Bottom ads
+        return '8773228071'; // Bottom ads
       case 'sidebar':
-        return '4567890123'; // Sidebar ads
+        return '5395297838'; // Sidebar ads
       case 'inline':
-        return '5678901234'; // Inline content ads
+        return '6871374497'; // Inline content ads
       default:
-        return '1234567890';
+        return '8773228071';
     }
   };
 
