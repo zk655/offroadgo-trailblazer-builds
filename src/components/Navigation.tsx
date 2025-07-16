@@ -30,24 +30,24 @@ const Navigation = () => {
       href: '/vehicles', 
       label: 'Vehicles',
       submenu: [
-        { href: '/vehicles', label: 'Browse All Models' },
-        { href: '/compare', label: 'Compare Vehicles' }
+        { href: '/vehicles', label: 'Browse All Models', id: 'browse-models' },
+        { href: '/compare', label: 'Compare Vehicles', id: 'compare-vehicles' }
       ]
     },
     { 
       href: '/clubs-events', 
       label: 'Events',
       submenu: [
-        { href: '/clubs-events', label: 'Rally Events' },
-        { href: '/clubs-events', label: 'Clubs & Teams' }
+        { href: '/clubs-events', label: 'Rally Events', id: 'rally-events' },
+        { href: '/clubs-events', label: 'Clubs & Teams', id: 'clubs-teams' }
       ]
     },
     { 
       href: '/insurance', 
       label: 'Insurance',
       submenu: [
-        { href: '/insurance', label: 'Compare Quotes' },
-        { href: '/insurance', label: 'Coverage Guide' }
+        { href: '/insurance', label: 'Compare Quotes', id: 'compare-quotes' },
+        { href: '/insurance', label: 'Coverage Guide', id: 'coverage-guide' }
       ]
     },
     { href: '/trails', label: 'Trails' },
@@ -115,7 +115,7 @@ const Navigation = () => {
                     <div className="bg-background border border-border rounded-xl shadow-lg py-2 min-w-[180px] backdrop-blur-sm">
                       {item.submenu.map((subItem) => (
                         <Link
-                          key={subItem.href}
+                          key={`${subItem.href}-${subItem.id}`}
                           to={subItem.href}
                           className="block px-4 py-3 text-sm text-foreground hover:text-primary hover:bg-primary/10 transition-colors border-b border-border/10 last:border-b-0"
                         >
@@ -201,7 +201,7 @@ const Navigation = () => {
                       <div className="ml-4 mt-2 space-y-1">
                         {item.submenu.map((subItem) => (
                           <Link
-                            key={subItem.href}
+                            key={`mobile-${subItem.href}-${subItem.id}`}
                             to={subItem.href}
                             className="block py-2 px-4 text-sm text-muted-foreground hover:text-primary transition-colors"
                           >

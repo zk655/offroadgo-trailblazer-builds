@@ -452,7 +452,7 @@ const BlogDetail = () => {
           </section>
 
           {/* Article Content */}
-          <article className="mb-12">
+          <article className="mb-12 blog-content">
             <div className="prose prose-base sm:prose-lg dark:prose-invert max-w-none 
                           prose-headings:text-foreground prose-headings:font-bold 
                           prose-h2:text-xl sm:prose-h2:text-2xl prose-h2:mt-6 sm:prose-h2:mt-8 prose-h2:mb-3 sm:prose-h2:mb-4 
