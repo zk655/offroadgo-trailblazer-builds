@@ -119,39 +119,43 @@ const InsuranceSection = () => {
                   </div>
                 )}
                 
-                <CardHeader className="pb-3">
-                  <div className="flex flex-col items-center text-center mb-3">
+                <CardHeader className="pb-4 pt-6">
+                  <div className="flex flex-col items-center text-center">
                     {quote.provider?.logo_url ? (
-                      <img 
-                        src={quote.provider.logo_url} 
-                        alt={quote.provider.name}
-                        className="h-16 w-auto object-contain mb-2"
-                      />
+                      <div className="h-24 w-full flex items-center justify-center mb-4">
+                        <img 
+                          src={quote.provider.logo_url} 
+                          alt={quote.provider.name}
+                          className="h-20 w-auto object-contain max-w-full"
+                        />
+                      </div>
                     ) : (
-                      <div className="flex items-center mb-2">
-                        <Shield className="w-8 h-8 text-blue-600 mr-2" />
-                        <span className="font-bold text-lg">{quote.provider?.name}</span>
+                      <div className="flex items-center mb-4">
+                        <Shield className="w-12 h-12 text-blue-600 mr-3" />
+                        <span className="font-bold text-xl">{quote.provider?.name}</span>
                       </div>
                     )}
                     
                     {quote.provider?.rating && (
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1 mb-4">
                         {getRatingStars(quote.provider.rating)}
-                        <span className="text-sm text-muted-foreground ml-1">({quote.provider.rating})</span>
+                        <span className="text-lg font-medium ml-2">({quote.provider.rating})</span>
                       </div>
                     )}
                   </div>
 
-                  <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="flex items-center justify-center gap-2 mb-3">
                     {getVehicleIcon(quote.vehicle_type)}
-                    <span className="font-semibold capitalize">{quote.vehicle_type.replace('_', ' ')}</span>
+                    <span className="font-semibold text-lg capitalize">{quote.vehicle_type.replace('_', ' ')}</span>
                   </div>
                   
-                  <Badge 
-                    className={`${getCoverageColor(quote.coverage_type)} text-white border-0 w-fit mx-auto`}
-                  >
-                    {quote.coverage_type}
-                  </Badge>
+                  <div className="flex justify-center">
+                    <Badge 
+                      className={`${getCoverageColor(quote.coverage_type)} text-white border-0 px-4 py-1 text-sm font-medium`}
+                    >
+                      {quote.coverage_type}
+                    </Badge>
+                  </div>
                 </CardHeader>
 
                 <CardContent className="pt-0">
