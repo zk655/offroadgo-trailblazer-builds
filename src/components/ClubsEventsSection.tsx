@@ -1,11 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, MapPin, Users, ArrowRight, Trophy } from 'lucide-react';
+import { Calendar, MapPin, Trophy, ArrowRight, Flag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+
+// Import rally event images
+import rallyEvent1 from '@/assets/rally-event-1.jpg';
+import rallyEvent2 from '@/assets/rally-event-2.jpg';
+import rallyEvent3 from '@/assets/rally-event-3.jpg';
+import rallyEvent4 from '@/assets/rally-event-4.jpg';
+import rallyEvent5 from '@/assets/rally-event-5.jpg';
+import rallyEvent6 from '@/assets/rally-event-6.jpg';
 
 interface Event {
   id: string;
@@ -17,9 +25,15 @@ interface Event {
   country: string;
   difficulty_level: string;
   image_url: string;
+  venue: string;
+  current_participants: number;
+  max_participants: number;
 }
 
 const ClubsEventsSection = () => {
+  // Import event images for fallback
+  const eventImages = [rallyEvent1, rallyEvent2, rallyEvent3, rallyEvent4, rallyEvent5, rallyEvent6];
+  
   const { data: upcomingEvents, isLoading } = useQuery({
     queryKey: ['upcoming-4x4-events-preview'],
     queryFn: async () => {
@@ -38,124 +52,137 @@ const ClubsEventsSection = () => {
 
   const getDifficultyColor = (level: string) => {
     switch (level?.toLowerCase()) {
-      case 'beginner': return 'bg-gradient-to-r from-green-500 to-green-600';
-      case 'intermediate': return 'bg-gradient-to-r from-yellow-500 to-orange-500';
-      case 'advanced': return 'bg-gradient-to-r from-orange-500 to-red-500';
-      case 'professional': return 'bg-gradient-to-r from-red-500 to-purple-600';
-      default: return 'bg-gradient-to-r from-blue-500 to-blue-600';
+      case 'beginner': return 'bg-green-500';
+      case 'intermediate': return 'bg-yellow-500';
+      case 'advanced': return 'bg-orange-500';
+      case 'professional': return 'bg-red-500';
+      default: return 'bg-primary';
     }
   };
 
+  const getEventImage = (event: Event, index: number) => {
+    // Use event's image_url if available, otherwise use local images
+    if (event.image_url && !event.image_url.includes('placeholder')) {
+      return event.image_url;
+    }
+    return eventImages[index % eventImages.length];
+  };
+
   return (
-    <section className="py-24 bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50 dark:from-orange-950/20 dark:via-red-950/20 dark:to-yellow-950/20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('/src/assets/rally-event-1.jpg')] bg-cover bg-center opacity-5" />
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-600/20 via-red-600/10 to-yellow-600/20" />
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-600 to-red-700 rounded-full mb-8 shadow-xl">
-            <Calendar className="w-10 h-10 text-white" />
-          </div>
-          <h2 className="text-5xl md:text-6xl font-bold mb-8 bg-gradient-to-r from-orange-600 via-red-600 to-yellow-600 bg-clip-text text-transparent">
+    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      <div className="container mx-auto">
+        {/* Section Header */}
+        <div className="text-center mb-12">
+          <Badge variant="outline" className="mb-3 text-primary border-primary/20 bg-primary/5 text-xs font-medium">
             4x4 Rally Events
+          </Badge>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
+            Upcoming <span className="text-primary">Rally Events</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            Experience the ultimate 4x4 adventures. Join professional rally events, tackle challenging terrains, 
-            and compete with fellow off-road enthusiasts in thrilling competitions worldwide.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Join thrilling 4x4 adventures and compete with fellow off-road enthusiasts
           </p>
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="animate-pulse">
-                <div className="bg-muted rounded-xl h-80" />
+                <div className="bg-muted rounded-lg h-64" />
               </div>
             ))}
           </div>
         ) : upcomingEvents && upcomingEvents.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {upcomingEvents.map((event) => (
-              <Link to={`/event/${event.id}`} key={event.id}>
-                <Card className="group hover:shadow-2xl hover:scale-105 transition-all duration-500 border-0 bg-card/80 backdrop-blur-sm overflow-hidden cursor-pointer">
-                {event.image_url && (
-                  <div className="relative h-48 overflow-hidden">
-                    <img 
-                      src={event.image_url} 
-                      alt={event.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    <div className="absolute top-4 left-4">
-                      <Badge className={`${getDifficultyColor(event.difficulty_level)} text-white border-0`}>
-                        {event.difficulty_level || 'Open'}
-                      </Badge>
-                    </div>
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-white font-bold text-lg line-clamp-2">{event.title}</h3>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {upcomingEvents.map((event, index) => (
+              <Card key={event.id} className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                {/* Event Image */}
+                <div className="relative overflow-hidden aspect-[4/3] bg-muted/10">
+                  <img 
+                    src={getEventImage(event, index)} 
+                    alt={event.title}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    onError={(e) => {
+                      console.error('Event image loading error for:', event.title);
+                      e.currentTarget.src = eventImages[index % eventImages.length];
+                    }}
+                  />
+                  
+                  {/* Difficulty Badge */}
+                  <Badge 
+                    className={`absolute top-2 left-2 ${getDifficultyColor(event.difficulty_level)} text-white border-0 text-xs font-medium`}
+                  >
+                    {event.difficulty_level || 'Open'}
+                  </Badge>
+
+                  {/* Event Type */}
+                  <div className="absolute top-2 right-2 bg-background/90 backdrop-blur-sm rounded-md px-2 py-1">
+                    <span className="text-xs font-semibold text-primary">{event.event_type}</span>
                   </div>
-                )}
-                
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      {event.start_date && format(new Date(event.start_date), 'MMM dd, yyyy')}
-                    </div>
-                    
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <MapPin className="w-4 h-4 mr-2" />
-                      {event.location}, {event.country}
-                    </div>
+                </div>
 
-                    <div className="flex items-center justify-between">
-                      <Badge variant="outline" className="text-xs">
-                        <Trophy className="w-3 h-3 mr-1" />
-                        {event.event_type}
-                      </Badge>
-                    </div>
-
-                    <p className="text-sm text-muted-foreground line-clamp-2">
+                <CardContent className="p-4">
+                  {/* Event Info */}
+                  <div className="mb-3">
+                    <h3 className="text-lg font-semibold leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                      {event.title}
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
                       {event.description}
                     </p>
                   </div>
+
+                  {/* Event Details */}
+                  <div className="space-y-2 mb-4 text-xs">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3 text-primary" />
+                      <span className="font-medium">
+                        {event.start_date && format(new Date(event.start_date), 'MMM dd, yyyy')}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MapPin className="h-3 w-3 text-primary" />
+                      <span className="font-medium">{event.location}, {event.country}</span>
+                    </div>
+                    {event.current_participants && event.max_participants && (
+                      <div className="flex items-center gap-1">
+                        <Trophy className="h-3 w-3 text-primary" />
+                        <span className="font-medium">
+                          {event.current_participants}/{event.max_participants} participants
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* View Details Button */}
+                  <Link to={`/event/${event.id}`}>
+                    <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-xs h-8">
+                      <Flag className="h-3 w-3 mr-1" />
+                      Join Event
+                      <ArrowRight className="h-3 w-3 ml-1" />
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
-              </Link>
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 mb-12">
-            <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No upcoming events</h3>
-            <p className="text-muted-foreground">Check back soon for new rally events and competitions.</p>
+          <div className="text-center py-8 mb-8">
+            <Calendar className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">No upcoming events</h3>
+            <p className="text-muted-foreground text-sm">Check back soon for new rally events and competitions.</p>
           </div>
         )}
 
-        {/* CTA Section */}
-        <div className="bg-gradient-to-br from-orange-600/10 via-red-600/5 to-yellow-600/10 rounded-2xl p-8 md:p-12 text-center border border-orange-200/20 dark:border-orange-800/20">
-          <div className="max-w-2xl mx-auto">
-            <h3 className="text-2xl md:text-3xl font-bold mb-4">
-              Ready to Join the Adventure?
-            </h3>
-            <p className="text-lg text-muted-foreground mb-8">
-              Discover rally clubs worldwide, register for upcoming events, and connect with fellow off-road enthusiasts.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-gradient-to-r from-orange-600 to-red-700 hover:shadow-lg transition-all">
-                <Link to="/clubs-events">
-                  <Users className="w-5 h-5 mr-2" />
-                  Explore 4x4 Events
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white">
-                <Link to="/clubs-events">
-                  View All Events
-                </Link>
-              </Button>
-            </div>
-          </div>
+        {/* View All Events Button */}
+        <div className="text-center">
+          <Link to="/clubs-events">
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Trophy className="w-4 h-4 mr-2" />
+              View All Rally Events
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
