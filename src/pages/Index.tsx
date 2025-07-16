@@ -9,6 +9,7 @@ import SEO from '@/components/SEO';
 import AdSenseAd from '@/components/AdSenseAd';
 import ClubsEventsSection from '@/components/ClubsEventsSection';
 import InsuranceSection from '@/components/InsuranceSection';
+import DataSyncButton from '@/components/DataSyncButton';
 
 const Index = () => {
   return (
@@ -79,6 +80,9 @@ const Index = () => {
       
       <CTASection />
       <Footer />
+      
+      {/* Data Sync Button */}
+      <DataSyncButton />
     </div>
   );
 };
