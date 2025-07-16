@@ -100,6 +100,244 @@ export type Database = {
           },
         ]
       }
+      clubs: {
+        Row: {
+          club_type: string | null
+          contact_email: string | null
+          country: string | null
+          created_at: string
+          description: string | null
+          founded_year: number | null
+          id: string
+          image_url: string | null
+          location: string | null
+          member_count: number | null
+          name: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          club_type?: string | null
+          contact_email?: string | null
+          country?: string | null
+          created_at?: string
+          description?: string | null
+          founded_year?: number | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          member_count?: number | null
+          name: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          club_type?: string | null
+          contact_email?: string | null
+          country?: string | null
+          created_at?: string
+          description?: string | null
+          founded_year?: number | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          member_count?: number | null
+          name?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          club_id: string | null
+          country: string | null
+          created_at: string
+          current_participants: number | null
+          description: string | null
+          difficulty_level: string | null
+          end_date: string | null
+          entry_fee: number | null
+          event_type: string | null
+          external_url: string | null
+          id: string
+          image_url: string | null
+          location: string | null
+          max_participants: number | null
+          start_date: string | null
+          terrain_type: string | null
+          title: string
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          club_id?: string | null
+          country?: string | null
+          created_at?: string
+          current_participants?: number | null
+          description?: string | null
+          difficulty_level?: string | null
+          end_date?: string | null
+          entry_fee?: number | null
+          event_type?: string | null
+          external_url?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          max_participants?: number | null
+          start_date?: string | null
+          terrain_type?: string | null
+          title: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          club_id?: string | null
+          country?: string | null
+          created_at?: string
+          current_participants?: number | null
+          description?: string | null
+          difficulty_level?: string | null
+          end_date?: string | null
+          entry_fee?: number | null
+          event_type?: string | null
+          external_url?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          max_participants?: number | null
+          start_date?: string | null
+          terrain_type?: string | null
+          title?: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      insurance_providers: {
+        Row: {
+          company_name: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          coverage_areas: string[] | null
+          created_at: string
+          description: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          rating: number | null
+          specializes_in: string[] | null
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          coverage_areas?: string[] | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          rating?: number | null
+          specializes_in?: string[] | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          coverage_areas?: string[] | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          rating?: number | null
+          specializes_in?: string[] | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      insurance_quotes: {
+        Row: {
+          annual_premium: number | null
+          coverage_limit: number | null
+          coverage_type: string
+          created_at: string
+          deductible: number | null
+          effective_date: string | null
+          expiry_date: string | null
+          features: string[] | null
+          id: string
+          max_age: number | null
+          min_age: number | null
+          min_experience_years: number | null
+          monthly_premium: number | null
+          provider_id: string
+          state_code: string | null
+          updated_at: string
+          vehicle_type: string
+        }
+        Insert: {
+          annual_premium?: number | null
+          coverage_limit?: number | null
+          coverage_type: string
+          created_at?: string
+          deductible?: number | null
+          effective_date?: string | null
+          expiry_date?: string | null
+          features?: string[] | null
+          id?: string
+          max_age?: number | null
+          min_age?: number | null
+          min_experience_years?: number | null
+          monthly_premium?: number | null
+          provider_id: string
+          state_code?: string | null
+          updated_at?: string
+          vehicle_type: string
+        }
+        Update: {
+          annual_premium?: number | null
+          coverage_limit?: number | null
+          coverage_type?: string
+          created_at?: string
+          deductible?: number | null
+          effective_date?: string | null
+          expiry_date?: string | null
+          features?: string[] | null
+          id?: string
+          max_age?: number | null
+          min_age?: number | null
+          min_experience_years?: number | null
+          monthly_premium?: number | null
+          provider_id?: string
+          state_code?: string | null
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurance_quotes_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mods: {
         Row: {
           amazon_link: string | null

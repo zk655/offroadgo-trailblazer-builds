@@ -7,6 +7,8 @@ import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
 import AdSenseAd from '@/components/AdSenseAd';
+import ClubsEventsSection from '@/components/ClubsEventsSection';
+import InsuranceSection from '@/components/InsuranceSection';
 
 const Index = () => {
   return (
@@ -47,8 +49,25 @@ const Index = () => {
       <VehiclesShowcase />
       <ProductsSection />
       
-      {/* Ad Section 3 - Before CTA */}
+      {/* Clubs & Events Section */}
+      <ClubsEventsSection />
+      
+      {/* Ad Section 3 - After Events */}
       <section className="py-2 md:py-4 bg-muted/5">
+        <div className="w-full overflow-hidden">
+          <AdSenseAd 
+            slot="8773228071"
+            layout="in-article"
+            className="w-full"
+          />
+        </div>
+      </section>
+      
+      {/* Insurance Section */}
+      <InsuranceSection />
+      
+      {/* Ad Section 4 - Before CTA */}
+      <section className="py-2 md:py-4 bg-muted/10">
         <div className="w-full overflow-hidden">
           <AdSenseAd 
             slot="8773228071"
