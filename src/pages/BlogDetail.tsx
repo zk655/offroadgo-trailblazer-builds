@@ -10,6 +10,7 @@ import Navigation from '@/components/Navigation';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
 import AdSenseAd from '@/components/AdSenseAd';
+import '../styles/blog.css';
 
 interface BlogPost {
   id: string;
@@ -54,14 +55,14 @@ const BlogDetail = () => {
         // If not found locally, create a sample detailed post
         const samplePost: BlogPost = {
           id: '1',
-          title: 'The Ultimate Guide to Off-Road Adventures',
+          title: getPostTitle(slug),
           slug: slug || '',
-          content: generateDetailedContent(),
-          excerpt: 'Discover everything you need to know about off-road adventures, from choosing the right vehicle to mastering challenging terrains.',
-          cover_image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1200&h=600&fit=crop',
+          content: generateDetailedContent(slug),
+          excerpt: getPostExcerpt(slug),
+          cover_image: getPostImage(slug),
           author: 'Off-Road Expert',
           published_at: new Date().toISOString(),
-          tags: ['adventure', 'off-road', 'guide', '4x4'],
+          tags: getPostTags(slug),
           external_url: ''
         };
         setPost(samplePost);
@@ -75,91 +76,211 @@ const BlogDetail = () => {
     }
   };
 
-  const generateDetailedContent = () => {
-    return `
-      <h2>Introduction to Off-Road Adventures</h2>
-      <p>Off-road driving is more than just a hobby—it's a passion that connects you with nature, challenges your skills, and creates unforgettable memories. Whether you're navigating rocky mountain trails, splashing through muddy paths, or conquering desert dunes, each adventure offers unique experiences and lessons.</p>
+  const getImageSrc = (imagePath: string) => {
+    // Handle both local assets and external URLs
+    if (imagePath.startsWith('/src/assets/')) {
+      // For Vite, we need to handle assets differently
+      return imagePath.replace('/src/assets/', '/src/assets/');
+    }
+    return imagePath;
+  };
 
-      <h2>Choosing the Right Vehicle</h2>
-      <p>The foundation of any successful off-road adventure starts with selecting the right vehicle. Here's what you need to consider:</p>
-      
-      <h3>Key Features to Look For:</h3>
-      <ul>
-        <li><strong>4-Wheel Drive System:</strong> Essential for traction on challenging terrain</li>
-        <li><strong>Ground Clearance:</strong> Higher clearance prevents undercarriage damage</li>
-        <li><strong>Approach and Departure Angles:</strong> Critical for navigating steep inclines</li>
-        <li><strong>Skid Plates:</strong> Protect vital components from rocks and debris</li>
-        <li><strong>Locking Differentials:</strong> Improve traction in difficult conditions</li>
-      </ul>
+  const getPostImage = (slug: string) => {
+    const imageMap: Record<string, string> = {
+      'ford-bronco-raptor-2024-review': '/src/assets/blog/ford-bronco-raptor.jpg',
+      'jeep-wrangler-modifications-guide': '/src/assets/blog/jeep-modifications.jpg',
+      'moab-hells-revenge-trail-guide': '/src/assets/blog/moab-hells-revenge.jpg',
+      'recovery-gear-safety-kit-guide': '/src/assets/blog/recovery-gear.jpg',
+      'winter-4x4-maintenance-tips': '/src/assets/blog/winter-maintenance.jpg',
+      'king-of-hammers-2024-recap': '/src/assets/blog/king-of-hammers.jpg',
+      'advanced-winching-techniques-guide': '/src/assets/blog/winching-techniques.jpg',
+      'colorado-secret-offroad-destinations': '/src/assets/blog/colorado-destinations.jpg'
+    };
+    return imageMap[slug] || '/src/assets/blog/ford-bronco-raptor.jpg';
+  };
 
-      <h2>Essential Gear and Equipment</h2>
-      <p>Proper preparation can make the difference between an epic adventure and a dangerous situation. Here's your essential gear checklist:</p>
+  const getPostTitle = (slug: string) => {
+    const titleMap: Record<string, string> = {
+      'ford-bronco-raptor-2024-review': 'New 2024 Ford Bronco Raptor: Ultimate Off-Road Beast',
+      'jeep-wrangler-modifications-guide': 'Top 10 Must-Have Modifications for Your Jeep Wrangler',
+      'moab-hells-revenge-trail-guide': 'Moab Trail Guide: Hell\'s Revenge Complete Walkthrough',
+      'recovery-gear-safety-kit-guide': 'Essential Recovery Gear: Complete Safety Kit Guide',
+      'winter-4x4-maintenance-tips': 'Winter Maintenance Tips for Your 4x4',
+      'king-of-hammers-2024-recap': 'King of the Hammers 2024: Event Recap and Highlights',
+      'advanced-winching-techniques-guide': 'Advanced Winching Techniques for Extreme Recovery',
+      'colorado-secret-offroad-destinations': 'Hidden Gems: Secret Off-Road Destinations in Colorado'
+    };
+    return titleMap[slug] || 'The Ultimate Guide to Off-Road Adventures';
+  };
 
-      <h3>Recovery Equipment:</h3>
-      <ul>
-        <li>Winch and recovery straps</li>
-        <li>Traction boards or sand ladders</li>
-        <li>Shovel and basic tools</li>
-        <li>Tire repair kit and portable compressor</li>
-      </ul>
+  const getPostExcerpt = (slug: string) => {
+    const excerptMap: Record<string, string> = {
+      'ford-bronco-raptor-2024-review': 'Comprehensive review of the 2024 Ford Bronco Raptor, featuring enhanced suspension, powerful engine, and advanced off-road technology.',
+      'jeep-wrangler-modifications-guide': 'Transform your Jeep Wrangler with these essential modifications that enhance performance, capability, and style.',
+      'moab-hells-revenge-trail-guide': 'Complete guide to conquering Hell\'s Revenge trail in Moab, including difficulty ratings, key obstacles, and safety tips.',
+      'recovery-gear-safety-kit-guide': 'Build the ultimate recovery kit with our comprehensive guide to essential safety equipment for off-road adventures.',
+      'winter-4x4-maintenance-tips': 'Keep your 4x4 running smoothly through winter with these essential maintenance tips and cold-weather preparations.',
+      'king-of-hammers-2024-recap': 'Relive the excitement of King of the Hammers 2024 with our comprehensive event recap and race highlights.',
+      'advanced-winching-techniques-guide': 'Master advanced winching techniques for safe and effective vehicle recovery in challenging off-road situations.',
+      'colorado-secret-offroad-destinations': 'Discover Colorado\'s best-kept off-road secrets with our guide to hidden trails and spectacular destinations.'
+    };
+    return excerptMap[slug] || 'Discover everything you need to know about off-road adventures, from choosing the right vehicle to mastering challenging terrains.';
+  };
 
-      <h3>Safety Equipment:</h3>
-      <ul>
-        <li>First aid kit</li>
-        <li>Emergency communication device</li>
-        <li>Extra water and food</li>
-        <li>Fire extinguisher</li>
-      </ul>
+  const getPostTags = (slug: string) => {
+    const tagsMap: Record<string, string[]> = {
+      'ford-bronco-raptor-2024-review': ['vehicles', 'ford', 'bronco', 'review'],
+      'jeep-wrangler-modifications-guide': ['modifications', 'jeep', 'wrangler', 'upgrade'],
+      'moab-hells-revenge-trail-guide': ['trails', 'moab', 'utah', 'guide'],
+      'recovery-gear-safety-kit-guide': ['gear', 'safety', 'recovery', 'equipment'],
+      'winter-4x4-maintenance-tips': ['maintenance', 'winter', '4x4', 'tips'],
+      'king-of-hammers-2024-recap': ['events', 'racing', 'koh', 'community'],
+      'advanced-winching-techniques-guide': ['safety', 'recovery', 'winching', 'techniques'],
+      'colorado-secret-offroad-destinations': ['destinations', 'colorado', 'trails', 'adventure']
+    };
+    return tagsMap[slug] || ['adventure', 'off-road', 'guide', '4x4'];
+  };
 
-      <h2>Popular Off-Road Destinations</h2>
-      <p>The United States offers some of the world's most spectacular off-road destinations:</p>
+  const generateDetailedContent = (slug: string) => {
+    const contentMap: Record<string, string> = {
+      'jeep-wrangler-modifications-guide': `
+        <div class="space-y-6">
+          <h2 class="text-2xl font-bold text-foreground mb-4">Essential Jeep Wrangler Modifications</h2>
+          <p class="text-base leading-relaxed mb-6">The Jeep Wrangler is one of the most modification-friendly vehicles on the market. Whether you're looking to improve capability, comfort, or style, these ten modifications will transform your Wrangler into the ultimate off-road machine.</p>
 
-      <h3>Moab, Utah</h3>
-      <p>Known for its red rock formations and challenging trails like Hell's Revenge and Fins and Things. Perfect for rock crawling enthusiasts.</p>
+          <div class="bg-muted/20 p-4 rounded-lg mb-6">
+            <h3 class="text-xl font-semibold mb-3">🚗 1. Lift Kit - The Foundation</h3>
+            <p class="mb-4">A quality lift kit is often the first modification Jeep owners consider. It provides increased ground clearance, allows for larger tires, and improves approach and departure angles.</p>
+            
+            <div class="ml-4 space-y-2">
+              <h4 class="font-medium text-lg">Lift Kit Options:</h4>
+              <ul class="list-disc ml-6 space-y-1">
+                <li><strong>2-3 inch lift:</strong> Perfect for daily driving with improved capability</li>
+                <li><strong>4-6 inch lift:</strong> Designed for serious off-road use</li>
+                <li><strong>Budget boost vs. complete suspension system:</strong> Consider your needs and budget</li>
+              </ul>
+            </div>
+          </div>
 
-      <h3>Rubicon Trail, California</h3>
-      <p>The ultimate test of vehicle and driver skill. This 22-mile trail is considered one of the most difficult in the country.</p>
+          <div class="bg-muted/20 p-4 rounded-lg mb-6">
+            <h3 class="text-xl font-semibold mb-3">🛞 2. Larger Tires - Traction Revolution</h3>
+            <p class="mb-4">Upgrading to larger, more aggressive tires dramatically improves traction on all surfaces. Popular sizes include 33", 35", and 37" tires, each requiring different levels of modification.</p>
+            
+            <div class="ml-4">
+              <h4 class="font-medium text-lg mb-2">Popular Tire Sizes:</h4>
+              <ul class="list-disc ml-6 space-y-1">
+                <li><strong>33" tires:</strong> Minimal modifications required</li>
+                <li><strong>35" tires:</strong> May require fender trimming</li>
+                <li><strong>37" tires:</strong> Extensive modifications needed</li>
+              </ul>
+            </div>
+          </div>
 
-      <h3>The Hammers, California</h3>
-      <p>Home to King of the Hammers race, offering everything from fast desert racing to technical rock crawling.</p>
+          <div class="bg-muted/20 p-4 rounded-lg mb-6">
+            <h3 class="text-xl font-semibold mb-3">🛡️ 3. Bumpers and Armor - Protection First</h3>
+            <p class="mb-4">Aftermarket bumpers provide better approach angles, winch mounting points, and protection for your vehicle's vital components.</p>
+            
+            <div class="ml-4">
+              <h4 class="font-medium text-lg mb-2">Essential Armor Components:</h4>
+              <ul class="list-disc ml-6 space-y-1">
+                <li>Front and rear bumpers with recovery points</li>
+                <li>Rock sliders for side protection</li>
+                <li>Skid plates for undercarriage protection</li>
+                <li>Fender flares for tire clearance</li>
+              </ul>
+            </div>
+          </div>
 
-      <h2>Trail Etiquette and Environmental Responsibility</h2>
-      <p>As off-road enthusiasts, we have a responsibility to preserve these natural areas for future generations:</p>
+          <div class="bg-muted/20 p-4 rounded-lg mb-6">
+            <h3 class="text-xl font-semibold mb-3">⚙️ 4. Winch System - Your Trail Lifeline</h3>
+            <p class="mb-4">A reliable winch can be the difference between adventure and disaster. Choose a winch rated for at least 1.5 times your vehicle's weight.</p>
+            
+            <div class="ml-4">
+              <h4 class="font-medium text-lg mb-2">Winch Selection Tips:</h4>
+              <ul class="list-disc ml-6 space-y-1">
+                <li>Calculate proper weight rating</li>
+                <li>Choose between synthetic and steel cable</li>
+                <li>Consider wireless remote options</li>
+                <li>Don't forget recovery accessories</li>
+              </ul>
+            </div>
+          </div>
 
-      <ul>
-        <li>Stay on designated trails</li>
-        <li>Pack out all trash</li>
-        <li>Respect wildlife and vegetation</li>
-        <li>Travel in groups for safety</li>
-        <li>Inform others of your plans</li>
-      </ul>
+          <div class="bg-muted/20 p-4 rounded-lg mb-6">
+            <h3 class="text-xl font-semibold mb-3">💡 5. LED Lighting - See and Be Seen</h3>
+            <p class="mb-4">LED light bars and auxiliary lights improve visibility during night driving and add a distinctive look to your Jeep.</p>
+            
+            <div class="ml-4">
+              <h4 class="font-medium text-lg mb-2">Lighting Options:</h4>
+              <ul class="list-disc ml-6 space-y-1">
+                <li>LED light bar for maximum coverage</li>
+                <li>Fog lights for weather conditions</li>
+                <li>Rock lights for close-up visibility</li>
+                <li>Headlight upgrades for better performance</li>
+              </ul>
+            </div>
+          </div>
 
-      <h2>Building Your Skills</h2>
-      <p>Off-road driving requires specific skills that develop over time:</p>
+          <div class="bg-muted/20 p-4 rounded-lg mb-6">
+            <h3 class="text-xl font-semibold mb-3">🔒 6. Air Lockers - Maximum Traction</h3>
+            <p class="mb-4">Locking differentials provide maximum traction in challenging conditions by ensuring both wheels on an axle turn at the same speed.</p>
+          </div>
 
-      <h3>Basic Techniques:</h3>
-      <ul>
-        <li><strong>Momentum Management:</strong> Knowing when to use power and when to slow down</li>
-        <li><strong>Line Selection:</strong> Choosing the best path through obstacles</li>
-        <li><strong>Tire Pressure Adjustment:</strong> Lower pressure for sand, higher for rocks</li>
-        <li><strong>Recovery Techniques:</strong> Self-recovery and helping others safely</li>
-      </ul>
+          <div class="bg-muted/20 p-4 rounded-lg mb-6">
+            <h3 class="text-xl font-semibold mb-3">🌬️ 7. Snorkel - Deep Water Capability</h3>
+            <p class="mb-4">A snorkel allows for deeper water crossings and provides cleaner air intake for dusty conditions.</p>
+          </div>
 
-      <h2>Maintenance and Preparation</h2>
-      <p>Regular maintenance becomes even more critical for off-road vehicles:</p>
+          <div class="bg-muted/20 p-4 rounded-lg mb-6">
+            <h3 class="text-xl font-semibold mb-3">🪑 8. Interior Upgrades - Comfort Matters</h3>
+            <p class="mb-4">Seat covers, floor liners, and grab handles improve comfort and durability for off-road adventures.</p>
+          </div>
 
-      <ul>
-        <li>Check and change fluids more frequently</li>
-        <li>Inspect suspension components regularly</li>
-        <li>Clean air filters after dusty conditions</li>
-        <li>Examine tires for wear and damage</li>
-        <li>Test 4WD system before heading out</li>
-      </ul>
+          <div class="bg-muted/20 p-4 rounded-lg mb-6">
+            <h3 class="text-xl font-semibold mb-3">🔧 9. Recovery Gear - Be Prepared</h3>
+            <p class="mb-4">Essential recovery equipment should be easily accessible and properly secured in your Jeep.</p>
+          </div>
 
-      <h2>Conclusion</h2>
-      <p>Off-road adventures offer unparalleled excitement and the opportunity to explore some of the most beautiful, remote places on Earth. With proper preparation, the right equipment, and respect for the environment, your off-road experiences will be safe, fun, and memorable. Remember, the journey is just as important as the destination.</p>
+          <div class="bg-muted/20 p-4 rounded-lg mb-6">
+            <h3 class="text-xl font-semibold mb-3">⚡ 10. Performance Tuning - Optimize Everything</h3>
+            <p class="mb-4">Engine tuning can optimize performance for larger tires and improved throttle response.</p>
+          </div>
 
-      <p>Whether you're a beginner taking your first steps into the off-road world or an experienced driver looking to tackle new challenges, always prioritize safety, preparation, and environmental stewardship. Happy trails!</p>
+          <div class="bg-primary/10 p-6 rounded-lg mt-8">
+            <h2 class="text-2xl font-bold mb-4">⚠️ Installation Considerations</h2>
+            <p class="mb-4">While many modifications can be DIY projects, complex installations like lift kits and lockers are best left to professionals.</p>
+            <ul class="list-disc ml-6 space-y-2">
+              <li>Always consider warranty implications</li>
+              <li>Choose reputable brands with good customer support</li>
+              <li>Plan modifications in logical order</li>
+              <li>Budget for professional installation when needed</li>
+            </ul>
+          </div>
+        </div>
+      `,
+      'ford-bronco-raptor-2024-review': `
+        <div class="space-y-6">
+          <h2 class="text-2xl font-bold mb-4">Introduction to the 2024 Ford Bronco Raptor</h2>
+          <p class="text-base leading-relaxed mb-6">The 2024 Ford Bronco Raptor represents the pinnacle of factory off-road performance, combining the legendary Bronco heritage with Ford's high-performance Raptor DNA.</p>
+          
+          <div class="bg-muted/20 p-4 rounded-lg mb-6">
+            <h3 class="text-xl font-semibold mb-3">🚗 Engine and Performance</h3>
+            <p class="mb-4">At the heart of the Bronco Raptor lies a twin-turbocharged 3.0-liter EcoBoost V6 engine, producing an impressive 418 horsepower and 440 lb-ft of torque.</p>
+          </div>
+          
+          <div class="bg-muted/20 p-4 rounded-lg mb-6">
+            <h3 class="text-xl font-semibold mb-3">🛞 Suspension and Chassis</h3>
+            <p class="mb-4">Fox Racing 3.1 Internal Bypass shocks with position-sensitive dampening provide exceptional control over rough terrain.</p>
+          </div>
+        </div>
+      `
+    };
+
+    return contentMap[slug] || `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-bold mb-4">Comprehensive Guide to Off-Road Adventures</h2>
+        <p class="text-base leading-relaxed mb-6">This detailed guide covers everything you need to know about off-road adventures, providing expert insights and practical advice.</p>
+      </div>
     `;
   };
 
@@ -308,11 +429,16 @@ const BlogDetail = () => {
           </div>
 
           {/* Featured Image */}
-          <div className="mb-8 overflow-hidden rounded-lg shadow-lg">
+          <div className="mb-6 sm:mb-8 overflow-hidden rounded-lg shadow-lg bg-muted">
             <img
               src={post.cover_image}
               alt={post.title}
               className="w-full h-48 sm:h-64 md:h-80 lg:h-96 object-cover hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1200&h=600&fit=crop';
+              }}
             />
           </div>
 
@@ -326,8 +452,16 @@ const BlogDetail = () => {
           </section>
 
           {/* Article Content */}
-          <article className="prose prose-lg dark:prose-invert max-w-none mb-12 prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3 prose-ul:my-4 prose-li:my-2 prose-strong:text-foreground">
-            <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          <article className="mb-12">
+            <div className="prose prose-base sm:prose-lg dark:prose-invert max-w-none 
+                          prose-headings:text-foreground prose-headings:font-bold 
+                          prose-h2:text-xl sm:prose-h2:text-2xl prose-h2:mt-6 sm:prose-h2:mt-8 prose-h2:mb-3 sm:prose-h2:mb-4 
+                          prose-h3:text-lg sm:prose-h3:text-xl prose-h3:mt-4 sm:prose-h3:mt-6 prose-h3:mb-2 sm:prose-h3:mb-3 
+                          prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:text-sm sm:prose-p:text-base prose-p:mb-4
+                          prose-ul:my-3 sm:prose-ul:my-4 prose-li:my-1 sm:prose-li:my-2 prose-li:text-sm sm:prose-li:text-base
+                          prose-strong:text-foreground prose-strong:font-semibold">
+              <div dangerouslySetInnerHTML={{ __html: post.content }} />
+            </div>
           </article>
 
           {/* Ad Section 2 - Mid Article */}

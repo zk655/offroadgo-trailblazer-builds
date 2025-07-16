@@ -1,0 +1,89 @@
+/* Custom blog content styles */
+.blog-content {
+  line-height: 1.7;
+}
+
+.blog-content .space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.blog-content .bg-muted\/20 {
+  background-color: hsl(var(--muted) / 0.2);
+}
+
+.blog-content .bg-primary\/10 {
+  background-color: hsl(var(--primary) / 0.1);
+}
+
+.blog-content .text-foreground {
+  color: hsl(var(--foreground));
+}
+
+.blog-content .text-muted-foreground {
+  color: hsl(var(--muted-foreground));
+}
+
+.blog-content .p-4 {
+  padding: 1rem;
+}
+
+.blog-content .p-6 {
+  padding: 1.5rem;
+}
+
+.blog-content .rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.blog-content .mb-4 {
+  margin-bottom: 1rem;
+}
+
+.blog-content .mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.blog-content .mt-8 {
+  margin-top: 2rem;
+}
+
+.blog-content .ml-4 {
+  margin-left: 1rem;
+}
+
+.blog-content .ml-6 {
+  margin-left: 1.5rem;
+}
+
+.blog-content .space-y-1 > * + * {
+  margin-top: 0.25rem;
+}
+
+.blog-content .space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+.blog-content .list-disc {
+  list-style-type: disc;
+}
+
+.blog-content .leading-relaxed {
+  line-height: 1.625;
+}
+
+@media (max-width: 640px) {
+  .blog-content .text-2xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+  
+  .blog-content .text-xl {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+  
+  .blog-content .text-lg {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+}
