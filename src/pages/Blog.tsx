@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
-import { Search, Calendar, User, BookOpen, ArrowRight } from 'lucide-react';
+import { getLiveBlogContent, blogCategories } from '@/services/blogService';
+import { Search, Calendar, User, BookOpen, ArrowRight, Grid } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
 import SEO from '@/components/SEO';
@@ -23,6 +24,7 @@ interface BlogPost {
   published_at: string;
   tags: string[];
   external_url: string;
+  category?: string;
 }
 
 const Blog = () => {
@@ -31,6 +33,7 @@ const Blog = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   useEffect(() => {
     fetchPosts();
@@ -38,17 +41,22 @@ const Blog = () => {
 
   useEffect(() => {
     filterPosts();
-  }, [posts, searchTerm, selectedTag]);
+  }, [posts, searchTerm, selectedTag, selectedCategory]);
 
   const fetchPosts = async () => {
     try {
+      // Get live content first
+      const liveContent = await getLiveBlogContent();
+      
+      // Get local database content
       const { data, error } = await supabase
         .from('blogs')
         .select('*')
         .order('published_at', { ascending: false });
 
-      if (error) throw error;
-      setPosts(data || []);
+      // Combine live and local content
+      const allPosts = [...liveContent, ...(data || [])];
+      setPosts(allPosts);
     } catch (error) {
       // Handle error silently in production
     } finally {
@@ -70,6 +78,12 @@ const Blog = () => {
     if (selectedTag !== 'all') {
       filtered = filtered.filter(post => 
         post.tags && post.tags.includes(selectedTag)
+      );
+    }
+
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(post => 
+        post.category === selectedCategory
       );
     }
 
@@ -153,6 +167,25 @@ const Blog = () => {
                 className="pl-10"
               />
             </div>
+          </div>
+        </div>
+
+        {/* Categories */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-3 flex items-center">
+            <Grid className="mr-2 h-5 w-5" />
+            Categories
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {blogCategories.map(category => (
+              <Card key={category.id} className="p-3 cursor-pointer hover:shadow-md transition-smooth" onClick={() => setSelectedCategory(category.id)}>
+                <div className="text-center">
+                  <div className="text-2xl mb-2">{category.icon}</div>
+                  <h4 className="font-medium text-sm">{category.name}</h4>
+                  <p className="text-xs text-muted-foreground">{category.description}</p>
+                </div>
+              </Card>
+            ))}
           </div>
         </div>
 

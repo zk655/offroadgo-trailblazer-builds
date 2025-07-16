@@ -14,6 +14,7 @@ import Parts from "./pages/Parts";
 import ProductDetail from "./pages/ProductDetail";
 import Trails from "./pages/Trails";
 import Blog from "./pages/Blog";
+import BlogDetail from "./pages/BlogDetail";
 import NotFound from "./pages/NotFound";
 import TrailDetail from "./pages/TrailDetail";
 import AdventureStart from "./pages/AdventureStart";
@@ -53,6 +54,7 @@ const App = () => (
               <Route path="/trail/:id" element={<TrailDetail />} />
               <Route path="/adventure-start" element={<AdventureStart />} />
               <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogDetail />} />
               <Route path="/about" element={<AboutUs />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsConditions />} />
