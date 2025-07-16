@@ -34,6 +34,22 @@ const Navigation = () => {
         { href: '/compare', label: 'Compare Vehicles' }
       ]
     },
+    { 
+      href: '/clubs-events', 
+      label: 'Events',
+      submenu: [
+        { href: '/clubs-events', label: 'Rally Events' },
+        { href: '/clubs-events', label: 'Clubs & Teams' }
+      ]
+    },
+    { 
+      href: '/insurance', 
+      label: 'Insurance',
+      submenu: [
+        { href: '/insurance', label: 'Compare Quotes' },
+        { href: '/insurance', label: 'Coverage Guide' }
+      ]
+    },
     { href: '/trails', label: 'Trails' },
     { href: '/build', label: 'Build' },
     { href: '/products', label: 'Products' },

@@ -23,6 +23,7 @@ import TermsConditions from "./pages/TermsConditions";
 import Sitemap from "./pages/Sitemap";
 import ClubsEvents from "./pages/ClubsEvents";
 import Insurance from "./pages/Insurance";
+import EventDetail from "./pages/EventDetail";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,7 @@ const App = () => (
               <Route path="/sitemap" element={<Sitemap />} />
               <Route path="/clubs-events" element={<ClubsEvents />} />
               <Route path="/insurance" element={<Insurance />} />
+              <Route path="/event/:id" element={<EventDetail />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

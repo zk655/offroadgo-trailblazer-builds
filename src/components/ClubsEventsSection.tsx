@@ -21,14 +21,15 @@ interface Event {
 
 const ClubsEventsSection = () => {
   const { data: upcomingEvents, isLoading } = useQuery({
-    queryKey: ['upcoming-events-preview'],
+    queryKey: ['upcoming-4x4-events-preview'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('events')
         .select('*')
         .gte('start_date', new Date().toISOString())
+        .or('terrain_type.ilike.%4x4%,event_type.ilike.%4x4%,title.ilike.%4x4%,description.ilike.%4x4%')
         .order('start_date')
-        .limit(3);
+        .limit(4);
       
       if (error) throw error;
       return data as Event[];
@@ -46,33 +47,36 @@ const ClubsEventsSection = () => {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-background via-muted/20 to-background">
-      <div className="container mx-auto px-4">
+    <section className="py-24 bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50 dark:from-orange-950/20 dark:via-red-950/20 dark:to-yellow-950/20 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[url('/src/assets/rally-event-1.jpg')] bg-cover bg-center opacity-5" />
+      <div className="absolute inset-0 bg-gradient-to-br from-orange-600/20 via-red-600/10 to-yellow-600/20" />
+      <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-primary-dark rounded-full mb-6">
-            <Calendar className="w-8 h-8 text-white" />
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-600 to-red-700 rounded-full mb-8 shadow-xl">
+            <Calendar className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
-            Rally Events & Clubs
+          <h2 className="text-5xl md:text-6xl font-bold mb-8 bg-gradient-to-r from-orange-600 via-red-600 to-yellow-600 bg-clip-text text-transparent">
+            4x4 Rally Events
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Join the global rally community. Discover upcoming competitions, connect with local clubs, 
-            and experience the thrill of competitive off-roading.
+          <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+            Experience the ultimate 4x4 adventures. Join professional rally events, tackle challenging terrains, 
+            and compete with fellow off-road enthusiasts in thrilling competitions worldwide.
           </p>
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {Array.from({ length: 3 }).map((_, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="animate-pulse">
                 <div className="bg-muted rounded-xl h-80" />
               </div>
             ))}
           </div>
         ) : upcomingEvents && upcomingEvents.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             {upcomingEvents.map((event) => (
-              <Card key={event.id} className="group hover:shadow-2xl transition-all duration-500 border-0 bg-card/50 backdrop-blur-sm overflow-hidden">
+              <Link to={`/event/${event.id}`} key={event.id}>
+                <Card className="group hover:shadow-2xl hover:scale-105 transition-all duration-500 border-0 bg-card/80 backdrop-blur-sm overflow-hidden cursor-pointer">
                 {event.image_url && (
                   <div className="relative h-48 overflow-hidden">
                     <img 
@@ -117,6 +121,7 @@ const ClubsEventsSection = () => {
                   </div>
                 </CardContent>
               </Card>
+              </Link>
             ))}
           </div>
         ) : (
@@ -128,7 +133,7 @@ const ClubsEventsSection = () => {
         )}
 
         {/* CTA Section */}
-        <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-2xl p-8 md:p-12 text-center">
+        <div className="bg-gradient-to-br from-orange-600/10 via-red-600/5 to-yellow-600/10 rounded-2xl p-8 md:p-12 text-center border border-orange-200/20 dark:border-orange-800/20">
           <div className="max-w-2xl mx-auto">
             <h3 className="text-2xl md:text-3xl font-bold mb-4">
               Ready to Join the Adventure?
@@ -137,14 +142,14 @@ const ClubsEventsSection = () => {
               Discover rally clubs worldwide, register for upcoming events, and connect with fellow off-road enthusiasts.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-gradient-to-r from-primary to-primary-dark hover:shadow-lg transition-all">
+              <Button asChild size="lg" className="bg-gradient-to-r from-orange-600 to-red-700 hover:shadow-lg transition-all">
                 <Link to="/clubs-events">
                   <Users className="w-5 h-5 mr-2" />
-                  Explore Clubs & Events
+                  Explore 4x4 Events
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-white">
+              <Button asChild variant="outline" size="lg" className="border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white">
                 <Link to="/clubs-events">
                   View All Events
                 </Link>
