@@ -692,7 +692,22 @@ const BlogDetail = () => {
             </div>
           </div>
         </div>
+      `,
+      'ford-bronco-raptor-2024-review': `
+        <div class="space-y-6">
+          <h2 class="text-2xl font-bold mb-4">2024 Ford Bronco Raptor Review</h2>
+          <p class="text-base leading-relaxed mb-6">The 2024 Ford Bronco Raptor represents the pinnacle of factory off-road performance.</p>
+        </div>
       `
+    };
+
+    return contentMap[slug] || `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-bold mb-4">Comprehensive Guide to Off-Road Adventures</h2>
+        <p class="text-base leading-relaxed mb-6">This detailed guide covers everything you need to know about off-road adventures.</p>
+      </div>
+    `;
+  };
 
   const calculateReadingTime = (content: string) => {
     const wordsPerMinute = 200;
