@@ -171,9 +171,9 @@ const VehiclesShowcase = () => {
           </p>
         </div>
 
-        {/* Vehicles Grid - More Compact */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {vehicles.map((vehicle) => (
+        {/* Top 4 Vehicles Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {vehicles.slice(0, 4).map((vehicle) => (
             <Card key={vehicle.id} className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
               {/* Vehicle Image - Smaller */}
               <div className="relative overflow-hidden aspect-[4/3] bg-muted/10">

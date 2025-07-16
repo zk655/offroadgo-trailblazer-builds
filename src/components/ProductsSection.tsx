@@ -169,9 +169,9 @@ const ProductsSection = () => {
           </p>
         </div>
 
-        {/* Products Grid - More Compact */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {products.map((product) => (
+        {/* Top 4 Products Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {products.slice(0, 4).map((product) => (
             <Link key={product.id} to={`/product/${product.id}`}>
               <Card className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer">
                 {/* Product Image - Compact */}
