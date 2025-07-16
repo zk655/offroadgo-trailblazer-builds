@@ -69,7 +69,7 @@ const ClubsEventsSection = () => {
   };
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
+    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-background">
       <div className="container mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12">
