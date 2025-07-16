@@ -27,7 +27,7 @@ const ClubsEventsSection = () => {
         .from('events')
         .select('*')
         .gte('start_date', new Date().toISOString())
-        .or('terrain_type.ilike.%4x4%,event_type.ilike.%4x4%,title.ilike.%4x4%,description.ilike.%4x4%')
+        .or('terrain_type.ilike.%4x4%,event_type.ilike.%4x4%,title.ilike.%4x4%,description.ilike.%4x4%,title.ilike.%off-road%,description.ilike.%off-road%')
         .order('start_date')
         .limit(4);
       
