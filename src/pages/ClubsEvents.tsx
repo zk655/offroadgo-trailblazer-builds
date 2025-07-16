@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users, Trophy, ExternalLink, Clock, DollarSign } from 'lucide-react';
 import { format } from 'date-fns';
+import OptimizedImage from '@/components/OptimizedImage';
 
 interface Club {
   id: string;
@@ -159,16 +160,20 @@ const ClubsEvents = () => {
               ) : events && events.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {events.map((event) => (
-                    <Card key={event.id} className="group hover:shadow-xl transition-all duration-300 border-0 bg-card/50 backdrop-blur-sm">
+                    <Card key={event.id} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 border-border/30 hover:border-primary/40 bg-card/80 backdrop-blur-sm rounded-2xl overflow-hidden">
                       {event.image_url && (
-                        <div className="relative h-48 overflow-hidden rounded-t-lg">
-                          <img 
+                        <div className="relative h-48 overflow-hidden">
+                          <OptimizedImage
                             src={event.image_url} 
                             alt={event.title}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            fallbackSrc="/placeholder.svg"
+                            loading="lazy"
+                            width={400}
+                            height={192}
                           />
                           <div className="absolute top-4 left-4">
-                            <Badge className={`${getDifficultyColor(event.difficulty_level)} text-white border-0`}>
+                            <Badge className={`${getDifficultyColor(event.difficulty_level)} text-white border-0 shadow-lg`}>
                               {event.difficulty_level || 'Open'}
                             </Badge>
                           </div>
@@ -265,13 +270,17 @@ const ClubsEvents = () => {
               ) : clubs && clubs.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {clubs.map((club) => (
-                    <Card key={club.id} className="group hover:shadow-xl transition-all duration-300 border-0 bg-card/50 backdrop-blur-sm">
+                    <Card key={club.id} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 border-border/30 hover:border-primary/40 bg-card/80 backdrop-blur-sm rounded-2xl overflow-hidden">
                       {club.image_url && (
-                        <div className="relative h-48 overflow-hidden rounded-t-lg">
-                          <img 
+                        <div className="relative h-48 overflow-hidden">
+                          <OptimizedImage
                             src={club.image_url} 
                             alt={club.name}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            fallbackSrc="/placeholder.svg"
+                            loading="lazy"
+                            width={400}
+                            height={192}
                           />
                         </div>
                       )}

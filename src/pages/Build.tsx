@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Wrench, Plus, X, Save, Car, DollarSign, Package } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
+import OptimizedImage from '@/components/OptimizedImage';
 
 interface Vehicle {
   id: string;
@@ -200,10 +201,14 @@ const Build = () => {
                     <Card className="border border-primary/20">
                       <CardContent className="p-4">
                         <div className="flex gap-4">
-                          <img
+                          <OptimizedImage
                             src={selectedVehicle.image_url}
                             alt={`${selectedVehicle.brand} ${selectedVehicle.name}`}
                             className="w-24 h-16 object-cover rounded"
+                            fallbackSrc="/placeholder.svg"
+                            loading="lazy"
+                            width={96}
+                            height={64}
                           />
                           <div>
                             <h4 className="font-semibold">
@@ -243,10 +248,14 @@ const Build = () => {
                           >
                             <CardContent className="p-3">
                               <div className="flex gap-3">
-                                <img
+                                <OptimizedImage
                                   src={mod.image_url}
                                   alt={mod.title}
                                   className="w-16 h-12 object-cover rounded"
+                                  fallbackSrc="/placeholder.svg"
+                                  loading="lazy"
+                                  width={64}
+                                  height={48}
                                 />
                                 <div className="flex-1">
                                   <p className="font-medium text-sm line-clamp-1">{mod.title}</p>

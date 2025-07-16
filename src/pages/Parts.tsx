@@ -12,6 +12,7 @@ import PageHero from '@/components/PageHero';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
 import AdSenseAd from '@/components/AdSenseAd';
+import OptimizedImage from '@/components/OptimizedImage';
 
 interface Product {
   id: string;
@@ -369,10 +370,14 @@ const Parts = () => {
                           <Card className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer">
                             {/* Product Image */}
                             <div className="relative overflow-hidden aspect-square bg-muted/10 p-4">
-                              <img 
+                              <OptimizedImage
                                 src={product.image_url} 
                                 alt={product.title}
                                 className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                                fallbackSrc="/placeholder.svg"
+                                loading="lazy"
+                                width={300}
+                                height={300}
                               />
                               
                               {/* Badge */}

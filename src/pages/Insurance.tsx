@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Shield, Star, DollarSign, Calendar, CheckCircle, Phone, ExternalLink, Truck, Car, Filter } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import OptimizedImage from '@/components/OptimizedImage';
 
 interface InsuranceProvider {
   id: string;
@@ -211,7 +212,7 @@ const Insurance = () => {
           ) : quotes && quotes.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {quotes.map((quote) => (
-                <Card key={quote.id} className="group hover:shadow-xl transition-all duration-300 border-0 bg-card/50 backdrop-blur-sm relative">
+                <Card key={quote.id} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 border-border/30 hover:border-primary/40 bg-card/80 backdrop-blur-sm rounded-2xl overflow-hidden relative">
                   {quote.monthly_premium <= 100 && (
                     <div className="absolute -top-3 -right-3 z-10">
                       <Badge className="bg-green-500 text-white border-0">Best Value</Badge>
@@ -221,10 +222,14 @@ const Insurance = () => {
                   <CardHeader>
                     <div className="flex items-center justify-between mb-4">
                       {quote.provider?.logo_url ? (
-                        <img 
+                        <OptimizedImage
                           src={quote.provider.logo_url} 
                           alt={quote.provider.name}
                           className="h-12 w-auto object-contain"
+                          fallbackSrc="/placeholder.svg"
+                          loading="lazy"
+                          width={120}
+                          height={48}
                         />
                       ) : (
                         <div className="flex items-center">
@@ -361,14 +366,18 @@ const Insurance = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {providers.slice(0, 6).map((provider) => (
-                <Card key={provider.id} className="group hover:shadow-lg transition-all duration-300">
+                <Card key={provider.id} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-2 border-border/30 hover:border-primary/40 bg-card/80 backdrop-blur-sm rounded-2xl overflow-hidden">
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       {provider.logo_url ? (
-                        <img 
+                        <OptimizedImage
                           src={provider.logo_url} 
                           alt={provider.name}
                           className="h-12 w-auto object-contain"
+                          fallbackSrc="/placeholder.svg"
+                          loading="lazy"
+                          width={120}
+                          height={48}
                         />
                       ) : (
                         <CardTitle className="text-xl">{provider.name}</CardTitle>
