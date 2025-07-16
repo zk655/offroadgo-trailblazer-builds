@@ -110,40 +110,39 @@ const InsuranceSection = () => {
         ) : bestQuotes && bestQuotes.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {bestQuotes.map((quote, index) => (
-              <Card key={quote.id} className="group hover:shadow-lg transition-all duration-300 bg-background border border-border">
-                {index === 0 && (
-                  <Badge className="absolute -top-2 left-4 bg-primary text-primary-foreground border-0 text-xs z-10">
-                    Best Value
-                  </Badge>
-                )}
+              <Card key={quote.id} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-background border border-border overflow-hidden">
+                {/* Provider Logo */}
+                <div className="relative overflow-hidden aspect-[3/2] bg-muted/10 p-4 flex items-center justify-center">
+                  {index === 0 && (
+                    <Badge className="absolute top-2 left-2 bg-primary text-primary-foreground border-0 text-xs z-10">
+                      Best Value
+                    </Badge>
+                  )}
+                  
+                  {quote.provider?.logo_url ? (
+                    <OptimizedImage
+                      src={quote.provider.logo_url} 
+                      alt={quote.provider.name}
+                      className="max-h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                      fallbackSrc="/placeholder.svg"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="flex items-center">
+                      <Shield className="w-8 h-8 text-primary mr-3" />
+                      <span className="font-semibold text-lg">{quote.provider?.name}</span>
+                    </div>
+                  )}
+                  
+                  {quote.provider?.rating && (
+                    <div className="absolute top-2 right-2 flex items-center gap-1 bg-background/90 backdrop-blur-sm rounded-md px-2 py-1">
+                      <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                      <span className="text-xs font-medium">{quote.provider.rating}</span>
+                    </div>
+                  )}
+                </div>
                 
                 <CardContent className="p-4">
-                  {/* Provider Info - Compact */}
-                  <div className="flex items-center justify-between mb-3">
-                    {quote.provider?.logo_url ? (
-                      <div className="h-8 w-20 flex items-center">
-                        <OptimizedImage
-                          src={quote.provider.logo_url} 
-                          alt={quote.provider.name}
-                          className="h-full w-auto object-contain"
-                          fallbackSrc="/placeholder.svg"
-                          loading="lazy"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex items-center">
-                        <Shield className="w-5 h-5 text-primary mr-2" />
-                        <span className="font-semibold text-sm">{quote.provider?.name}</span>
-                      </div>
-                    )}
-                    
-                    {quote.provider?.rating && (
-                      <div className="flex items-center gap-1">
-                        <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                        <span className="text-xs font-medium">{quote.provider.rating}</span>
-                      </div>
-                    )}
-                  </div>
 
                   {/* Vehicle Type & Coverage */}
                   <div className="flex items-center justify-between mb-3">
