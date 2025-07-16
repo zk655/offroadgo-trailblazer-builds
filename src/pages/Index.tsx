@@ -9,9 +9,16 @@ import SEO from '@/components/SEO';
 import AdSenseAd from '@/components/AdSenseAd';
 import ClubsEventsSection from '@/components/ClubsEventsSection';
 import InsuranceSection from '@/components/InsuranceSection';
-import DataSyncButton from '@/components/DataSyncButton';
+import { useAutoDataSync } from '@/hooks/useAutoDataSync';
 
 const Index = () => {
+  // Initialize automatic data sync
+  useAutoDataSync({
+    enabled: true,
+    syncOnMount: true,
+    syncInterval: 30 * 60 * 1000, // 30 minutes
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <SEO 
@@ -80,9 +87,6 @@ const Index = () => {
       
       <CTASection />
       <Footer />
-      
-      {/* Data Sync Button */}
-      <DataSyncButton />
     </div>
   );
 };
