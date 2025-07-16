@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface AdSenseAdProps {
   slot: string;
@@ -19,26 +19,34 @@ const AdSenseAd = ({
 }: AdSenseAdProps) => {
   const [adLoaded, setAdLoaded] = useState(false);
   const [showContainer, setShowContainer] = useState(false);
+  const adRef = useRef<HTMLModElement>(null);
+  const [adInitialized, setAdInitialized] = useState(false);
 
   useEffect(() => {
+    if (adInitialized) return;
+
     const timer = setTimeout(() => {
       try {
-        // @ts-ignore
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-        
-        // Check if ad loaded after a longer delay
-        setTimeout(() => {
-          const adElement = document.querySelector(`[data-ad-slot="${slot}"]`) as HTMLElement;
-          if (adElement) {
-            const hasContent = adElement.innerHTML.trim().length > 0;
-            const hasChildren = adElement.children.length > 0;
-            const hasHeight = adElement.offsetHeight > 10;
-            
-            const isAdLoaded = hasContent && (hasChildren || hasHeight);
-            setAdLoaded(isAdLoaded);
-            setShowContainer(isAdLoaded);
-          }
-        }, 2000);
+        // Check if the ad element exists and hasn't been processed yet
+        const adElement = adRef.current;
+        if (adElement && !adElement.hasAttribute('data-adsbygoogle-status')) {
+          // @ts-ignore
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+          setAdInitialized(true);
+          
+          // Check if ad loaded after a delay
+          setTimeout(() => {
+            if (adElement) {
+              const hasContent = adElement.innerHTML.trim().length > 0;
+              const hasChildren = adElement.children.length > 0;
+              const hasHeight = adElement.offsetHeight > 10;
+              
+              const isAdLoaded = hasContent && (hasChildren || hasHeight);
+              setAdLoaded(isAdLoaded);
+              setShowContainer(isAdLoaded);
+            }
+          }, 2000);
+        }
         
       } catch (err) {
         console.log('AdSense error:', err);
@@ -47,7 +55,7 @@ const AdSenseAd = ({
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [slot]);
+  }, [slot, adInitialized]);
 
   // Don't render anything if no ad is loaded
   if (!showContainer && !adLoaded) {
@@ -65,6 +73,7 @@ const AdSenseAd = ({
       transition: 'all 0.3s ease'
     }}>
       <ins
+        ref={adRef}
         className="adsbygoogle"
         style={{
           display: 'block',
