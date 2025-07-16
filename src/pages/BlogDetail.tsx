@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
-import { ArrowLeft, Calendar, User, Clock, Share2, Heart, BookOpen, Tag } from 'lucide-react';
+import { ArrowLeft, Calendar, User, Clock, Share2, Heart, BookOpen, Tag, ArrowRight } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
@@ -271,46 +271,48 @@ const BlogDetail = () => {
 
         {/* Article Header */}
         <div className="max-w-4xl mx-auto">
-          <div className="mb-6">
+          <div className="mb-8 space-y-6">
             <div className="flex flex-wrap gap-2 mb-4">
               {post.tags?.map(tag => (
-                <Badge key={tag} variant="secondary">
+                <Badge key={tag} variant="secondary" className="text-sm px-3 py-1">
                   <Tag className="mr-1 h-3 w-3" />
                   {tag}
                 </Badge>
               ))}
             </div>
             
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-foreground">
               {post.title}
             </h1>
             
-            <div className="flex flex-wrap items-center gap-6 text-muted-foreground mb-6">
-              <div className="flex items-center">
-                <User className="mr-2 h-4 w-4" />
+            <div className="flex flex-wrap items-center gap-4 md:gap-6 text-muted-foreground text-sm md:text-base">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                  <User className="h-4 w-4 text-primary-foreground" />
+                </div>
                 <span className="font-medium">{post.author}</span>
               </div>
-              <div className="flex items-center">
-                <Calendar className="mr-2 h-4 w-4" />
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
                 <span>{formatDate(post.published_at)}</span>
               </div>
-              <div className="flex items-center">
-                <Clock className="mr-2 h-4 w-4" />
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4" />
                 <span>{readingTime} min read</span>
               </div>
-              <Button variant="ghost" size="sm" onClick={handleShare}>
+              <Button variant="ghost" size="sm" onClick={handleShare} className="h-8 px-3">
                 <Share2 className="mr-2 h-4 w-4" />
-                Share
+                <span className="hidden sm:inline">Share</span>
               </Button>
             </div>
           </div>
 
           {/* Featured Image */}
-          <div className="mb-8">
+          <div className="mb-8 overflow-hidden rounded-lg shadow-lg">
             <img
               src={post.cover_image}
               alt={post.title}
-              className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
+              className="w-full h-48 sm:h-64 md:h-80 lg:h-96 object-cover hover:scale-105 transition-transform duration-500"
             />
           </div>
 
@@ -324,9 +326,9 @@ const BlogDetail = () => {
           </section>
 
           {/* Article Content */}
-          <div className="prose prose-lg dark:prose-invert max-w-none mb-12">
+          <article className="prose prose-lg dark:prose-invert max-w-none mb-12 prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3 prose-ul:my-4 prose-li:my-2 prose-strong:text-foreground">
             <div dangerouslySetInnerHTML={{ __html: post.content }} />
-          </div>
+          </article>
 
           {/* Ad Section 2 - Mid Article */}
           <section className="py-4 mb-8">
@@ -340,16 +342,17 @@ const BlogDetail = () => {
           <Separator className="my-8" />
 
           {/* Author Section */}
-          <Card className="mb-8">
+          <Card className="mb-8 border-2 hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center shadow-lg">
                   <User className="h-8 w-8 text-primary-foreground" />
                 </div>
-                <div>
-                  <h3 className="font-semibold text-lg">{post.author}</h3>
-                  <p className="text-muted-foreground">
-                    Passionate off-road enthusiast and automotive expert with years of experience in 4x4 adventures.
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg mb-2">{post.author}</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Passionate off-road enthusiast and automotive expert with years of experience in 4x4 adventures. 
+                    Dedicated to sharing knowledge and helping fellow adventurers explore the great outdoors safely and responsibly.
                   </p>
                 </div>
               </div>
@@ -358,35 +361,37 @@ const BlogDetail = () => {
 
           {/* Related Posts */}
           {relatedPosts.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <section className="mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-foreground">Related Articles</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {relatedPosts.map((relatedPost) => (
-                  <Card key={relatedPost.id} className="group hover:shadow-lg transition-smooth">
-                    <div className="relative">
+                  <Card key={relatedPost.id} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border overflow-hidden">
+                    <div className="relative overflow-hidden">
                       <img
                         src={relatedPost.cover_image}
                         alt={relatedPost.title}
-                        className="w-full h-32 object-cover rounded-t-lg"
+                        className="w-full h-32 sm:h-40 object-cover group-hover:scale-110 transition-transform duration-500"
                       />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
-                    <CardContent className="p-4">
-                      <h3 className="font-semibold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                    <CardContent className="p-4 space-y-3">
+                      <h3 className="font-semibold text-sm md:text-base line-clamp-2 group-hover:text-primary transition-colors leading-tight">
                         {relatedPost.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                      <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                         {relatedPost.excerpt}
                       </p>
-                      <Button asChild variant="outline" size="sm">
+                      <Button asChild variant="outline" size="sm" className="w-full text-xs">
                         <Link to={`/blog/${relatedPost.slug}`}>
                           Read More
+                          <ArrowRight className="ml-2 h-3 w-3" />
                         </Link>
                       </Button>
                     </CardContent>
                   </Card>
                 ))}
               </div>
-            </div>
+            </section>
           )}
         </div>
       </div>

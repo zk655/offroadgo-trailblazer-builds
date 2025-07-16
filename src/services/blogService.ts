@@ -1,4 +1,12 @@
 // Service for fetching blog content from external APIs and managing categories
+import fordBroncoImage from '@/assets/blog/ford-bronco-raptor.jpg';
+import jeepModificationsImage from '@/assets/blog/jeep-modifications.jpg';
+import moabTrailImage from '@/assets/blog/moab-hells-revenge.jpg';
+import recoveryGearImage from '@/assets/blog/recovery-gear.jpg';
+import winterMaintenanceImage from '@/assets/blog/winter-maintenance.jpg';
+import kingOfHammersImage from '@/assets/blog/king-of-hammers.jpg';
+import winchingTechniquesImage from '@/assets/blog/winching-techniques.jpg';
+import coloradoDestinationsImage from '@/assets/blog/colorado-destinations.jpg';
 
 interface ExternalBlogPost {
   title: string;
@@ -101,7 +109,7 @@ const generateLiveBlogContent = (): any[] => {
       slug: 'ford-bronco-raptor-2024-review',
       content: generateDetailedContent('Ford Bronco Raptor'),
       excerpt: 'Comprehensive review of the 2024 Ford Bronco Raptor, featuring enhanced suspension, powerful engine, and advanced off-road technology.',
-      cover_image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&h=600&fit=crop',
+      cover_image: fordBroncoImage,
       author: 'Vehicle Expert',
       published_at: new Date(Date.now() - 86400000).toISOString(), // Yesterday
       tags: ['vehicles', 'ford', 'bronco', 'review'],
@@ -114,7 +122,7 @@ const generateLiveBlogContent = (): any[] => {
       slug: 'jeep-wrangler-modifications-guide',
       content: generateDetailedContent('Jeep Modifications'),
       excerpt: 'Transform your Jeep Wrangler with these essential modifications that enhance performance, capability, and style.',
-      cover_image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+      cover_image: jeepModificationsImage,
       author: 'Mod Specialist',
       published_at: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
       tags: ['modifications', 'jeep', 'wrangler', 'upgrade'],
@@ -127,7 +135,7 @@ const generateLiveBlogContent = (): any[] => {
       slug: 'moab-hells-revenge-trail-guide',
       content: generateDetailedContent('Moab Trail Guide'),
       excerpt: 'Complete guide to conquering Hell\'s Revenge trail in Moab, including difficulty ratings, key obstacles, and safety tips.',
-      cover_image: 'https://images.unsplash.com/photo-1485833077593-4278bba3f11f?w=800&h=600&fit=crop',
+      cover_image: moabTrailImage,
       author: 'Trail Master',
       published_at: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
       tags: ['trails', 'moab', 'utah', 'guide'],
@@ -140,7 +148,7 @@ const generateLiveBlogContent = (): any[] => {
       slug: 'recovery-gear-safety-kit-guide',
       content: generateDetailedContent('Recovery Gear'),
       excerpt: 'Build the ultimate recovery kit with our comprehensive guide to essential safety equipment for off-road adventures.',
-      cover_image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop',
+      cover_image: recoveryGearImage,
       author: 'Safety Expert',
       published_at: new Date(Date.now() - 345600000).toISOString(), // 4 days ago
       tags: ['gear', 'safety', 'recovery', 'equipment'],
@@ -153,7 +161,7 @@ const generateLiveBlogContent = (): any[] => {
       slug: 'winter-4x4-maintenance-tips',
       content: generateDetailedContent('Winter Maintenance'),
       excerpt: 'Keep your 4x4 running smoothly through winter with these essential maintenance tips and cold-weather preparations.',
-      cover_image: 'https://images.unsplash.com/photo-1594736797933-d0f31954d3a2?w=800&h=600&fit=crop',
+      cover_image: winterMaintenanceImage,
       author: 'Maintenance Pro',
       published_at: new Date(Date.now() - 432000000).toISOString(), // 5 days ago
       tags: ['maintenance', 'winter', '4x4', 'tips'],
@@ -166,7 +174,7 @@ const generateLiveBlogContent = (): any[] => {
       slug: 'king-of-hammers-2024-recap',
       content: generateDetailedContent('King of the Hammers'),
       excerpt: 'Relive the excitement of King of the Hammers 2024 with our comprehensive event recap and race highlights.',
-      cover_image: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800&h=600&fit=crop',
+      cover_image: kingOfHammersImage,
       author: 'Event Reporter',
       published_at: new Date(Date.now() - 518400000).toISOString(), // 6 days ago
       tags: ['events', 'racing', 'koh', 'community'],
@@ -179,7 +187,7 @@ const generateLiveBlogContent = (): any[] => {
       slug: 'advanced-winching-techniques-guide',
       content: generateDetailedContent('Winching Techniques'),
       excerpt: 'Master advanced winching techniques for safe and effective vehicle recovery in challenging off-road situations.',
-      cover_image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&h=600&fit=crop',
+      cover_image: winchingTechniquesImage,
       author: 'Recovery Specialist',
       published_at: new Date(Date.now() - 604800000).toISOString(), // 1 week ago
       tags: ['safety', 'recovery', 'winching', 'techniques'],
@@ -192,7 +200,7 @@ const generateLiveBlogContent = (): any[] => {
       slug: 'colorado-secret-offroad-destinations',
       content: generateDetailedContent('Colorado Destinations'),
       excerpt: 'Discover Colorado\'s best-kept off-road secrets with our guide to hidden trails and spectacular destinations.',
-      cover_image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+      cover_image: coloradoDestinationsImage,
       author: 'Adventure Guide',
       published_at: new Date(Date.now() - 691200000).toISOString(), // 8 days ago
       tags: ['destinations', 'colorado', 'trails', 'adventure'],
