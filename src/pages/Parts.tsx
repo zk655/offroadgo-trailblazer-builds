@@ -13,6 +13,8 @@ import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
 import AdSenseAd from '@/components/AdSenseAd';
 import OptimizedImage from '@/components/OptimizedImage';
+import { resolveImageUrl } from '@/utils/imageResolver';
+import AdPlacement from '@/components/AdPlacement';
 
 interface Product {
   id: string;
@@ -228,11 +230,7 @@ const Parts = () => {
       {/* Ad Section 1 - After Hero */}
       <section className="py-2 md:py-4 bg-muted/5">
         <div className="w-full overflow-hidden">
-          <AdSenseAd 
-            slot="8773228071"
-            layout="in-article"
-            className="w-full"
-          />
+          <AdPlacement position="top" pageType="parts" />
         </div>
       </section>
 
@@ -303,11 +301,7 @@ const Parts = () => {
       {/* Ad Section 2 - After Categories */}
       <section className="py-2 md:py-4 bg-muted/10">
         <div className="w-full overflow-hidden">
-          <AdSenseAd 
-            slot="8773228071"
-            layout="in-article"
-            className="w-full"
-          />
+          <AdPlacement position="middle" pageType="parts" />
         </div>
       </section>
 
@@ -486,10 +480,14 @@ const Parts = () => {
                     <Card className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer">
                       {/* Product Image */}
                       <div className="relative overflow-hidden aspect-square bg-muted/10 p-4">
-                        <img 
-                          src={product.image_url} 
+                        <OptimizedImage
+                          src={resolveImageUrl(product.image_url)}
                           alt={product.title}
                           className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                          fallbackSrc="/placeholder.svg"
+                          loading="lazy"
+                          width={300}
+                          height={300}
                         />
                         
                         {/* Badge */}
@@ -588,11 +586,7 @@ const Parts = () => {
       {/* Ad Section 3 - After Products */}
       <section className="py-2 md:py-4 bg-muted/5">
         <div className="w-full overflow-hidden">
-          <AdSenseAd 
-            slot="8773228071"
-            layout="in-article"
-            className="w-full"
-          />
+          <AdPlacement position="bottom" pageType="parts" />
         </div>
       </section>
 

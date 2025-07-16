@@ -13,21 +13,33 @@ const AdSenseAd = ({
   slot, 
   style = { display: 'block', textAlign: 'center' }, 
   className = '',
-  format = 'fluid',
+  format = 'auto',
   responsive = true,
   layout = 'in-article'
 }: AdSenseAdProps) => {
   const [adLoaded, setAdLoaded] = useState(false);
-  const [showContainer, setShowContainer] = useState(false);
+  const [showContainer, setShowContainer] = useState(true);
   const adRef = useRef<HTMLModElement>(null);
   const [adInitialized, setAdInitialized] = useState(false);
 
   useEffect(() => {
     if (adInitialized) return;
 
+    // Ensure AdSense script is loaded
+    const checkAdSenseScript = () => {
+      if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6402737863827515';
+        script.crossOrigin = 'anonymous';
+        document.head.appendChild(script);
+      }
+    };
+
+    checkAdSenseScript();
+
     const timer = setTimeout(() => {
       try {
-        // Check if the ad element exists and hasn't been processed yet
         const adElement = adRef.current;
         if (adElement && !adElement.hasAttribute('data-adsbygoogle-status')) {
           // @ts-ignore
@@ -43,32 +55,34 @@ const AdSenseAd = ({
               
               const isAdLoaded = hasContent && (hasChildren || hasHeight);
               setAdLoaded(isAdLoaded);
-              setShowContainer(isAdLoaded);
+              
+              // Always show container, even if ad doesn't load
+              setShowContainer(true);
             }
-          }, 2000);
+          }, 3000);
         }
         
       } catch (err) {
         console.log('AdSense error:', err);
-        setShowContainer(false);
+        setShowContainer(true); // Still show container on error
       }
-    }, 100);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [slot, adInitialized]);
 
-  // Don't render anything if no ad is loaded
-  if (!showContainer && !adLoaded) {
+  // Always show container to prevent layout shift
+  if (!showContainer) {
     return null;
   }
 
   return (
     <div className={`adsense-container w-full ${className}`} style={{ 
-      minHeight: adLoaded ? 'auto' : '0',
+      minHeight: adLoaded ? 'auto' : '90px',
       maxHeight: 'none',
-      padding: adLoaded ? '8px' : '0',
+      padding: '8px',
       backgroundColor: 'transparent',
-      margin: adLoaded ? '12px 0' : '0',
+      margin: '12px 0',
       overflow: 'hidden',
       transition: 'all 0.3s ease'
     }}>
@@ -78,16 +92,17 @@ const AdSenseAd = ({
         style={{
           display: 'block',
           width: '100%',
-          minHeight: '0',
+          minHeight: '90px',
           height: 'auto',
           backgroundColor: 'transparent',
-          opacity: adLoaded ? 1 : 0,
+          opacity: adLoaded ? 1 : 0.8,
           transition: 'opacity 0.3s ease'
         }}
         data-ad-client="ca-pub-6402737863827515"
         data-ad-slot={slot}
         data-ad-format="auto"
         data-full-width-responsive="true"
+        data-ad-layout={layout}
       />
     </div>
   );

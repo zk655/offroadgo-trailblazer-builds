@@ -14,16 +14,8 @@ import Footer from '@/components/Footer';
 import AdSenseAd from '@/components/AdSenseAd';
 import OptimizedImage from '@/components/OptimizedImage';
 
-// Import vehicle images
-import fordBroncoRaptor from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
-import fordF150Raptor from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
-import ramTrx from '@/assets/vehicles/ram-1500-trx.jpg';
-import jeepWrangler from '@/assets/vehicles/jeep-wrangler-rubicon.jpg';
-import toyota4Runner from '@/assets/vehicles/toyota-4runner-trd-pro.jpg';
-import chevyColorado from '@/assets/vehicles/chevy-colorado-zr2.jpg';
-import gmcSierra from '@/assets/vehicles/gmc-sierra-at4x.jpg';
-import nissanFrontier from '@/assets/vehicles/nissan-frontier-pro4x.jpg';
-import subaruOutback from '@/assets/vehicles/subaru-outback-wilderness.jpg';
+import { resolveImageUrl } from '@/utils/imageResolver';
+import AdPlacement from '@/components/AdPlacement';
 
 interface Vehicle {
   id: string;
@@ -41,25 +33,13 @@ interface Vehicle {
   ground_clearance: number;
 }
 
-// Image mapping for vehicles
-const vehicleImages: Record<string, string> = {
-  'ford-bronco-raptor': fordBroncoRaptor,
-  'ford-f-150-raptor': fordF150Raptor,  
-  'ram-1500-trx': ramTrx,
-  'jeep-wrangler-rubicon': jeepWrangler,
-  'toyota-4runner-trd-pro': toyota4Runner,
-  'chevrolet-colorado-zr2': chevyColorado,
-  'gmc-sierra-at4x': gmcSierra,
-  'nissan-frontier-pro-4x': nissanFrontier,
-  'subaru-outback-wilderness': subaruOutback,
-};
-
 // Helper function to get vehicle image
 const getVehicleImage = (brand: string, name: string, image_url?: string) => {
-  if (image_url) return image_url;
+  if (image_url) {
+    return resolveImageUrl(image_url);
+  }
   
-  const key = `${brand.toLowerCase()}-${name.toLowerCase().replace(/\s+/g, '-')}`;
-  return vehicleImages[key] || fordBroncoRaptor; // Default fallback
+  return '/placeholder.svg';
 };
 
 // Remove the hardcoded vehicle data - now using database
@@ -175,16 +155,12 @@ const Vehicles = () => {
         icon={Car}
       />
 
-      {/* Ad Section 1 - After Hero */}
-      <section className="py-2 md:py-4 bg-muted/5">
-        <div className="w-full overflow-hidden">
-          <AdSenseAd 
-            slot="8773228071"
-            layout="in-article"
-            className="w-full"
-          />
-        </div>
-      </section>
+        {/* Ad Section 1 - After Hero */}
+        <section className="py-2 md:py-4 bg-muted/5">
+          <div className="w-full overflow-hidden">
+            <AdPlacement position="top" pageType="vehicles" />
+          </div>
+        </section>
 
       <div className="container mx-auto px-4 py-8">
         {/* Filters */}
