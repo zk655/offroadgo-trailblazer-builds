@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Shield, Star, DollarSign, ArrowRight, CheckCircle, Truck, Car } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import OptimizedImage from '@/components/OptimizedImage';
 
 interface InsuranceQuote {
   id: string;
@@ -121,10 +122,12 @@ const InsuranceSection = () => {
                   <div className="flex items-center justify-between mb-3">
                     {quote.provider?.logo_url ? (
                       <div className="h-8 w-20 flex items-center">
-                        <img 
+                        <OptimizedImage
                           src={quote.provider.logo_url} 
                           alt={quote.provider.name}
                           className="h-full w-auto object-contain"
+                          fallbackSrc="/placeholder.svg"
+                          loading="lazy"
                         />
                       </div>
                     ) : (

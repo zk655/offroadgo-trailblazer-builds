@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, Heart, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import OptimizedImage from '@/components/OptimizedImage';
 
 // Import product images
 import winchImage from '@/assets/products/winch-12000lb.jpg';
@@ -174,16 +175,14 @@ const ProductsSection = () => {
           {products.slice(0, 4).map((product) => (
             <Link key={product.id} to={`/product/${product.id}`}>
               <Card className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer">
-                {/* Product Image - Compact */}
+                {/* Product Image - Optimized */}
                 <div className="relative overflow-hidden aspect-square bg-muted/10 p-4">
-                  <img 
+                  <OptimizedImage
                     src={product.image} 
                     alt={product.name}
                     className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                    onError={(e) => {
-                      console.error('Product image loading error for:', product.name);
-                      e.currentTarget.src = '/placeholder.svg';
-                    }}
+                    fallbackSrc="/placeholder.svg"
+                    loading="lazy"
                   />
                   
                   {/* Badge */}

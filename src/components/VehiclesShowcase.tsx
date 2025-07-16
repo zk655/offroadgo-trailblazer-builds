@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Gauge, Mountain, Fuel, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import OptimizedImage from '@/components/OptimizedImage';
 
 // Import vehicle images with error handling
 const importImage = (imagePath: string) => {
@@ -175,16 +176,14 @@ const VehiclesShowcase = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {vehicles.slice(0, 4).map((vehicle) => (
             <Card key={vehicle.id} className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-              {/* Vehicle Image - Smaller */}
+              {/* Vehicle Image - Optimized */}
               <div className="relative overflow-hidden aspect-[4/3] bg-muted/10">
-                <img 
+                <OptimizedImage
                   src={vehicle.image} 
                   alt={vehicle.name}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  onError={(e) => {
-                    console.error('Image loading error for:', vehicle.name);
-                    e.currentTarget.src = '/placeholder.svg';
-                  }}
+                  fallbackSrc="/placeholder.svg"
+                  loading="lazy"
                 />
                 
                 {/* Badge */}

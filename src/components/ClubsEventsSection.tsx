@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Trophy, ArrowRight, Flag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import OptimizedImage from '@/components/OptimizedImage';
 
 // Import rally event images
 import rallyEvent1 from '@/assets/rally-event-1.jpg';
@@ -96,16 +97,14 @@ const ClubsEventsSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {upcomingEvents.map((event, index) => (
               <Card key={event.id} className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-                {/* Event Image */}
+                {/* Event Image - Optimized */}
                 <div className="relative overflow-hidden aspect-[4/3] bg-muted/10">
-                  <img 
+                  <OptimizedImage
                     src={getEventImage(event, index)} 
                     alt={event.title}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    onError={(e) => {
-                      console.error('Event image loading error for:', event.title);
-                      e.currentTarget.src = eventImages[index % eventImages.length];
-                    }}
+                    fallbackSrc={eventImages[index % eventImages.length]}
+                    loading="lazy"
                   />
                   
                   {/* Difficulty Badge */}
