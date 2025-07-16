@@ -144,14 +144,57 @@ const BlogDetail = () => {
   const generateDetailedContent = (slug: string) => {
     const contentMap: Record<string, string> = {
       'jeep-wrangler-modifications-guide': `
-        <div class="space-y-8">
-          <div class="text-center mb-8">
-            <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&h=400&fit=crop&crop=center" alt="Modified Jeep Wrangler on trail" class="w-full h-64 object-cover rounded-lg shadow-lg mb-4" />
-            <p class="text-sm text-muted-foreground">A well-modified Jeep Wrangler conquering challenging terrain</p>
+        <div className="space-y-8">
+          <h2 className="text-3xl font-bold text-foreground mb-6">Ultimate Jeep Wrangler Modification Guide</h2>
+          <p className="text-lg leading-relaxed mb-8 text-foreground">Transform your Wrangler with these essential modifications for enhanced performance and capability.</p>
+          
+          <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 rounded-lg mb-8">
+            <h3 className="text-2xl font-bold mb-4 text-foreground">1. Lift Kit - Foundation Upgrade</h3>
+            <p className="text-base leading-relaxed mb-4 text-foreground">A quality lift kit provides increased ground clearance and allows for larger tires. Options range from budget 2-3 inch lifts ($500-1500) to extreme 6+ inch systems ($3000-8000+).</p>
           </div>
+          
+          <div className="bg-gradient-to-r from-accent/10 to-primary/10 p-6 rounded-lg mb-8">
+            <h3 className="text-2xl font-bold mb-4 text-foreground">2. Larger Tires - Maximum Traction</h3>
+            <p className="text-base leading-relaxed mb-4 text-foreground">Upgrade to 33", 35", or 37" tires for improved traction. Each size requires different modifications and affects performance differently.</p>
+          </div>
+          
+          <div className="bg-muted p-6 rounded-lg border-l-4 border-primary">
+            <h4 className="text-xl font-bold mb-3 text-foreground">Professional Installation Recommended</h4>
+            <p className="text-foreground">Complex modifications should be installed by professionals to ensure safety and proper function.</p>
+          </div>
+        </div>
+      `,
+      'ford-bronco-raptor-2024-review': `
+        <div className="space-y-8">
+          <h2 className="text-3xl font-bold text-foreground mb-6">2024 Ford Bronco Raptor Review</h2>
+          <p className="text-lg leading-relaxed mb-8 text-foreground">The ultimate factory off-road machine with 418HP twin-turbo V6 and Fox Racing suspension.</p>
+          
+          <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 rounded-lg mb-8">
+            <h3 className="text-2xl font-bold mb-4 text-foreground">Performance Specifications</h3>
+            <p className="text-base leading-relaxed mb-4 text-foreground">Twin-turbocharged 3.0L EcoBoost V6 producing 418 horsepower and 440 lb-ft of torque, paired with a 10-speed automatic transmission.</p>
+          </div>
+        </div>
+      `,
+      'best-tires-rock-crawling-2024': `
+        <div className="space-y-8">
+          <h2 className="text-3xl font-bold text-foreground mb-6">Best Rock Crawling Tires 2024</h2>
+          <p className="text-lg leading-relaxed mb-8 text-foreground">Top tire choices for technical rock crawling with maximum grip and durability.</p>
+          
+          <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 rounded-lg mb-8">
+            <h3 className="text-2xl font-bold mb-4 text-foreground">Top Recommendations</h3>
+            <p className="text-base leading-relaxed mb-4 text-foreground">BFGoodrich Krawler T/A KX and Maxxis Creepy Crawler lead the pack for serious rock crawling applications.</p>
+          </div>
+        </div>
+      `
+    };
 
-          <h2 class="text-3xl font-bold text-foreground mb-6">The Ultimate Jeep Wrangler Modification Guide</h2>
-          <p class="text-lg leading-relaxed mb-8">The Jeep Wrangler stands as America's most modification-friendly vehicle, offering endless possibilities for customization. Whether you're a weekend warrior or a hardcore rock crawler, transforming your Wrangler into the ultimate off-road machine requires careful planning and the right modifications. This comprehensive guide covers the top 10 essential modifications that will dramatically improve your Jeep's capability, comfort, and style.</p>
+    return contentMap[slug] || `
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold mb-4 text-foreground">Off-Road Adventure Guide</h2>
+        <p className="text-base leading-relaxed mb-6 text-foreground">Comprehensive information for off-road enthusiasts.</p>
+      </div>
+    `;
+  };
 
           <div class="bg-gradient-to-r from-primary/10 to-secondary/10 p-6 rounded-lg mb-8">
             <h3 class="text-2xl font-bold mb-4">🚗 1. Lift Kit - The Foundation of Every Build</h3>
