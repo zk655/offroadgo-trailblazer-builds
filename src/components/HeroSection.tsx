@@ -4,15 +4,15 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Compass, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// Hero background images for rotation - using imported assets
-import heroOffroad1 from '@/assets/hero-offroad-1.jpg';
-import heroOffroad2 from '@/assets/hero-offroad-2.jpg';
-import heroOffroad3 from '@/assets/hero-offroad-3.jpg';
+// Hero background images for rotation - using modern off-road assets
+import heroModern1 from '@/assets/hero-modern-1.jpg';
+import heroModern2 from '@/assets/hero-modern-2.jpg';
+import heroModern3 from '@/assets/hero-modern-3.jpg';
 
 const heroImages = [
-  heroOffroad1,
-  heroOffroad2,
-  heroOffroad3
+  heroModern1,
+  heroModern2,
+  heroModern3
 ];
 
 const HeroSection = () => {
