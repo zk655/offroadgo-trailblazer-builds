@@ -7,53 +7,33 @@ interface AdPlacementProps {
   pageType?: 'home' | 'vehicles' | 'insurance' | 'parts' | 'blog' | 'other';
 }
 
-const AdPlacement: React.FC<AdPlacementProps> = ({ 
-  position, 
+const AdPlacement: React.FC<AdPlacementProps> = ({
+  position,
   className = '',
   pageType = 'other'
 }) => {
-  // Different ad slot IDs for different positions and page types
   const getAdSlot = () => {
     switch (position) {
-      case 'top':
-        return '8773228071'; // Top banner ads
-      case 'middle':
-        return '2268201929'; // Middle content ads
-      case 'bottom':
-        return '3788333009'; // Bottom ads
-      case 'sidebar':
-        return '5395297838'; // Sidebar ads
-      case 'inline':
-        return '6871374497'; // Inline content ads
-      default:
-        return '8773228071';
+      case 'top': return '8773228071';
+      case 'middle': return '2268201929';
+      case 'bottom': return '3788333009';
+      case 'sidebar': return '5395297838';
+      case 'inline': return '6871374497';
+      default: return '8773228071';
     }
   };
 
   const getAdFormat = () => {
     switch (position) {
-      case 'top':
-      case 'bottom':
-        return 'auto';
-      case 'sidebar':
-        return 'rectangle';
+      case 'sidebar': return 'rectangle';
       case 'middle':
-      case 'inline':
-        return 'fluid';
-      default:
-        return 'auto';
+      case 'inline': return 'fluid';
+      default: return 'auto';
     }
   };
 
   const getAdLayout = () => {
-    switch (position) {
-      case 'inline':
-        return 'in-article';
-      case 'sidebar':
-        return null;
-      default:
-        return 'in-article';
-    }
+    return position === 'inline' ? 'in-article' : null;
   };
 
   return (
