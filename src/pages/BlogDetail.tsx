@@ -363,10 +363,28 @@ const BlogDetail = () => {
             )}
           </header>
 
+          {/* Ad Section - Top of Article */}
+          <div className="py-4 mb-8">
+            <AdSenseAd 
+              slot="8773228071"
+              layout="in-article"
+              className="w-full max-w-4xl"
+            />
+          </div>
+
           <div className="prose prose-lg max-w-none mb-12">
             <div 
               className="blog-content" 
               dangerouslySetInnerHTML={{ __html: generateDetailedContent(post.slug) }}
+            />
+          </div>
+
+          {/* Ad Section - After Content */}
+          <div className="py-4 mb-8">
+            <AdSenseAd 
+              slot="2268201929"
+              layout="in-article"
+              className="w-full max-w-4xl"
             />
           </div>
 

@@ -6,7 +6,7 @@ interface AdSenseAdProps {
   className?: string;
   format?: string;
   responsive?: boolean;
-  layout?: string;
+  layout?: string | null;
 }
 
 const AdSenseAd = ({ 
@@ -19,11 +19,21 @@ const AdSenseAd = ({
 }: AdSenseAdProps) => {
   const [adLoaded, setAdLoaded] = useState(false);
   const [showContainer, setShowContainer] = useState(true);
-  const adRef = useRef<HTMLModElement>(null);
+  const adRef = useRef<HTMLElement | null>(null);
   const [adInitialized, setAdInitialized] = useState(false);
 
   useEffect(() => {
     if (adInitialized) return;
+
+    // Only load ads if we're in production environment
+    const isProduction = window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1');
+    
+    if (!isProduction) {
+      // Show placeholder in development
+      setShowContainer(true);
+      setAdLoaded(false);
+      return;
+    }
 
     // Ensure AdSense script is loaded
     const checkAdSenseScript = () => {
@@ -32,6 +42,13 @@ const AdSenseAd = ({
         script.async = true;
         script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6402737863827515';
         script.crossOrigin = 'anonymous';
+        
+        // Add error handling for script loading
+        script.onerror = () => {
+          console.log('AdSense script failed to load');
+          setShowContainer(true);
+        };
+        
         document.head.appendChild(script);
       }
     };
@@ -63,17 +80,39 @@ const AdSenseAd = ({
         }
         
       } catch (err) {
-        console.log('AdSense error:', err);
+        console.log('AdSense initialization error:', err);
         setShowContainer(true); // Still show container on error
       }
-    }, 500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [slot, adInitialized]);
 
-  // Always show container to prevent layout shift
+  // Show development placeholder or production ad container
   if (!showContainer) {
     return null;
+  }
+
+  // Development placeholder
+  const isProduction = window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1');
+  
+  if (!isProduction) {
+    return (
+      <div className={`adsense-container w-full max-w-screen-xl mx-auto ${className}`} style={{ 
+        minHeight: '90px',
+        padding: '8px',
+        backgroundColor: 'hsl(var(--muted))',
+        margin: '12px auto',
+        overflow: 'hidden',
+        borderRadius: '8px',
+        border: '1px dashed hsl(var(--border))',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <span className="text-sm text-muted-foreground">Ad Placeholder (Production Only)</span>
+      </div>
+    );
   }
 
   return (
@@ -87,7 +126,7 @@ const AdSenseAd = ({
       transition: 'all 0.3s ease'
     }}>
       <ins
-        ref={adRef}
+        ref={adRef as any}
         className="adsbygoogle"
         style={{
           display: 'block',
@@ -101,9 +140,9 @@ const AdSenseAd = ({
         }}
         data-ad-client="ca-pub-6402737863827515"
         data-ad-slot={slot}
-        data-ad-format="auto"
-        data-full-width-responsive="true"
-        data-ad-layout={layout}
+        data-ad-format={format}
+        data-full-width-responsive={responsive ? "true" : "false"}
+        {...(layout && { 'data-ad-layout': layout })}
       />
     </div>
   );

@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Car, Gauge, Fuel, TrendingUp, Users, Calendar, Award, Cog, Zap, Shield, Mountain, Wrench, Info, Star, Heart, Share2, Download } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
+import AdPlacement from '@/components/AdPlacement';
 import { supabase } from '@/integrations/supabase/client';
 
 // Import vehicle images
@@ -486,6 +488,15 @@ const VehicleDetail = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Ad Section - After Content */}
+      <AdPlacement 
+        position="bottom" 
+        pageType="vehicles"
+        className="py-6 bg-muted/5"
+      />
+
+      <Footer />
     </div>
   );
 };

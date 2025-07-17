@@ -21,6 +21,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import AdPlacement from '@/components/AdPlacement';
 
 interface Product {
   id: string;
@@ -306,6 +307,13 @@ const ProductDetail = () => {
               </div>
             </div>
 
+            {/* Ad Section - Mid Page */}
+            <AdPlacement 
+              position="middle" 
+              pageType="parts"
+              className="py-6 bg-muted/5"
+            />
+
             {/* Related Products */}
             {relatedProducts.length > 0 && (
               <section>
@@ -345,6 +353,13 @@ const ProductDetail = () => {
                 </div>
               </section>
             )}
+
+            {/* Ad Section - Bottom */}
+            <AdPlacement 
+              position="bottom" 
+              pageType="parts"
+              className="py-6 bg-muted/10"
+            />
           </div>
         </section>
       </main>

@@ -6,7 +6,7 @@ import ProductsSection from '@/components/ProductsSection';
 import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
-import AdSenseAd from '@/components/AdSenseAd';
+import AdPlacement from '@/components/AdPlacement';
 import ClubsEventsSection from '@/components/ClubsEventsSection';
 import InsuranceSection from '@/components/InsuranceSection';
 import { useAutoDataSync } from '@/hooks/useAutoDataSync';
@@ -31,32 +31,20 @@ const Index = () => {
       <HeroSection />
       
       {/* Ad Section 1 - After Hero */}
-      <section className="py-4 md:py-6 bg-muted/5">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center">
-            <AdSenseAd 
-              slot="8773228071"
-              layout="in-article"
-              className="w-full max-w-4xl"
-            />
-          </div>
-        </div>
-      </section>
+      <AdPlacement 
+        position="top" 
+        pageType="home"
+        className="py-4 md:py-6 bg-muted/5"
+      />
       
       <FeatureCards />
       
       {/* Ad Section 2 - Mid Page */}
-      <section className="py-4 md:py-6 bg-muted/10">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center">
-            <AdSenseAd 
-              slot="8773228071"
-              layout="in-article"
-              className="w-full max-w-4xl"
-            />
-          </div>
-        </div>
-      </section>
+      <AdPlacement 
+        position="middle" 
+        pageType="home"
+        className="py-4 md:py-6 bg-muted/10"
+      />
       
       <VehiclesShowcase />
       <ProductsSection />
@@ -65,33 +53,21 @@ const Index = () => {
       <ClubsEventsSection />
       
       {/* Ad Section 3 - After Events */}
-      <section className="py-4 md:py-6 bg-muted/5">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center">
-            <AdSenseAd 
-              slot="8773228071"
-              layout="in-article"
-              className="w-full max-w-4xl"
-            />
-          </div>
-        </div>
-      </section>
+      <AdPlacement 
+        position="inline" 
+        pageType="home"
+        className="py-4 md:py-6 bg-muted/5"
+      />
       
       {/* Insurance Section */}
       <InsuranceSection />
       
       {/* Ad Section 4 - Before CTA */}
-      <section className="py-4 md:py-6 bg-muted/10">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center">
-            <AdSenseAd 
-              slot="8773228071"
-              layout="in-article"
-              className="w-full max-w-4xl"
-            />
-          </div>
-        </div>
-      </section>
+      <AdPlacement 
+        position="bottom" 
+        pageType="home"
+        className="py-4 md:py-6 bg-muted/10"
+      />
       
       <CTASection />
       <Footer />
