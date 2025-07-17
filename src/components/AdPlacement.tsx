@@ -18,9 +18,9 @@ const AdPlacement: React.FC<AdPlacementProps> = ({
       case 'top':
         return '8773228071'; // Top banner ads
       case 'middle':
-        return '8773228071'; // Middle content ads
+        return '2268201929'; // Middle content ads
       case 'bottom':
-        return '8773228071'; // Bottom ads
+        return '3788333009'; // Bottom ads
       case 'sidebar':
         return '5395297838'; // Sidebar ads
       case 'inline':
