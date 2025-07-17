@@ -1,3 +1,4 @@
+// components/AdSenseAd.tsx
 import { useEffect, useRef, useState } from 'react';
 
 interface AdSenseAdProps {
@@ -17,7 +18,7 @@ const AdSenseAd = ({
   className = '',
   sticky = false,
 }: AdSenseAdProps) => {
-  const ref = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const adRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [adLoaded, setAdLoaded] = useState(false);
@@ -26,7 +27,7 @@ const AdSenseAd = ({
   const slot = isMobile && slotMobile ? slotMobile : slotDesktop;
 
   useEffect(() => {
-    if (!ref.current) return;
+    if (!wrapperRef.current) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -34,23 +35,24 @@ const AdSenseAd = ({
       },
       { threshold: 0.5 }
     );
-    observer.observe(ref.current);
+
+    observer.observe(wrapperRef.current);
     return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
     if (!isVisible || !adRef.current) return;
 
-    const isProduction = window.location.hostname !== 'localhost';
+    const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
 
     if (isProduction && !adRef.current.getAttribute('data-adsbygoogle-status')) {
-      const script = document.querySelector('script[src*="adsbygoogle.js"]');
-      if (!script) {
-        const s = document.createElement('script');
-        s.async = true;
-        s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6402737863827515';
-        s.crossOrigin = 'anonymous';
-        document.head.appendChild(s);
+      const existingScript = document.querySelector('script[src*="adsbygoogle.js"]');
+      if (!existingScript) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6402737863827515';
+        script.crossOrigin = 'anonymous';
+        document.head.appendChild(script);
       }
 
       setTimeout(() => {
@@ -63,18 +65,19 @@ const AdSenseAd = ({
       }, 500);
     }
 
+    // Check if ad actually loads
     setTimeout(() => {
       if (adRef.current) {
         const hasContent = adRef.current.innerHTML.trim().length > 0;
         const hasHeight = adRef.current.offsetHeight > 50;
         setAdLoaded(hasContent && hasHeight);
       }
-    }, 3000);
+    }, 2500);
   }, [isVisible]);
 
   return (
     <div
-      ref={ref}
+      ref={wrapperRef}
       className={`adsense-wrapper ${className} ${sticky ? 'sticky top-20' : ''}`}
       style={{
         minHeight: '90px',
