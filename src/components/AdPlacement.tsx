@@ -1,3 +1,4 @@
+// components/AdPlacement.tsx
 import AdSenseAd from './AdSenseAd';
 
 interface AdPlacementProps {
