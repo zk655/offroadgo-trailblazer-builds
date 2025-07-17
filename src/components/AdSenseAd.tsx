@@ -1,106 +1,128 @@
-// components/AdSenseAd.tsx
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 
 interface AdSenseAdProps {
-  slotDesktop: string;
-  slotMobile?: string;
-  format?: string;
-  layout?: string | null;
+  slot: string;
+  style?: React.CSSProperties;
   className?: string;
-  sticky?: boolean;
+  format?: string;
+  responsive?: boolean;
+  layout?: string | null;
+  clientId?: string; // Optional for flexibility
 }
 
 const AdSenseAd = ({
-  slotDesktop,
-  slotMobile,
-  format = 'auto',
-  layout = null,
+  slot,
+  style = { display: 'block', textAlign: 'center' },
   className = '',
-  sticky = false,
+  format = 'auto',
+  responsive = true,
+  layout = 'in-article',
+  clientId = 'ca-pub-6402737863827515'
 }: AdSenseAdProps) => {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const adRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
   const [adLoaded, setAdLoaded] = useState(false);
+  const [showContainer, setShowContainer] = useState(true);
+  const [adInitialized, setAdInitialized] = useState(false);
+  const adRef = useRef<HTMLElement | null>(null);
 
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  const slot = isMobile && slotMobile ? slotMobile : slotDesktop;
+  const isProduction = import.meta.env.PROD;
+
+  const checkAdSenseScript = useCallback(() => {
+    if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${clientId}`;
+      script.crossOrigin = 'anonymous';
+      script.onerror = () => {
+        console.warn('AdSense script failed to load.');
+        setShowContainer(true);
+      };
+      document.head.appendChild(script);
+    }
+  }, [clientId]);
 
   useEffect(() => {
-    if (!wrapperRef.current) return;
+    if (adInitialized || !slot) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.5 }
-    );
-
-    observer.observe(wrapperRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!isVisible || !adRef.current) return;
-
-    const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
-
-    if (isProduction && !adRef.current.getAttribute('data-adsbygoogle-status')) {
-      const existingScript = document.querySelector('script[src*="adsbygoogle.js"]');
-      if (!existingScript) {
-        const script = document.createElement('script');
-        script.async = true;
-        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6402737863827515';
-        script.crossOrigin = 'anonymous';
-        document.head.appendChild(script);
-      }
-
-      setTimeout(() => {
-        try {
-          // @ts-ignore
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
-        } catch (e) {
-          console.warn('AdSense error:', e);
-        }
-      }, 500);
+    if (!isProduction) {
+      setShowContainer(true);
+      setAdLoaded(false);
+      return;
     }
 
-    // Check if ad actually loads
-    setTimeout(() => {
-      if (adRef.current) {
-        const hasContent = adRef.current.innerHTML.trim().length > 0;
-        const hasHeight = adRef.current.offsetHeight > 50;
-        setAdLoaded(hasContent && hasHeight);
+    checkAdSenseScript();
+
+    const timer = setTimeout(() => {
+      try {
+        const adElement = adRef.current;
+        if (adElement && !adElement.hasAttribute('data-adsbygoogle-status')) {
+          // @ts-ignore
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+          setAdInitialized(true);
+
+          setTimeout(() => {
+            if (adElement) {
+              const isLoaded = (
+                adElement.innerHTML.trim().length > 0 &&
+                (adElement.children.length > 0 || adElement.offsetHeight > 10)
+              );
+              setAdLoaded(isLoaded);
+              setShowContainer(true);
+            }
+          }, 2500);
+        }
+      } catch (err) {
+        console.error('AdSense init error:', err);
+        setShowContainer(true);
       }
-    }, 2500);
-  }, [isVisible]);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [slot, adInitialized, checkAdSenseScript, isProduction]);
+
+  if (!showContainer) return null;
+
+  if (!isProduction) {
+    return (
+      <div className={`adsense-placeholder w-full max-w-screen-xl mx-auto ${className}`} style={{
+        minHeight: '90px',
+        padding: '8px',
+        margin: '12px auto',
+        backgroundColor: 'hsl(var(--muted))',
+        border: '1px dashed hsl(var(--border))',
+        borderRadius: '8px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}>
+        <span className="text-sm text-muted-foreground">Ad Placeholder (Only in Production)</span>
+      </div>
+    );
+  }
 
   return (
-    <div
-      ref={wrapperRef}
-      className={`adsense-wrapper ${className} ${sticky ? 'sticky top-20' : ''}`}
-      style={{
-        minHeight: '90px',
-        display: isVisible ? 'block' : 'none',
-        padding: '8px',
-      }}
-    >
+    <div className={`adsense-container w-full max-w-screen-xl mx-auto ${className}`} style={{
+      minHeight: adLoaded ? 'auto' : '90px',
+      padding: '8px',
+      margin: '12px auto',
+      overflow: 'hidden',
+      transition: 'all 0.3s ease',
+      backgroundColor: 'transparent'
+    }}>
       <ins
         ref={adRef as any}
         className="adsbygoogle"
         style={{
-          display: 'block',
+          ...style,
           width: '100%',
-          minHeight: '90px',
-          margin: '0 auto',
           opacity: adLoaded ? 1 : 0.8,
-          transition: 'opacity 0.3s ease-in-out',
+          transition: 'opacity 0.3s ease',
+          margin: '0 auto'
         }}
-        data-ad-client="ca-pub-6402737863827515"
+        data-ad-client={clientId}
         data-ad-slot={slot}
         data-ad-format={format}
-        data-full-width-responsive="true"
-        {...(layout ? { 'data-ad-layout': layout } : {})}
+        data-full-width-responsive={responsive ? "true" : "false"}
+        {...(layout && { 'data-ad-layout': layout })}
       />
     </div>
   );
