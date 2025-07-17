@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { resolveImageUrl } from '@/utils/imageResolver';
 
 interface OptimizedImageProps {
@@ -22,7 +22,10 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   width,
   height,
 }) => {
-  const [currentSrc, setCurrentSrc] = useState(resolveImageUrl(src));
+  const [currentSrc, setCurrentSrc] = useState(() => {
+    const resolved = resolveImageUrl(src);
+    return resolved;
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
@@ -35,6 +38,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     console.warn(`Image failed to load: ${currentSrc}`);
     setIsLoading(false);
     
+    // Try fallback if not already using it
     if (currentSrc !== resolveImageUrl(fallbackSrc)) {
       setCurrentSrc(resolveImageUrl(fallbackSrc));
       setHasError(false);
@@ -46,6 +50,16 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       onError(e);
     }
   }, [currentSrc, fallbackSrc, onError]);
+
+  // Update src when prop changes
+  useEffect(() => {
+    const newSrc = resolveImageUrl(src);
+    if (newSrc !== currentSrc) {
+      setCurrentSrc(newSrc);
+      setIsLoading(true);
+      setHasError(false);
+    }
+  }, [src, currentSrc]);
 
   if (hasError) {
     return (

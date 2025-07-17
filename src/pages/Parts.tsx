@@ -228,8 +228,8 @@ const Parts = () => {
       />
 
       {/* Ad Section 1 - After Hero */}
-      <section className="py-2 md:py-4 bg-muted/5">
-        <div className="w-full overflow-hidden">
+      <section className="py-4 md:py-6 bg-muted/5">
+        <div className="container mx-auto px-4">
           <AdPlacement position="top" pageType="parts" />
         </div>
       </section>
@@ -299,8 +299,8 @@ const Parts = () => {
       </section>
 
       {/* Ad Section 2 - After Categories */}
-      <section className="py-2 md:py-4 bg-muted/10">
-        <div className="w-full overflow-hidden">
+      <section className="py-4 md:py-6 bg-muted/10">
+        <div className="container mx-auto px-4">
           <AdPlacement position="middle" pageType="parts" />
         </div>
       </section>
@@ -584,8 +584,8 @@ const Parts = () => {
       </section>
 
       {/* Ad Section 3 - After Products */}
-      <section className="py-2 md:py-4 bg-muted/5">
-        <div className="w-full overflow-hidden">
+      <section className="py-4 md:py-6 bg-muted/5">
+        <div className="container mx-auto px-4">
           <AdPlacement position="bottom" pageType="parts" />
         </div>
       </section>

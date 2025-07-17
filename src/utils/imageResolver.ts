@@ -1,5 +1,5 @@
 // Vehicle images
-import fordBroncoRaptor from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
+import fordBroncoWildtrak from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
 import ramTrx from '@/assets/vehicles/ram-1500-trx.jpg';
 import jeepWrangler from '@/assets/vehicles/jeep-wrangler-rubicon.jpg';
 import toyota4Runner from '@/assets/vehicles/toyota-4runner-trd-pro.jpg';
@@ -47,7 +47,7 @@ import winterMaintenance from '@/assets/blog/winter-maintenance.jpg';
 // Image mapping
 const imageMap: Record<string, string> = {
   // Vehicles
-  '/src/assets/vehicles/ford-bronco-wildtrak.jpg': fordBroncoRaptor,
+  '/src/assets/vehicles/ford-bronco-wildtrak.jpg': fordBroncoWildtrak,
   '/src/assets/vehicles/ram-1500-trx.jpg': ramTrx,
   '/src/assets/vehicles/jeep-wrangler-rubicon.jpg': jeepWrangler,
   '/src/assets/vehicles/toyota-4runner-trd-pro.jpg': toyota4Runner,
@@ -108,7 +108,7 @@ export const resolveImageUrl = (imagePath: string | null): string => {
     return imagePath;
   }
 
-  // Check if we have a mapped image
+  // Check if we have a mapped image first
   if (imageMap[imagePath]) {
     return imageMap[imagePath];
   }
@@ -120,7 +120,25 @@ export const resolveImageUrl = (imagePath: string | null): string => {
 
   // For src/assets paths, try to resolve them
   if (imagePath.startsWith('/src/assets/')) {
-    return imageMap[imagePath] || '/placeholder.svg';
+    const mappedImage = imageMap[imagePath];
+    if (mappedImage) {
+      return mappedImage;
+    }
+    // If not mapped, log warning and return placeholder
+    console.warn(`Image not found in imageMap: ${imagePath}`);
+    return '/placeholder.svg';
+  }
+
+  // For assets paths without /src prefix
+  if (imagePath.startsWith('assets/')) {
+    const fullPath = `/src/${imagePath}`;
+    return imageMap[fullPath] || '/placeholder.svg';
+  }
+
+  // For relative paths starting with ./
+  if (imagePath.startsWith('./')) {
+    const cleanPath = imagePath.replace('./', '/src/assets/');
+    return imageMap[cleanPath] || '/placeholder.svg';
   }
 
   // If it starts with '/', it's likely a public path
@@ -128,7 +146,14 @@ export const resolveImageUrl = (imagePath: string | null): string => {
     return imagePath;
   }
 
+  // Try to resolve as relative asset path
+  const assetPath = `/src/assets/${imagePath}`;
+  if (imageMap[assetPath]) {
+    return imageMap[assetPath];
+  }
+
   // Default fallback
+  console.warn(`Could not resolve image path: ${imagePath}`);
   return '/placeholder.svg';
 };
 

@@ -31,26 +31,30 @@ const Index = () => {
       <HeroSection />
       
       {/* Ad Section 1 - After Hero */}
-      <section className="py-2 md:py-4 bg-muted/5">
-        <div className="w-full overflow-hidden">
-          <AdSenseAd 
-            slot="8773228071"
-            layout="in-article"
-            className="w-full"
-          />
+      <section className="py-4 md:py-6 bg-muted/5">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-center">
+            <AdSenseAd 
+              slot="8773228071"
+              layout="in-article"
+              className="w-full max-w-4xl"
+            />
+          </div>
         </div>
       </section>
       
       <FeatureCards />
       
       {/* Ad Section 2 - Mid Page */}
-      <section className="py-2 md:py-4 bg-muted/10">
-        <div className="w-full overflow-hidden">
-          <AdSenseAd 
-            slot="8773228071"
-            layout="in-article"
-            className="w-full"
-          />
+      <section className="py-4 md:py-6 bg-muted/10">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-center">
+            <AdSenseAd 
+              slot="8773228071"
+              layout="in-article"
+              className="w-full max-w-4xl"
+            />
+          </div>
         </div>
       </section>
       
@@ -61,13 +65,15 @@ const Index = () => {
       <ClubsEventsSection />
       
       {/* Ad Section 3 - After Events */}
-      <section className="py-2 md:py-4 bg-muted/5">
-        <div className="w-full overflow-hidden">
-          <AdSenseAd 
-            slot="8773228071"
-            layout="in-article"
-            className="w-full"
-          />
+      <section className="py-4 md:py-6 bg-muted/5">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-center">
+            <AdSenseAd 
+              slot="8773228071"
+              layout="in-article"
+              className="w-full max-w-4xl"
+            />
+          </div>
         </div>
       </section>
       
@@ -75,13 +81,15 @@ const Index = () => {
       <InsuranceSection />
       
       {/* Ad Section 4 - Before CTA */}
-      <section className="py-2 md:py-4 bg-muted/10">
-        <div className="w-full overflow-hidden">
-          <AdSenseAd 
-            slot="8773228071"
-            layout="in-article"
-            className="w-full"
-          />
+      <section className="py-4 md:py-6 bg-muted/10">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-center">
+            <AdSenseAd 
+              slot="8773228071"
+              layout="in-article"
+              className="w-full max-w-4xl"
+            />
+          </div>
         </div>
       </section>
       

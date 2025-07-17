@@ -155,12 +155,12 @@ const Vehicles = () => {
         icon={Car}
       />
 
-        {/* Ad Section 1 - After Hero */}
-        <section className="py-2 md:py-4 bg-muted/5">
-          <div className="w-full overflow-hidden">
-            <AdPlacement position="top" pageType="vehicles" />
-          </div>
-        </section>
+      {/* Ad Section 1 - After Hero */}
+      <section className="py-4 md:py-6 bg-muted/5">
+        <div className="container mx-auto px-4">
+          <AdPlacement position="top" pageType="vehicles" />
+        </div>
+      </section>
 
       <div className="container mx-auto px-4 py-8">
         {/* Filters */}
@@ -204,13 +204,15 @@ const Vehicles = () => {
         </div>
 
         {/* Ad Section 2 - After Filters */}
-        <section className="py-2 md:py-4 bg-muted/10">
-          <div className="w-full overflow-hidden">
-            <AdSenseAd 
-              slot="8773228071"
-              layout="in-article"
-              className="w-full"
-            />
+        <section className="py-4 md:py-6 bg-muted/10">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-center">
+              <AdSenseAd 
+                slot="8773228071"
+                layout="in-article"
+                className="w-full max-w-4xl"
+              />
+            </div>
           </div>
         </section>
 
@@ -435,13 +437,15 @@ const Vehicles = () => {
         )}
 
         {/* Ad Section 3 - After Vehicle Grid */}
-        <section className="py-2 md:py-4 bg-muted/5 mb-8">
-          <div className="w-full overflow-hidden">
-            <AdSenseAd 
-              slot="8773228071"
-              layout="in-article"
-              className="w-full"
-            />
+        <section className="py-4 md:py-6 bg-muted/5 mb-8">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-center">
+              <AdSenseAd 
+                slot="8773228071"
+                layout="in-article"
+                className="w-full max-w-4xl"
+              />
+            </div>
           </div>
         </section>
       </div>

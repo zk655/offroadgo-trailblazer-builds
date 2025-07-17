@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Shield, Star, DollarSign, Calendar, CheckCircle, Phone, ExternalLink, Truck, Car, Filter } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import OptimizedImage from '@/components/OptimizedImage';
+import AdPlacement from '@/components/AdPlacement';
 
 interface InsuranceProvider {
   id: string;
@@ -150,6 +151,13 @@ const Insurance = () => {
           <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
             Protect your trucks and SUVs with comprehensive coverage from top-rated insurance providers. Compare rates and find the perfect policy.
           </p>
+        </div>
+      </section>
+
+      {/* Ad Section 1 - After Hero */}
+      <section className="py-4 md:py-6 bg-muted/5">
+        <div className="container mx-auto px-4">
+          <AdPlacement position="top" pageType="insurance" />
         </div>
       </section>
 
@@ -436,6 +444,13 @@ const Insurance = () => {
           </div>
         </section>
       )}
+
+      {/* Ad Section 2 - Before Footer */}
+      <section className="py-4 md:py-6 bg-muted/10">
+        <div className="container mx-auto px-4">
+          <AdPlacement position="bottom" pageType="insurance" />
+        </div>
+      </section>
 
       <Footer />
     </div>

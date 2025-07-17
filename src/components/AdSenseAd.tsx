@@ -77,12 +77,12 @@ const AdSenseAd = ({
   }
 
   return (
-    <div className={`adsense-container w-full ${className}`} style={{ 
+    <div className={`adsense-container w-full max-w-screen-xl mx-auto ${className}`} style={{ 
       minHeight: adLoaded ? 'auto' : '90px',
       maxHeight: 'none',
       padding: '8px',
       backgroundColor: 'transparent',
-      margin: '12px 0',
+      margin: '12px auto',
       overflow: 'hidden',
       transition: 'all 0.3s ease'
     }}>
@@ -96,7 +96,8 @@ const AdSenseAd = ({
           height: 'auto',
           backgroundColor: 'transparent',
           opacity: adLoaded ? 1 : 0.8,
-          transition: 'opacity 0.3s ease'
+          transition: 'opacity 0.3s ease',
+          margin: '0 auto'
         }}
         data-ad-client="ca-pub-6402737863827515"
         data-ad-slot={slot}

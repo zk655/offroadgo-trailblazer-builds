@@ -57,12 +57,12 @@ const AdPlacement: React.FC<AdPlacementProps> = ({
   };
 
   return (
-    <div className={`ad-placement ad-placement-${position} ${className}`}>
+    <div className={`ad-placement ad-placement-${position} ${className} flex justify-center`}>
       <AdSenseAd
         slot={getAdSlot()}
         format={getAdFormat()}
         layout={getAdLayout()}
-        className={`ad-${position}`}
+        className={`ad-${position} w-full max-w-4xl`}
       />
     </div>
   );
