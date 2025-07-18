@@ -8,6 +8,7 @@ interface AdSenseAdProps {
   responsive?: boolean;
   layout?: string | null;
   clientId?: string; // Optional for flexibility
+  onAdLoaded?: (loaded: boolean) => void;
 }
 
 const AdSenseAd = ({
@@ -17,7 +18,8 @@ const AdSenseAd = ({
   format = 'auto',
   responsive = true,
   layout = 'in-article',
-  clientId = 'ca-pub-6402737863827515'
+  clientId = 'ca-pub-6402737863827515',
+  onAdLoaded
 }: AdSenseAdProps) => {
   const [adLoaded, setAdLoaded] = useState(false);
   const [showContainer, setShowContainer] = useState(true);
@@ -78,6 +80,13 @@ const AdSenseAd = ({
 
     return () => clearTimeout(timer);
   }, [slot, adInitialized, checkAdSenseScript, isProduction]);
+
+  // Notify parent when ad loaded state changes
+  useEffect(() => {
+    if (onAdLoaded) {
+      onAdLoaded(adLoaded);
+    }
+  }, [adLoaded, onAdLoaded]);
 
   if (!showContainer) return null;
 
