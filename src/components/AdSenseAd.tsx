@@ -7,8 +7,7 @@ interface AdSenseAdProps {
   format?: string;
   responsive?: boolean;
   layout?: string | null;
-  clientId?: string; // Optional for flexibility
-  onAdLoaded?: (loaded: boolean) => void;
+  clientId?: string;
 }
 
 const AdSenseAd = ({
@@ -18,8 +17,7 @@ const AdSenseAd = ({
   format = 'auto',
   responsive = true,
   layout = 'in-article',
-  clientId = 'ca-pub-6402737863827515',
-  onAdLoaded
+  clientId = 'ca-pub-6402737863827515'
 }: AdSenseAdProps) => {
   const [adLoaded, setAdLoaded] = useState(false);
   const [showContainer, setShowContainer] = useState(true);
@@ -29,7 +27,7 @@ const AdSenseAd = ({
   const isProduction = import.meta.env.PROD;
 
   const checkAdSenseScript = useCallback(() => {
-    if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
+    if (!document.querySelector(`script[src*="adsbygoogle.js"]`)) {
       const script = document.createElement('script');
       script.async = true;
       script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${clientId}`;
@@ -80,13 +78,6 @@ const AdSenseAd = ({
 
     return () => clearTimeout(timer);
   }, [slot, adInitialized, checkAdSenseScript, isProduction]);
-
-  // Notify parent when ad loaded state changes
-  useEffect(() => {
-    if (onAdLoaded) {
-      onAdLoaded(adLoaded);
-    }
-  }, [adLoaded, onAdLoaded]);
 
   if (!showContainer) return null;
 
