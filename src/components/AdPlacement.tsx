@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import AdSenseAd from './AdSenseAd';
 import { useAdBlocker } from '@/hooks/useAdBlocker';
 
@@ -18,10 +18,9 @@ const AdPlacement: React.FC<AdPlacementProps> = ({
   sticky = false
 }) => {
   const { isBlocked, isChecking } = useAdBlocker();
-  const [currentSlotIndex, setCurrentSlotIndex] = useState(0);
   const [adLoaded, setAdLoaded] = useState(false);
-
-  // Rotating ad slots for each position
+  
+  // Ad slots for each position
   const adSlots = {
     top: ['8773228071', '1234567890', '0987654321'],
     middle: ['2268201929', '2345678901', '1098765432'], 
@@ -30,19 +29,12 @@ const AdPlacement: React.FC<AdPlacementProps> = ({
     inline: ['6871374497', '5678901234', '4321098765']
   };
 
-  const getAdSlot = useCallback(() => {
+  // Pick random slot once per mount and keep it fixed
+  const selectedSlot = useMemo(() => {
     const slots = adSlots[position] || adSlots.top;
-    return slots[currentSlotIndex % slots.length];
-  }, [position, currentSlotIndex]);
-
-  // Rotate ad slots every 30 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlotIndex(prev => prev + 1);
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, []);
+    const randomIndex = Math.floor(Math.random() * slots.length);
+    return slots[randomIndex];
+  }, [position]); // Only recalculates if position changes
 
   // Analytics tracking
   useEffect(() => {
@@ -52,7 +44,7 @@ const AdPlacement: React.FC<AdPlacementProps> = ({
         (window as any).gtag('event', 'ad_impression', {
           position,
           pageType,
-          slot: getAdSlot(),
+          slot: selectedSlot,
           timestamp: Date.now()
         });
       }
@@ -62,11 +54,11 @@ const AdPlacement: React.FC<AdPlacementProps> = ({
         (window as any).analytics.track('Ad Impression', {
           position,
           pageType,
-          slot: getAdSlot()
+          slot: selectedSlot
         });
       }
     }
-  }, [adLoaded, isBlocked, position, pageType, getAdSlot]);
+  }, [adLoaded, isBlocked, position, pageType, selectedSlot]);
 
   const getAdFormat = () => {
     switch (position) {
@@ -127,7 +119,7 @@ const AdPlacement: React.FC<AdPlacementProps> = ({
   return (
     <div className={getResponsiveClasses()}>
       <AdSenseAd
-        slot={getAdSlot()}
+        slot={selectedSlot}
         format={getAdFormat()}
         layout={getAdLayout()}
         className={getAdClasses()}
