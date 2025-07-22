@@ -28,6 +28,14 @@ import Insurance from "./pages/Insurance";
 import EventDetail from "./pages/EventDetail";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
+import AdminBlogs from "./pages/admin/AdminBlogs";
+import AdminVehicles from "./pages/admin/AdminVehicles";
+import AdminParts from "./pages/admin/AdminParts";
+import AdminTrails from "./pages/admin/AdminTrails";
+import AdminInsurance from "./pages/admin/AdminInsurance";
+import AdminEvents from "./pages/admin/AdminEvents";
+import AdminClubs from "./pages/admin/AdminClubs";
+import AdminUsers from "./pages/admin/AdminUsers";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +76,14 @@ const App = () => (
               <Route path="/event/:id" element={<EventDetail />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/blogs" element={<AdminBlogs />} />
+              <Route path="/admin/vehicles" element={<AdminVehicles />} />
+              <Route path="/admin/parts" element={<AdminParts />} />
+              <Route path="/admin/trails" element={<AdminTrails />} />
+              <Route path="/admin/insurance" element={<AdminInsurance />} />
+              <Route path="/admin/events" element={<AdminEvents />} />
+              <Route path="/admin/clubs" element={<AdminClubs />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
