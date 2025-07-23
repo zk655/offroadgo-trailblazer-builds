@@ -51,7 +51,7 @@ const coverageTypes = ["Liability", "Comprehensive", "Collision", "Full Coverage
 const specializations = ["Off-Road", "ATV/UTV", "Modified Vehicles", "Racing", "Commercial", "Classic Cars"];
 
 export default function AdminInsurance() {
-  const { user, userRole } = useAuth();
+  const { user, userRole, loading, roleLoading } = useAuth();
   const [isProviderDialogOpen, setIsProviderDialogOpen] = useState(false);
   const [isQuoteDialogOpen, setIsQuoteDialogOpen] = useState(false);
   const [editingProvider, setEditingProvider] = useState<any>(null);
@@ -93,6 +93,14 @@ export default function AdminInsurance() {
       expiry_date: "",
     },
   });
+
+  if (loading || roleLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   if (!user) {
     return <Navigate to="/auth" replace />;

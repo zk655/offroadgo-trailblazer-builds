@@ -44,7 +44,7 @@ interface VehicleFormData {
 }
 
 export default function AdminVehicles() {
-  const { user, userRole } = useAuth();
+  const { user, userRole, loading, roleLoading } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -80,6 +80,14 @@ export default function AdminVehicles() {
       warranty: "",
     },
   });
+
+  if (loading || roleLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   if (!user) {
     return <Navigate to="/auth" replace />;

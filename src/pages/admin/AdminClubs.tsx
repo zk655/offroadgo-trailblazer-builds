@@ -31,7 +31,7 @@ interface ClubFormData {
 const clubTypes = ["Rally", "Racing", "Trail Riding", "Social", "Competition", "Training", "Mixed"];
 
 export default function AdminClubs() {
-  const { user, userRole } = useAuth();
+  const { user, userRole, loading, roleLoading } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingClub, setEditingClub] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -53,6 +53,14 @@ export default function AdminClubs() {
       image_url: "",
     },
   });
+
+  if (loading || roleLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   if (!user) {
     return <Navigate to="/auth" replace />;

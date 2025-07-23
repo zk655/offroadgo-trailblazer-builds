@@ -21,7 +21,7 @@ interface RoleFormData {
 }
 
 export default function AdminUsers() {
-  const { user, userRole } = useAuth();
+  const { user, userRole, loading, roleLoading } = useAuth();
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
@@ -33,6 +33,14 @@ export default function AdminUsers() {
       role: "",
     },
   });
+
+  if (loading || roleLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   if (!user) {
     return <Navigate to="/auth" replace />;

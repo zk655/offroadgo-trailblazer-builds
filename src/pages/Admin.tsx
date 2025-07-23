@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +17,7 @@ import {
 
 export default function Admin() {
   const { user, signOut, userRole, loading, roleLoading } = useAuth();
+  const navigate = useNavigate();
 
   if (loading || roleLoading) {
     return (
@@ -126,7 +127,7 @@ export default function Admin() {
             <Card 
               key={section.path} 
               className="cursor-pointer hover:shadow-lg transition-shadow"
-              onClick={() => window.location.href = section.path}
+              onClick={() => navigate(section.path)}
             >
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
