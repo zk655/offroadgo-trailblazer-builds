@@ -6,6 +6,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  roleLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, metadata?: any) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -18,6 +19,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [roleLoading, setRoleLoading] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
@@ -30,11 +32,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         // Fetch user role when session changes
         if (session?.user) {
+          setRoleLoading(true);
           setTimeout(() => {
             fetchUserRole(session.user.id);
           }, 0);
         } else {
           setUserRole(null);
+          setRoleLoading(false);
         }
       }
     );
@@ -46,6 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       
       if (session?.user) {
+        setRoleLoading(true);
         setTimeout(() => {
           fetchUserRole(session.user.id);
         }, 0);
@@ -65,9 +70,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       if (!error && data) {
         setUserRole(data.role);
+      } else {
+        // If no role found, set as 'user' by default
+        setUserRole('user');
       }
     } catch (error) {
       console.error('Error fetching user role:', error);
+      setUserRole('user');
+    } finally {
+      setRoleLoading(false);
     }
   };
 
@@ -96,6 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     await supabase.auth.signOut();
     setUserRole(null);
+    setRoleLoading(false);
   };
 
   return (
@@ -104,6 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         session,
         loading,
+        roleLoading,
         signIn,
         signUp,
         signOut,

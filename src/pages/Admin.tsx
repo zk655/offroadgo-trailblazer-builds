@@ -16,9 +16,9 @@ import {
 } from 'lucide-react';
 
 export default function Admin() {
-  const { user, signOut, userRole, loading } = useAuth();
+  const { user, signOut, userRole, loading, roleLoading } = useAuth();
 
-  if (loading) {
+  if (loading || roleLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
