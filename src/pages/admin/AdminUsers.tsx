@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import AdminHeader from "@/components/AdminHeader";
 
 interface RoleFormData {
   user_id: string;
@@ -145,12 +146,10 @@ export default function AdminUsers() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">User Management</h1>
-            <p className="text-muted-foreground">Manage user profiles and permissions</p>
-          </div>
-        </div>
+        <AdminHeader
+          title="User Management"
+          description="Manage user profiles and permissions"
+        />
 
         <Tabs defaultValue="profiles" className="space-y-6">
           <TabsList>

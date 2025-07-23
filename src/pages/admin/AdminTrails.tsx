@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import AdminHeader from "@/components/AdminHeader";
 
 interface TrailFormData {
   name: string;
@@ -211,18 +212,17 @@ export default function AdminTrails() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Trail Management</h1>
-            <p className="text-muted-foreground">Manage off-road trails and routes</p>
-          </div>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={handleCreate}>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Trail
-              </Button>
-            </DialogTrigger>
+        <AdminHeader
+          title="Trail Management"
+          description="Manage off-road trails and routes"
+          action={
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={handleCreate}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Trail
+                </Button>
+              </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>
@@ -418,8 +418,9 @@ export default function AdminTrails() {
                 </form>
               </Form>
             </DialogContent>
-          </Dialog>
-        </div>
+            </Dialog>
+          }
+        />
 
         <div className="mb-6 flex gap-4">
           <div className="relative flex-1">

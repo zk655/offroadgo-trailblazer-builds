@@ -13,6 +13,8 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import AdminHeader from "@/components/AdminHeader";
+import BlogEditor from "@/components/BlogEditor";
 
 interface BlogFormData {
   title: string;
@@ -24,6 +26,7 @@ interface BlogFormData {
   cover_image: string;
   external_url: string;
   published_at: string;
+  images: string[];
 }
 
 export default function AdminBlogs() {
@@ -45,6 +48,7 @@ export default function AdminBlogs() {
       cover_image: "",
       external_url: "",
       published_at: "",
+      images: [],
     },
   });
 
@@ -74,6 +78,7 @@ export default function AdminBlogs() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-blogs"] });
+      queryClient.invalidateQueries({ queryKey: ["blogs"] }); // Invalidate blog page cache
       toast({ title: "Blog created successfully" });
       setIsDialogOpen(false);
       form.reset();
@@ -94,6 +99,7 @@ export default function AdminBlogs() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-blogs"] });
+      queryClient.invalidateQueries({ queryKey: ["blogs"] }); // Invalidate blog page cache
       toast({ title: "Blog updated successfully" });
       setIsDialogOpen(false);
       setEditingBlog(null);
@@ -111,6 +117,7 @@ export default function AdminBlogs() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-blogs"] });
+      queryClient.invalidateQueries({ queryKey: ["blogs"] }); // Invalidate blog page cache
       toast({ title: "Blog deleted successfully" });
     },
     onError: (error: any) => {
@@ -165,6 +172,7 @@ export default function AdminBlogs() {
       cover_image: blog.cover_image || "",
       external_url: blog.external_url || "",
       published_at: blog.published_at ? new Date(blog.published_at).toISOString().slice(0, 16) : "",
+      images: [],
     });
     setIsDialogOpen(true);
   };
@@ -178,52 +186,54 @@ export default function AdminBlogs() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Blog Management</h1>
-            <p className="text-muted-foreground">Manage your blog posts and articles</p>
-          </div>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={handleCreate}>
-                <Plus className="mr-2 h-4 w-4" />
-                Create Blog Post
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <AdminHeader
+          title="Blog Management"
+          description="Manage your blog posts and articles"
+          action={
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={handleCreate}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Blog Post
+                </Button>
+              </DialogTrigger>
+            <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>
                   {editingBlog ? "Edit Blog Post" : "Create New Blog Post"}
                 </DialogTitle>
               </DialogHeader>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="Blog post title" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="slug"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Slug</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="blog-post-url-slug" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Title</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="Blog post title" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="slug"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Slug</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="blog-post-url-slug" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  
                   <FormField
                     control={form.control}
                     name="excerpt"
@@ -237,6 +247,7 @@ export default function AdminBlogs() {
                       </FormItem>
                     )}
                   />
+                  
                   <FormField
                     control={form.control}
                     name="content"
@@ -244,7 +255,12 @@ export default function AdminBlogs() {
                       <FormItem>
                         <FormLabel>Content</FormLabel>
                         <FormControl>
-                          <Textarea {...field} placeholder="Blog post content..." rows={8} />
+                          <BlogEditor
+                            content={field.value}
+                            onChange={field.onChange}
+                            images={form.watch("images")}
+                            onImagesChange={(images) => form.setValue("images", images)}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -325,8 +341,9 @@ export default function AdminBlogs() {
                 </form>
               </Form>
             </DialogContent>
-          </Dialog>
-        </div>
+            </Dialog>
+          }
+        />
 
         <div className="mb-6">
           <div className="relative">

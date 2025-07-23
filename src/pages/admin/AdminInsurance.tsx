@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import AdminHeader from "@/components/AdminHeader";
 
 interface ProviderFormData {
   name: string;
@@ -243,12 +244,10 @@ export default function AdminInsurance() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Insurance Management</h1>
-            <p className="text-muted-foreground">Manage insurance providers and quotes</p>
-          </div>
-        </div>
+        <AdminHeader
+          title="Insurance Management"
+          description="Manage insurance providers and quotes"
+        />
 
         <Tabs defaultValue="providers" className="space-y-6">
           <TabsList>

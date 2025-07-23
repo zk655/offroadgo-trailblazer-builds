@@ -49,17 +49,19 @@ const Blog = () => {
       // Get live content first
       const liveContent = await getLiveBlogContent();
       
-      // Get local database content
+      // Get local database content with proper ordering
       const { data, error } = await supabase
         .from('blogs')
         .select('*')
-        .order('published_at', { ascending: false });
+        .order('created_at', { ascending: false });
 
-      // Combine live and local content
-      const allPosts = [...liveContent, ...(data || [])];
+      if (error) throw error;
+
+      // Combine live and local content, ensuring local content comes first
+      const allPosts = [...(data || []), ...liveContent];
       setPosts(allPosts);
     } catch (error) {
-      // Handle error silently in production
+      console.error('Error fetching posts:', error);
     } finally {
       setLoading(false);
     }
