@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Edit, Plus, Search } from "lucide-react";
+import { Trash2, Edit, Plus, Search, Eye } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Navigate } from "react-router-dom";
@@ -34,6 +34,8 @@ export default function AdminBlogs() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [viewingBlog, setViewingBlog] = useState<any>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -181,6 +183,11 @@ export default function AdminBlogs() {
     setEditingBlog(null);
     form.reset();
     setIsDialogOpen(true);
+  };
+
+  const handleView = (blog: any) => {
+    setViewingBlog(blog);
+    setIsViewDialogOpen(true);
   };
 
   return (
@@ -406,6 +413,13 @@ export default function AdminBlogs() {
                       <Button
                         variant="outline"
                         size="sm"
+                        onClick={() => handleView(blog)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => handleEdit(blog)}
                       >
                         <Edit className="h-4 w-4" />
@@ -433,6 +447,51 @@ export default function AdminBlogs() {
             </CardContent>
           </Card>
         )}
+
+        {/* View Blog Dialog */}
+        <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{viewingBlog?.title}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <span>By {viewingBlog?.author || "Unknown"}</span>
+                <span>{viewingBlog?.created_at ? new Date(viewingBlog.created_at).toLocaleDateString() : ""}</span>
+              </div>
+              
+              {viewingBlog?.cover_image && (
+                <img 
+                  src={viewingBlog.cover_image} 
+                  alt={viewingBlog.title}
+                  className="w-full h-64 object-cover rounded-lg"
+                />
+              )}
+              
+              {viewingBlog?.excerpt && (
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <h3 className="font-semibold mb-2">Excerpt</h3>
+                  <p className="text-muted-foreground">{viewingBlog.excerpt}</p>
+                </div>
+              )}
+              
+              <div className="prose max-w-none">
+                <div dangerouslySetInnerHTML={{ __html: viewingBlog?.content || "" }} />
+              </div>
+              
+              {viewingBlog?.tags && viewingBlog.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-4 border-t">
+                  <span className="text-sm font-medium">Tags:</span>
+                  {viewingBlog.tags.map((tag: string, index: number) => (
+                    <Badge key={index} variant="secondary">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
