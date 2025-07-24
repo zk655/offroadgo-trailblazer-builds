@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import '../styles/quill-editor.css';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Upload, X, Image } from "lucide-react";
+import { Upload, X, Image, List } from "lucide-react";
 
 interface BlogEditorProps {
   content: string;
@@ -17,23 +18,46 @@ interface BlogEditorProps {
 }
 
 const modules = {
-  toolbar: [
-    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-    ['bold', 'italic', 'underline', 'strike'],
-    [{ 'color': [] }, { 'background': [] }],
-    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-    [{ 'indent': '-1'}, { 'indent': '+1' }],
-    [{ 'align': [] }],
-    ['blockquote', 'code-block'],
-    ['link', 'image'],
-    ['clean']
-  ],
+  toolbar: {
+    container: [
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'script': 'sub'}, { 'script': 'super' }],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+      [{ 'indent': '-1'}, { 'indent': '+1' }],
+      [{ 'direction': 'rtl' }],
+      [{ 'align': [] }],
+      ['blockquote', 'code-block'],
+      ['link', 'image', 'video', 'formula'],
+      [{ 'table': 'TD' }],
+      ['clean']
+    ],
+    handlers: {
+      'table': function() {
+        const table = '<table><tr><td>Cell 1</td><td>Cell 2</td></tr><tr><td>Cell 3</td><td>Cell 4</td></tr></table>';
+        const range = this.quill.getSelection();
+        if (range) {
+          this.quill.clipboard.dangerouslyPasteHTML(range.index, table);
+        }
+      }
+    }
+  },
+  clipboard: {
+    matchVisual: false,
+  },
+  history: {
+    delay: 2000,
+    maxStack: 500,
+    userOnly: true
+  }
 };
 
 const formats = [
-  'header', 'bold', 'italic', 'underline', 'strike',
-  'color', 'background', 'list', 'bullet', 'indent',
-  'align', 'blockquote', 'code-block', 'link', 'image'
+  'header', 'font', 'size', 'bold', 'italic', 'underline', 'strike',
+  'color', 'background', 'script', 'list', 'bullet', 'check', 'indent',
+  'direction', 'align', 'blockquote', 'code-block', 'link', 'image', 'video', 'formula'
 ];
 
 export default function BlogEditor({ content, onChange, images = [], onImagesChange, className = "" }: BlogEditorProps) {
@@ -64,11 +88,53 @@ export default function BlogEditor({ content, onChange, images = [], onImagesCha
     onChange(content + imageTag);
   };
 
+  const generateTableOfContents = () => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, 'text/html');
+    const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    
+    if (headings.length === 0) {
+      return;
+    }
+
+    let tocHtml = '<div class="table-of-contents"><h3>Table of Contents</h3><ul>';
+    
+    headings.forEach((heading, index) => {
+      const level = parseInt(heading.tagName.charAt(1));
+      const text = heading.textContent || `Heading ${index + 1}`;
+      const id = `heading-${index}`;
+      
+      // Add id to heading if it doesn't have one
+      heading.id = id;
+      
+      const indent = '  '.repeat(level - 1);
+      tocHtml += `${indent}<li><a href="#${id}">${text}</a></li>`;
+    });
+    
+    tocHtml += '</ul></div>';
+    
+    // Update content with modified headings
+    const updatedContent = doc.body.innerHTML;
+    onChange(tocHtml + '\n\n' + updatedContent);
+  };
+
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Rich Text Editor */}
       <div className="space-y-2">
-        <Label>Content</Label>
+        <div className="flex items-center justify-between">
+          <Label>Content</Label>
+          <Button 
+            type="button"
+            variant="outline" 
+            size="sm" 
+            onClick={generateTableOfContents}
+            className="flex items-center gap-2"
+          >
+            <List className="h-4 w-4" />
+            Generate Table of Contents
+          </Button>
+        </div>
         <div className="min-h-[400px]">
           <ReactQuill
             theme="snow"
