@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import '../styles/quill-editor.css';
@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Upload, X, Image, List } from "lucide-react";
+import { Upload, X, Image, List, Trash2 } from "lucide-react";
+import ImageUploadDropzone from './ImageUploadDropzone';
+import { useImageUpload } from '@/hooks/useImageUpload';
 
 interface BlogEditorProps {
   content: string;
@@ -15,6 +17,7 @@ interface BlogEditorProps {
   images?: string[];
   onImagesChange?: (images: string[]) => void;
   className?: string;
+  blogId?: string;
 }
 
 const modules = {
@@ -60,9 +63,11 @@ const formats = [
   'direction', 'align', 'blockquote', 'code-block', 'link', 'image', 'video', 'formula'
 ];
 
-export default function BlogEditor({ content, onChange, images = [], onImagesChange, className = "" }: BlogEditorProps) {
+export default function BlogEditor({ content, onChange, images = [], onImagesChange, className = "", blogId }: BlogEditorProps) {
   const [imageUrls, setImageUrls] = useState<string[]>(images);
   const [newImageUrl, setNewImageUrl] = useState("");
+  const quillRef = useRef<ReactQuill>(null);
+  const { uploadImage } = useImageUpload({ blogId });
 
   useEffect(() => {
     setImageUrls(images);
@@ -84,8 +89,35 @@ export default function BlogEditor({ content, onChange, images = [], onImagesCha
   };
 
   const insertImageIntoContent = (imageUrl: string) => {
-    const imageTag = `<img src="${imageUrl}" alt="Blog image" style="max-width: 100%; height: auto; margin: 16px 0;" />`;
-    onChange(content + imageTag);
+    const quill = quillRef.current?.getEditor();
+    if (quill) {
+      const range = quill.getSelection() || { index: quill.getLength(), length: 0 };
+      quill.insertEmbed(range.index, 'image', imageUrl);
+      quill.setSelection({ index: range.index + 1, length: 0 });
+    } else {
+      // Fallback to appending at the end
+      const imageTag = `<img src="${imageUrl}" alt="Blog image" style="max-width: 100%; height: auto; margin: 16px 0;" />`;
+      onChange(content + imageTag);
+    }
+  };
+
+  const handleFileUpload = async (file: File) => {
+    const uploadedImage = await uploadImage(file);
+    if (uploadedImage) {
+      const updatedImages = [...imageUrls, uploadedImage.url];
+      setImageUrls(updatedImages);
+      onImagesChange?.(updatedImages);
+    }
+  };
+
+  const handleEditorImageUpload = async (file: File) => {
+    const uploadedImage = await uploadImage(file);
+    if (uploadedImage) {
+      insertImageIntoContent(uploadedImage.url);
+      const updatedImages = [...imageUrls, uploadedImage.url];
+      setImageUrls(updatedImages);
+      onImagesChange?.(updatedImages);
+    }
   };
 
   const generateTableOfContents = () => {
@@ -124,19 +156,27 @@ export default function BlogEditor({ content, onChange, images = [], onImagesCha
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label>Content</Label>
-          <Button 
-            type="button"
-            variant="outline" 
-            size="sm" 
-            onClick={generateTableOfContents}
-            className="flex items-center gap-2"
-          >
-            <List className="h-4 w-4" />
-            Generate Table of Contents
-          </Button>
+          <div className="flex gap-2">
+            <ImageUploadDropzone
+              onImageUploaded={(url) => insertImageIntoContent(url)}
+              blogId={blogId}
+              variant="compact"
+            />
+            <Button 
+              type="button"
+              variant="outline" 
+              size="sm" 
+              onClick={generateTableOfContents}
+              className="flex items-center gap-2"
+            >
+              <List className="h-4 w-4" />
+              Generate Table of Contents
+            </Button>
+          </div>
         </div>
         <div className="min-h-[400px]">
           <ReactQuill
+            ref={quillRef}
             theme="snow"
             value={content}
             onChange={onChange}
@@ -157,18 +197,30 @@ export default function BlogEditor({ content, onChange, images = [], onImagesCha
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Add Image */}
-          <div className="flex gap-2">
-            <Input
-              placeholder="Enter image URL..."
-              value={newImageUrl}
-              onChange={(e) => setNewImageUrl(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && addImage()}
+          {/* Upload or Add Image */}
+          <div className="space-y-4">
+            <Label>Upload or Add Images</Label>
+            <ImageUploadDropzone
+              onImageUploaded={(url) => {
+                const updatedImages = [...imageUrls, url];
+                setImageUrls(updatedImages);
+                onImagesChange?.(updatedImages);
+              }}
+              blogId={blogId}
+              className="h-32"
             />
-            <Button onClick={addImage} size="sm">
-              <Upload className="h-4 w-4 mr-2" />
-              Add
-            </Button>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Or enter image URL..."
+                value={newImageUrl}
+                onChange={(e) => setNewImageUrl(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && addImage()}
+              />
+              <Button onClick={addImage} size="sm">
+                <Upload className="h-4 w-4 mr-2" />
+                Add URL
+              </Button>
+            </div>
           </div>
 
           {/* Image List */}
