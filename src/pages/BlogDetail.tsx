@@ -375,7 +375,7 @@ const BlogDetail = () => {
           <div className="prose prose-lg max-w-none mb-12">
             <div 
               className="blog-content" 
-              dangerouslySetInnerHTML={{ __html: generateDetailedContent(post.slug) }}
+              dangerouslySetInnerHTML={{ __html: post.content || generateDetailedContent(post.slug) }}
             />
           </div>
 
