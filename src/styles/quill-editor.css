@@ -189,6 +189,20 @@
   color: hsl(var(--primary-foreground)) !important;
 }
 
+/* Image Styling in Editor */
+.ql-editor img {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 8px !important;
+  margin: 16px 0 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  display: block !important;
+}
+
+.ql-editor p img {
+  margin: 16px auto !important;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .ql-toolbar {

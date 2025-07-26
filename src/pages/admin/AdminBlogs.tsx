@@ -266,8 +266,6 @@ export default function AdminBlogs() {
                            <BlogEditor
                              content={field.value}
                              onChange={field.onChange}
-                             images={form.watch("images")}
-                             onImagesChange={(images) => form.setValue("images", images)}
                              blogId={editingBlog?.id}
                            />
                         </FormControl>
