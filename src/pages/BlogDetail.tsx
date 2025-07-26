@@ -375,7 +375,11 @@ const BlogDetail = () => {
           <div className="prose prose-lg max-w-none mb-12">
             <div 
               className="blog-content" 
-              dangerouslySetInnerHTML={{ __html: post.content || generateDetailedContent(post.slug) }}
+              dangerouslySetInnerHTML={{ 
+                __html: post.content 
+                  ? post.content.replace(/<pre class="ql-syntax"[^>]*>/g, '<div>').replace(/<\/pre>/g, '</div>')
+                  : generateDetailedContent(post.slug) 
+              }}
             />
           </div>
 
