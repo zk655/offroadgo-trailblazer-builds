@@ -44,6 +44,21 @@ const modules = {
         if (range) {
           this.quill.clipboard.dangerouslyPasteHTML(range.index, table);
         }
+      },
+      'image': function() {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+        
+        input.onchange = () => {
+          const file = input.files?.[0];
+          if (file) {
+            // This will be handled by the BlogEditor component
+            const event = new CustomEvent('quill-image-upload', { detail: file });
+            document.dispatchEvent(event);
+          }
+        };
       }
     }
   },
@@ -68,6 +83,27 @@ export default function BlogEditor({ content, onChange, images = [], onImagesCha
   const [newImageUrl, setNewImageUrl] = useState("");
   const quillRef = useRef<ReactQuill>(null);
   const { uploadImage } = useImageUpload({ blogId });
+
+  // Handle custom Quill image upload events
+  useEffect(() => {
+    const handleQuillImageUpload = async (event: CustomEvent) => {
+      const file = event.detail;
+      if (file) {
+        const uploadedImage = await uploadImage(file);
+        if (uploadedImage) {
+          insertImageIntoContent(uploadedImage.url);
+          const updatedImages = [...imageUrls, uploadedImage.url];
+          setImageUrls(updatedImages);
+          onImagesChange?.(updatedImages);
+        }
+      }
+    };
+
+    document.addEventListener('quill-image-upload', handleQuillImageUpload as EventListener);
+    return () => {
+      document.removeEventListener('quill-image-upload', handleQuillImageUpload as EventListener);
+    };
+  }, [uploadImage, imageUrls, onImagesChange]);
 
   useEffect(() => {
     setImageUrls(images);
@@ -95,8 +131,8 @@ export default function BlogEditor({ content, onChange, images = [], onImagesCha
       quill.insertEmbed(range.index, 'image', imageUrl);
       quill.setSelection({ index: range.index + 1, length: 0 });
     } else {
-      // Fallback to appending at the end
-      const imageTag = `<img src="${imageUrl}" alt="Blog image" style="max-width: 100%; height: auto; margin: 16px 0;" />`;
+      // Fallback to appending at the end with better styling
+      const imageTag = `<p><img src="${imageUrl}" alt="Blog image" style="max-width: 100%; height: auto; margin: 16px 0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);" /></p>`;
       onChange(content + imageTag);
     }
   };

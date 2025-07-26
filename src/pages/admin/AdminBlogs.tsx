@@ -8,7 +8,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Edit, Plus, Search, Eye } from "lucide-react";
+import { Trash2, Edit, Plus, Search, Eye, X } from "lucide-react";
+import ImageUploadDropzone from "@/components/ImageUploadDropzone";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Navigate } from "react-router-dom";
@@ -307,9 +308,34 @@ export default function AdminBlogs() {
                     name="cover_image"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Cover Image URL</FormLabel>
+                        <FormLabel>Cover Image</FormLabel>
                         <FormControl>
-                          <Input {...field} placeholder="https://example.com/image.jpg" />
+                          <div className="space-y-4">
+                            <Input {...field} placeholder="https://example.com/image.jpg" />
+                            <ImageUploadDropzone
+                              onImageUploaded={(url) => field.onChange(url)}
+                              blogId={editingBlog?.id}
+                              variant="compact"
+                            />
+                            {field.value && (
+                              <div className="relative">
+                                <img 
+                                  src={field.value} 
+                                  alt="Cover preview" 
+                                  className="w-full h-32 object-cover rounded-lg"
+                                />
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  size="sm"
+                                  className="absolute top-2 right-2"
+                                  onClick={() => field.onChange("")}
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            )}
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
