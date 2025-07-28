@@ -72,8 +72,20 @@ export default function AdminBlogs() {
 
   const createMutation = useMutation({
     mutationFn: async (data: BlogFormData) => {
+      // Generate slug from title if not provided
+      let slug = data.slug;
+      if (!slug && data.title) {
+        slug = data.title
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-+|-+$/g, '');
+      }
+      
       const { error } = await supabase.from("blogs").insert({
         ...data,
+        slug,
         tags: data.tags ? data.tags.split(",").map(tag => tag.trim()) : [],
         published_at: data.published_at || null,
       });
@@ -93,8 +105,20 @@ export default function AdminBlogs() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: BlogFormData }) => {
+      // Generate slug from title if not provided
+      let slug = data.slug;
+      if (!slug && data.title) {
+        slug = data.title
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-+|-+$/g, '');
+      }
+      
       const { error } = await supabase.from("blogs").update({
         ...data,
+        slug,
         tags: data.tags ? data.tags.split(",").map(tag => tag.trim()) : [],
         published_at: data.published_at || null,
       }).eq("id", id);

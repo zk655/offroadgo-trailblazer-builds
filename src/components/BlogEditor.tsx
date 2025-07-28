@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import '../styles/quill-editor.css';
@@ -15,7 +15,8 @@ interface BlogEditorProps {
   blogId?: string;
 }
 
-const modules = {
+// Static modules configuration to prevent re-renders
+const baseModules = {
   toolbar: [
     [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
     [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
@@ -50,14 +51,38 @@ export default function BlogEditor({ content, onChange, className = "", blogId }
   const { uploadImage, uploading } = useImageUpload({ blogId });
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const quillRef = useRef<ReactQuill>(null);
+
+  // Enhanced modules with custom image handler
+  const modules = useMemo(() => ({
+    ...baseModules,
+    toolbar: {
+      container: baseModules.toolbar,
+      handlers: {
+        image: () => {
+          fileInputRef.current?.click();
+        }
+      }
+    }
+  }), []);
+
+  const insertImageIntoEditor = (imageUrl: string) => {
+    const quill = quillRef.current?.getEditor();
+    if (quill) {
+      const range = quill.getSelection(true);
+      const index = range ? range.index : quill.getLength();
+      
+      // Insert image at cursor position or end of content
+      quill.insertEmbed(index, 'image', imageUrl);
+      quill.setSelection({ index: index + 1, length: 0 });
+    }
+  };
 
   const handleImageUpload = async (file: File) => {
     try {
       const uploadedImage = await uploadImage(file);
       if (uploadedImage) {
-        // Simply append image HTML to content instead of direct manipulation
-        const imageHtml = `<p><img src="${uploadedImage.url}" alt="Uploaded image" style="max-width: 100%; height: auto; border-radius: 8px; margin: 16px auto; display: block;" /></p>`;
-        onChange(content + '\n' + imageHtml);
+        insertImageIntoEditor(uploadedImage.url);
         
         toast({
           title: "Image uploaded successfully",
@@ -161,6 +186,7 @@ export default function BlogEditor({ content, onChange, className = "", blogId }
         </div>
         <div className="min-h-[500px] relative">
           <ReactQuill
+            ref={quillRef}
             theme="snow"
             value={content}
             onChange={onChange}
