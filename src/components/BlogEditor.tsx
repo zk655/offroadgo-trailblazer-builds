@@ -15,7 +15,7 @@ interface BlogEditorProps {
   blogId?: string;
 }
 
-const modules = {
+const getModules = (imageHandler: () => void) => ({
   toolbar: {
     container: [
       [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
@@ -32,21 +32,7 @@ const modules = {
       ['clean']
     ],
     handlers: {
-      'image': function() {
-        const input = document.createElement('input');
-        input.setAttribute('type', 'file');
-        input.setAttribute('accept', 'image/*');
-        input.click();
-        
-        input.onchange = () => {
-          const file = input.files?.[0];
-          if (file) {
-            // This will be handled by the BlogEditor component
-            const event = new CustomEvent('quill-image-upload', { detail: file });
-            document.dispatchEvent(event);
-          }
-        };
-      }
+      'image': imageHandler
     }
   },
   clipboard: {
@@ -57,7 +43,7 @@ const modules = {
     maxStack: 500,
     userOnly: true
   }
-};
+});
 
 const formats = [
   'header', 'font', 'size', 'bold', 'italic', 'underline', 'strike',
@@ -106,16 +92,8 @@ export default function BlogEditor({ content, onChange, className = "", blogId }
     };
   };
 
-  // Update modules to use our custom image handler
-  const customModules = {
-    ...modules,
-    toolbar: {
-      ...modules.toolbar,
-      handlers: {
-        'image': imageHandler
-      }
-    }
-  };
+  // Get modules with our custom image handler
+  const customModules = getModules(imageHandler);
 
   const insertImageIntoEditor = (imageUrl: string) => {
     const quill = quillRef.current?.getEditor();
