@@ -31,18 +31,10 @@ const modules = {
       [{ 'direction': 'rtl' }],
       [{ 'align': [] }],
       ['blockquote', 'code-block'],
-      ['link', 'image', 'video', 'formula'],
-      [{ 'table': 'TD' }],
+      ['link', 'image', 'video'],
       ['clean']
     ],
     handlers: {
-      'table': function() {
-        const table = '<table><tr><td>Cell 1</td><td>Cell 2</td></tr><tr><td>Cell 3</td><td>Cell 4</td></tr></table>';
-        const range = this.quill.getSelection();
-        if (range) {
-          this.quill.clipboard.dangerouslyPasteHTML(range.index, table);
-        }
-      },
       'image': function() {
         const input = document.createElement('input');
         input.setAttribute('type', 'file');
@@ -73,7 +65,7 @@ const modules = {
 const formats = [
   'header', 'font', 'size', 'bold', 'italic', 'underline', 'strike',
   'color', 'background', 'script', 'list', 'bullet', 'check', 'indent',
-  'direction', 'align', 'blockquote', 'code-block', 'link', 'image', 'video', 'formula'
+  'direction', 'align', 'blockquote', 'code-block', 'link', 'image', 'video'
 ];
 
 export default function BlogEditor({ content, onChange, className = "", blogId }: BlogEditorProps) {
@@ -102,11 +94,14 @@ export default function BlogEditor({ content, onChange, className = "", blogId }
     const quill = quillRef.current?.getEditor();
     if (quill) {
       const range = quill.getSelection() || { index: quill.getLength(), length: 0 };
-      quill.insertEmbed(range.index, 'image', imageUrl);
-      quill.setSelection({ index: range.index + 1, length: 0 });
+      // Insert a line break and then the image
+      quill.insertText(range.index, '\n');
+      quill.insertEmbed(range.index + 1, 'image', imageUrl);
+      quill.insertText(range.index + 2, '\n');
+      quill.setSelection({ index: range.index + 3, length: 0 });
     } else {
       // Fallback to appending at the end with proper styling
-      const imageTag = `<p><img src="${imageUrl}" alt="Blog image" /></p>`;
+      const imageTag = `<p><img src="${imageUrl}" alt="Blog image" style="max-width: 100%; height: auto; border-radius: 8px; margin: 16px 0;" /></p>`;
       onChange(content + imageTag);
     }
   };
@@ -165,7 +160,7 @@ export default function BlogEditor({ content, onChange, className = "", blogId }
             </Button>
           </div>
         </div>
-        <div className="min-h-[400px]">
+        <div className="min-h-[450px]">
           <ReactQuill
             ref={quillRef}
             theme="snow"
@@ -173,7 +168,7 @@ export default function BlogEditor({ content, onChange, className = "", blogId }
             onChange={onChange}
             modules={modules}
             formats={formats}
-            style={{ height: '350px' }}
+            style={{ height: '400px' }}
             placeholder="Write your blog post content here..."
           />
         </div>
