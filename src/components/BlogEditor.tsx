@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import '../styles/quill-editor.css';
@@ -15,26 +15,21 @@ interface BlogEditorProps {
   blogId?: string;
 }
 
-const getModules = (imageHandler: () => void) => ({
-  toolbar: {
-    container: [
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'script': 'sub'}, { 'script': 'super' }],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],
-      [{ 'direction': 'rtl' }],
-      [{ 'align': [] }],
-      ['blockquote', 'code-block'],
-      ['link', 'image', 'video'],
-      ['clean']
-    ],
-    handlers: {
-      'image': imageHandler
-    }
-  },
+const modules = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+    [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'color': [] }, { 'background': [] }],
+    [{ 'script': 'sub'}, { 'script': 'super' }],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+    [{ 'indent': '-1'}, { 'indent': '+1' }],
+    [{ 'direction': 'rtl' }],
+    [{ 'align': [] }],
+    ['blockquote', 'code-block'],
+    ['link', 'image', 'video'],
+    ['clean']
+  ],
   clipboard: {
     matchVisual: false,
   },
@@ -43,7 +38,7 @@ const getModules = (imageHandler: () => void) => ({
     maxStack: 500,
     userOnly: true
   }
-});
+};
 
 const formats = [
   'header', 'font', 'size', 'bold', 'italic', 'underline', 'strike',
@@ -52,17 +47,18 @@ const formats = [
 ];
 
 export default function BlogEditor({ content, onChange, className = "", blogId }: BlogEditorProps) {
-  const quillRef = useRef<ReactQuill>(null);
   const { uploadImage, uploading } = useImageUpload({ blogId });
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Handle image upload from toolbar or upload button
   const handleImageUpload = async (file: File) => {
     try {
       const uploadedImage = await uploadImage(file);
       if (uploadedImage) {
-        insertImageIntoEditor(uploadedImage.url);
+        // Simply append image HTML to content instead of direct manipulation
+        const imageHtml = `<p><img src="${uploadedImage.url}" alt="Uploaded image" style="max-width: 100%; height: auto; border-radius: 8px; margin: 16px auto; display: block;" /></p>`;
+        onChange(content + '\n' + imageHtml);
+        
         toast({
           title: "Image uploaded successfully",
           description: "The image has been added to your content.",
@@ -77,40 +73,6 @@ export default function BlogEditor({ content, onChange, className = "", blogId }
     }
   };
 
-  // Custom image handler for Quill toolbar
-  const imageHandler = () => {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*');
-    input.click();
-    
-    input.onchange = () => {
-      const file = input.files?.[0];
-      if (file) {
-        handleImageUpload(file);
-      }
-    };
-  };
-
-  // Get modules with our custom image handler
-  const customModules = getModules(imageHandler);
-
-  const insertImageIntoEditor = (imageUrl: string) => {
-    const quill = quillRef.current?.getEditor();
-    if (quill) {
-      const range = quill.getSelection() || { index: quill.getLength(), length: 0 };
-      
-      // Insert image with proper spacing
-      quill.insertText(range.index, '\n');
-      quill.insertEmbed(range.index + 1, 'image', imageUrl);
-      quill.insertText(range.index + 2, '\n');
-      quill.setSelection({ index: range.index + 3, length: 0 });
-      
-      // Force re-render to ensure image displays
-      quill.update();
-    }
-  };
-
   const handleUploadButtonClick = () => {
     fileInputRef.current?.click();
   };
@@ -120,7 +82,6 @@ export default function BlogEditor({ content, onChange, className = "", blogId }
     if (file) {
       handleImageUpload(file);
     }
-    // Reset input
     event.target.value = '';
   };
 
@@ -200,11 +161,10 @@ export default function BlogEditor({ content, onChange, className = "", blogId }
         </div>
         <div className="min-h-[500px] relative">
           <ReactQuill
-            ref={quillRef}
             theme="snow"
             value={content}
             onChange={onChange}
-            modules={customModules}
+            modules={modules}
             formats={formats}
             style={{ 
               height: '450px',
