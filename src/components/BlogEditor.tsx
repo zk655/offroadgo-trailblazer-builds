@@ -220,7 +220,7 @@ export default function BlogEditor({ content, onChange, className = "", blogId }
             </Button>
           </div>
         </div>
-        <div className="min-h-[450px]">
+        <div className="min-h-[500px] relative">
           <ReactQuill
             ref={quillRef}
             theme="snow"
@@ -228,7 +228,10 @@ export default function BlogEditor({ content, onChange, className = "", blogId }
             onChange={onChange}
             modules={customModules}
             formats={formats}
-            style={{ height: '400px' }}
+            style={{ 
+              height: '450px',
+              backgroundColor: 'hsl(var(--background))'
+            }}
             placeholder="Write your blog post content here..."
           />
         </div>
