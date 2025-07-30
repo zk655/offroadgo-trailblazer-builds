@@ -156,10 +156,38 @@ export default function TipTapEditor({ content, onChange, className = "", blogId
   const generateTableOfContents = () => {
     if (!editor) return;
     
-    const html = editor.getHTML();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    const json = editor.getJSON();
+    const headings: Array<{level: number, text: string, id: string}> = [];
+    
+    // Extract headings from the JSON content
+    const extractHeadings = (content: any) => {
+      if (content.content) {
+        content.content.forEach((node: any) => {
+          if (node.type === 'heading' && node.content) {
+            const text = node.content.map((textNode: any) => textNode.text || '').join('');
+            if (text.trim()) {
+              const id = `heading-${headings.length}`;
+              headings.push({
+                level: node.attrs.level,
+                text: text.trim(),
+                id
+              });
+              
+              // Add id to the heading node
+              if (!node.attrs) node.attrs = {};
+              node.attrs.id = id;
+            }
+          }
+          
+          // Recursively check nested content
+          if (node.content) {
+            extractHeadings(node);
+          }
+        });
+      }
+    };
+    
+    extractHeadings(json);
     
     if (headings.length === 0) {
       toast({
@@ -170,26 +198,18 @@ export default function TipTapEditor({ content, onChange, className = "", blogId
       return;
     }
 
+    // Create TOC HTML
     let tocHtml = '<div class="table-of-contents"><h3>Table of Contents</h3><ul>';
     
-    headings.forEach((heading, index) => {
-      const level = parseInt(heading.tagName.charAt(1));
-      const text = heading.textContent || `Heading ${index + 1}`;
-      const id = `heading-${index}`;
-      
-      heading.id = id;
-      
-      const indent = '  '.repeat(level - 1);
-      tocHtml += `${indent}<li><a href="#${id}">${text}</a></li>`;
+    headings.forEach((heading) => {
+      const indent = '  '.repeat(heading.level - 1);
+      tocHtml += `${indent}<li><a href="#${heading.id}">${heading.text}</a></li>`;
     });
     
     tocHtml += '</ul></div>';
     
-    const updatedContent = doc.body.innerHTML;
-    const newContent = tocHtml + '\n\n' + updatedContent;
-    
-    editor.commands.setContent(newContent);
-    onChange(newContent);
+    // Insert TOC at the beginning
+    editor.chain().focus().setTextSelection(0).insertContent(tocHtml + '<br>').run();
     
     toast({
       title: "Table of contents generated",
