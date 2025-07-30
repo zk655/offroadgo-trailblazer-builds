@@ -45,7 +45,9 @@ import {
   Table as TableIcon,
   CheckSquare,
   Minus,
-  Strikethrough
+  Strikethrough,
+  Undo,
+  Redo
 } from "lucide-react";
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useToast } from '@/hooks/use-toast';
@@ -294,6 +296,30 @@ export default function TipTapEditor({ content, onChange, className = "", blogId
         {/* Toolbar */}
         <div className="border border-border rounded-t-md p-2 bg-background">
           <div className="flex flex-wrap gap-1">
+            {/* Undo/Redo */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().undo().run()}
+              disabled={!editor.can().undo()}
+              title="Undo (Ctrl+Z)"
+            >
+              <Undo className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().redo().run()}
+              disabled={!editor.can().redo()}
+              title="Redo (Ctrl+Y)"
+            >
+              <Redo className="h-4 w-4" />
+            </Button>
+
+            <div className="w-px h-6 bg-border mx-1" />
+
             {/* Headings */}
             <Button
               type="button"
