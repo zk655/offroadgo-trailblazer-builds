@@ -180,6 +180,30 @@ export default function AdminInsurance() {
     },
   });
 
+  const updateProviderMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: ProviderFormData }) => {
+      const processedData = {
+        ...data,
+        specializes_in: data.specializes_in ? data.specializes_in.split(",").map(item => item.trim()) : [],
+        coverage_areas: data.coverage_areas ? data.coverage_areas.split(",").map(item => item.trim()) : [],
+        rating: data.rating ? parseFloat(data.rating.toString()) : null,
+      };
+
+      const { error } = await supabase.from("insurance_providers").update(processedData).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-insurance-providers"] });
+      toast({ title: "Insurance provider updated successfully" });
+      setIsProviderDialogOpen(false);
+      setEditingProvider(null);
+      providerForm.reset();
+    },
+    onError: (error: any) => {
+      toast({ title: "Error updating provider", description: error.message, variant: "destructive" });
+    },
+  });
+
   // Quote mutations
   const createQuoteMutation = useMutation({
     mutationFn: async (data: QuoteFormData) => {
@@ -211,6 +235,37 @@ export default function AdminInsurance() {
     },
   });
 
+  const updateQuoteMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: QuoteFormData }) => {
+      const processedData = {
+        ...data,
+        monthly_premium: data.monthly_premium ? parseFloat(data.monthly_premium.toString()) : null,
+        annual_premium: data.annual_premium ? parseFloat(data.annual_premium.toString()) : null,
+        deductible: data.deductible ? parseFloat(data.deductible.toString()) : null,
+        coverage_limit: data.coverage_limit ? parseFloat(data.coverage_limit.toString()) : null,
+        min_age: data.min_age ? parseInt(data.min_age.toString()) : null,
+        max_age: data.max_age ? parseInt(data.max_age.toString()) : null,
+        min_experience_years: data.min_experience_years ? parseInt(data.min_experience_years.toString()) : null,
+        features: data.features ? data.features.split(",").map(item => item.trim()) : [],
+        effective_date: data.effective_date || null,
+        expiry_date: data.expiry_date || null,
+      };
+
+      const { error } = await supabase.from("insurance_quotes").update(processedData).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-insurance-quotes"] });
+      toast({ title: "Insurance quote updated successfully" });
+      setIsQuoteDialogOpen(false);
+      setEditingQuote(null);
+      quoteForm.reset();
+    },
+    onError: (error: any) => {
+      toast({ title: "Error updating quote", description: error.message, variant: "destructive" });
+    },
+  });
+
   const deleteProviderMutation = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("insurance_providers").delete().eq("id", id);
@@ -234,11 +289,69 @@ export default function AdminInsurance() {
   });
 
   const onProviderSubmit = (data: ProviderFormData) => {
-    createProviderMutation.mutate(data);
+    if (editingProvider) {
+      updateProviderMutation.mutate({ id: editingProvider.id, data });
+    } else {
+      createProviderMutation.mutate(data);
+    }
   };
 
   const onQuoteSubmit = (data: QuoteFormData) => {
-    createQuoteMutation.mutate(data);
+    if (editingQuote) {
+      updateQuoteMutation.mutate({ id: editingQuote.id, data });
+    } else {
+      createQuoteMutation.mutate(data);
+    }
+  };
+
+  const handleEditProvider = (provider: any) => {
+    setEditingProvider(provider);
+    providerForm.reset({
+      name: provider.name || "",
+      company_name: provider.company_name || "",
+      description: provider.description || "",
+      specializes_in: provider.specializes_in?.join(", ") || "",
+      coverage_areas: provider.coverage_areas?.join(", ") || "",
+      rating: provider.rating || "",
+      contact_phone: provider.contact_phone || "",
+      contact_email: provider.contact_email || "",
+      website_url: provider.website_url || "",
+      logo_url: provider.logo_url || "",
+    });
+    setIsProviderDialogOpen(true);
+  };
+
+  const handleEditQuote = (quote: any) => {
+    setEditingQuote(quote);
+    quoteForm.reset({
+      provider_id: quote.provider_id || "",
+      vehicle_type: quote.vehicle_type || "",
+      coverage_type: quote.coverage_type || "",
+      state_code: quote.state_code || "",
+      monthly_premium: quote.monthly_premium || "",
+      annual_premium: quote.annual_premium || "",
+      deductible: quote.deductible || "",
+      coverage_limit: quote.coverage_limit || "",
+      min_age: quote.min_age || "",
+      max_age: quote.max_age || "",
+      min_experience_years: quote.min_experience_years || "",
+      features: quote.features?.join(", ") || "",
+      effective_date: quote.effective_date || "",
+      expiry_date: quote.expiry_date || "",
+    });
+    setIsQuoteDialogOpen(true);
+  };
+
+  const handleCloseProviderDialog = () => {
+    setIsProviderDialogOpen(false);
+    setEditingProvider(null);
+    providerForm.reset();
+  };
+
+  const handleCloseQuoteDialog = () => {
+    setIsQuoteDialogOpen(false);
+    setEditingQuote(null);
+    quoteForm.reset();
   };
 
   return (
@@ -266,7 +379,7 @@ export default function AdminInsurance() {
                   className="pl-10"
                 />
               </div>
-              <Dialog open={isProviderDialogOpen} onOpenChange={setIsProviderDialogOpen}>
+              <Dialog open={isProviderDialogOpen} onOpenChange={handleCloseProviderDialog}>
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="mr-2 h-4 w-4" />
@@ -275,7 +388,9 @@ export default function AdminInsurance() {
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle>Add New Insurance Provider</DialogTitle>
+                    <DialogTitle>
+                      {editingProvider ? "Edit Insurance Provider" : "Add New Insurance Provider"}
+                    </DialogTitle>
                   </DialogHeader>
                   <Form {...providerForm}>
                     <form onSubmit={providerForm.handleSubmit(onProviderSubmit)} className="space-y-4">
@@ -423,8 +538,8 @@ export default function AdminInsurance() {
                       </div>
 
                       <DialogFooter>
-                        <Button type="submit" disabled={createProviderMutation.isPending}>
-                          Create Provider
+                        <Button type="submit" disabled={createProviderMutation.isPending || updateProviderMutation.isPending}>
+                          {editingProvider ? "Update Provider" : "Create Provider"}
                         </Button>
                       </DialogFooter>
                     </form>
@@ -489,6 +604,13 @@ export default function AdminInsurance() {
                         <Button
                           variant="outline"
                           size="sm"
+                          onClick={() => handleEditProvider(provider)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
                           onClick={() => deleteProviderMutation.mutate(provider.id)}
                           disabled={deleteProviderMutation.isPending}
                         >
@@ -504,7 +626,7 @@ export default function AdminInsurance() {
 
           <TabsContent value="quotes" className="space-y-6">
             <div className="flex justify-end">
-              <Dialog open={isQuoteDialogOpen} onOpenChange={setIsQuoteDialogOpen}>
+              <Dialog open={isQuoteDialogOpen} onOpenChange={handleCloseQuoteDialog}>
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="mr-2 h-4 w-4" />
@@ -513,7 +635,9 @@ export default function AdminInsurance() {
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle>Add New Insurance Quote</DialogTitle>
+                    <DialogTitle>
+                      {editingQuote ? "Edit Insurance Quote" : "Add New Insurance Quote"}
+                    </DialogTitle>
                   </DialogHeader>
                   <Form {...quoteForm}>
                     <form onSubmit={quoteForm.handleSubmit(onQuoteSubmit)} className="space-y-4">
@@ -636,8 +760,8 @@ export default function AdminInsurance() {
                       </div>
 
                       <DialogFooter>
-                        <Button type="submit" disabled={createQuoteMutation.isPending}>
-                          Create Quote
+                        <Button type="submit" disabled={createQuoteMutation.isPending || updateQuoteMutation.isPending}>
+                          {editingQuote ? "Update Quote" : "Create Quote"}
                         </Button>
                       </DialogFooter>
                     </form>
@@ -672,14 +796,23 @@ export default function AdminInsurance() {
                             {quote.vehicle_type} - {quote.coverage_type}
                           </p>
                         </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => deleteQuoteMutation.mutate(quote.id)}
-                          disabled={deleteQuoteMutation.isPending}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditQuote(quote)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => deleteQuoteMutation.mutate(quote.id)}
+                            disabled={deleteQuoteMutation.isPending}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         {quote.monthly_premium && (
