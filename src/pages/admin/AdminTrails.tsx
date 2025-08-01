@@ -94,7 +94,7 @@ export default function AdminTrails() {
         query = query.or(`name.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%,terrain.ilike.%${searchTerm}%`);
       }
       
-      if (selectedDifficulty) {
+      if (selectedDifficulty && selectedDifficulty !== "all") {
         query = query.eq("difficulty", selectedDifficulty);
       }
       
@@ -437,7 +437,7 @@ export default function AdminTrails() {
               <SelectValue placeholder="Filter by difficulty" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Difficulties</SelectItem>
+              <SelectItem value="all">All Difficulties</SelectItem>
               {difficulties.map((difficulty) => (
                 <SelectItem key={difficulty} value={difficulty}>
                   {difficulty}
