@@ -67,6 +67,47 @@ export default function AdminEvents() {
     },
   });
 
+  // Move all hooks to the top before any early returns
+  const { data: events, isLoading } = useQuery({
+    queryKey: ["admin-events", searchTerm, selectedType],
+    queryFn: async () => {
+      let query = supabase
+        .from("events")
+        .select(`
+          *,
+          clubs (
+            name
+          )
+        `)
+        .order("start_date", { ascending: false });
+      
+      if (searchTerm) {
+        query = query.or(`title.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%,event_type.ilike.%${searchTerm}%`);
+      }
+      
+      if (selectedType && selectedType !== "all") {
+        query = query.eq("event_type", selectedType);
+      }
+      
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: clubs } = useQuery({
+    queryKey: ["admin-clubs"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("clubs")
+        .select("id, name")
+        .order("name");
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
   if (loading || roleLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -94,46 +135,6 @@ export default function AdminEvents() {
     );
   }
 
-  const { data: events, isLoading } = useQuery({
-    queryKey: ["admin-events", searchTerm, selectedType],
-    queryFn: async () => {
-      let query = supabase
-        .from("events")
-        .select(`
-          *,
-          clubs (
-            name
-          )
-        `)
-        .order("start_date", { ascending: false });
-      
-      if (searchTerm) {
-        query = query.or(`title.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%,event_type.ilike.%${searchTerm}%`);
-      }
-      
-      if (selectedType) {
-        query = query.eq("event_type", selectedType);
-      }
-      
-      const { data, error } = await query;
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: clubs } = useQuery({
-    queryKey: ["admin-clubs"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("clubs")
-        .select("id, name")
-        .order("name");
-      
-      if (error) throw error;
-      return data;
-    },
-  });
-
   const createMutation = useMutation({
     mutationFn: async (data: EventFormData) => {
       const processedData = {
@@ -142,7 +143,7 @@ export default function AdminEvents() {
         max_participants: data.max_participants ? parseInt(data.max_participants.toString()) : null,
         start_date: data.start_date || null,
         end_date: data.end_date || null,
-        club_id: data.club_id || null,
+        club_id: data.club_id && data.club_id !== "none" ? data.club_id : null,
       };
 
       const { error } = await supabase.from("events").insert(processedData);
@@ -167,7 +168,7 @@ export default function AdminEvents() {
         max_participants: data.max_participants ? parseInt(data.max_participants.toString()) : null,
         start_date: data.start_date || null,
         end_date: data.end_date || null,
-        club_id: data.club_id || null,
+        club_id: data.club_id && data.club_id !== "none" ? data.club_id : null,
       };
 
       const { error } = await supabase.from("events").update(processedData).eq("id", id);
@@ -333,7 +334,7 @@ export default function AdminEvents() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="">No Club</SelectItem>
+                              <SelectItem value="none">No Club</SelectItem>
                               {clubs?.map((club) => (
                                 <SelectItem key={club.id} value={club.id}>
                                   {club.name}
@@ -553,7 +554,7 @@ export default function AdminEvents() {
               <SelectValue placeholder="Filter by type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Types</SelectItem>
+              <SelectItem value="all">All Types</SelectItem>
               {eventTypes.map((type) => (
                 <SelectItem key={type} value={type.toLowerCase()}>
                   {type}
