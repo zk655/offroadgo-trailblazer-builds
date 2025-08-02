@@ -46,13 +46,15 @@ const categories = [
 ];
 
 export default function AdminParts() {
+  // All hooks must be at the very top before any conditionals or early returns
   const { user, userRole, loading, roleLoading } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMod, setEditingMod] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   
   const form = useForm<ModFormData>({
     defaultValues: {
@@ -66,33 +68,6 @@ export default function AdminParts() {
       amazon_link: "",
     },
   });
-
-  if (loading || roleLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  if (userRole !== "admin" && userRole !== "editor") {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="w-96">
-          <CardHeader>
-            <CardTitle className="text-destructive">Access Denied</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>You don't have permission to access this page.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const { data: mods, isLoading } = useQuery({
     queryKey: ["admin-mods", searchTerm, selectedCategory],
@@ -171,6 +146,33 @@ export default function AdminParts() {
       toast({ title: "Error deleting part", description: error.message, variant: "destructive" });
     },
   });
+
+  if (loading || roleLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  if (userRole !== "admin" && userRole !== "editor") {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="w-96">
+          <CardHeader>
+            <CardTitle className="text-destructive">Access Denied</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>You don't have permission to access this page.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const onSubmit = (data: ModFormData) => {
     if (editingMod) {
