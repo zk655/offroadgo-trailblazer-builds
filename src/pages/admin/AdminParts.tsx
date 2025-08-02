@@ -62,7 +62,7 @@ export default function AdminParts() {
     },
   });
 
-  const { data: categories } = useQuery({
+  const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -71,7 +71,7 @@ export default function AdminParts() {
         .order("name");
       
       if (error) throw error;
-      return data;
+      return data || [];
     },
   });
 
@@ -275,7 +275,7 @@ export default function AdminParts() {
                               </SelectTrigger>
                             </FormControl>
                              <SelectContent>
-                               {categories?.map((category) => (
+                               {categories.map((category) => (
                                  <SelectItem key={category.id} value={category.name}>
                                    {category.name}
                                  </SelectItem>
@@ -400,7 +400,7 @@ export default function AdminParts() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              {categories?.map((category) => (
+              {categories.map((category) => (
                 <SelectItem key={category.id} value={category.name}>
                   {category.name}
                 </SelectItem>
