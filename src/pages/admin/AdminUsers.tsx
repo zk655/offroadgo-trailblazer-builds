@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, UserPlus, Search, User, Shield, Settings } from "lucide-react";
+import { Trash2, UserPlus, Search, User, Shield, Settings, Edit, Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Navigate } from "react-router-dom";
@@ -21,9 +21,24 @@ interface RoleFormData {
   role: string;
 }
 
+interface UserFormData {
+  email: string;
+  password: string;
+  full_name: string;
+  username: string;
+  role: string;
+}
+
+interface EditPasswordFormData {
+  password: string;
+}
+
 export default function AdminUsers() {
   const { user, userRole, loading, roleLoading } = useAuth();
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
+  const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
+  const [isEditPasswordDialogOpen, setIsEditPasswordDialogOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -32,6 +47,22 @@ export default function AdminUsers() {
     defaultValues: {
       user_id: "",
       role: "",
+    },
+  });
+
+  const userForm = useForm<UserFormData>({
+    defaultValues: {
+      email: "",
+      password: "",
+      full_name: "",
+      username: "",
+      role: "user",
+    },
+  });
+
+  const passwordForm = useForm<EditPasswordFormData>({
+    defaultValues: {
+      password: "",
     },
   });
 
@@ -129,15 +160,81 @@ export default function AdminUsers() {
     },
   });
 
+  const createUserMutation = useMutation({
+    mutationFn: async (data: UserFormData) => {
+      const { data: newUser, error: authError } = await supabase.auth.admin.createUser({
+        email: data.email,
+        password: data.password,
+        user_metadata: {
+          full_name: data.full_name,
+          username: data.username,
+        },
+      });
+      
+      if (authError) throw authError;
+      
+      // Assign role if specified
+      if (data.role && data.role !== "user" && newUser.user) {
+        const { error: roleError } = await supabase.from("user_roles").insert({
+          user_id: newUser.user.id,
+          role: data.role as 'admin' | 'editor' | 'user'
+        });
+        if (roleError) throw roleError;
+      }
+      
+      return newUser;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-user-roles"] });
+      toast({ title: "User created successfully" });
+      setIsAddUserDialogOpen(false);
+      userForm.reset();
+    },
+    onError: (error: any) => {
+      toast({ title: "Error creating user", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const updatePasswordMutation = useMutation({
+    mutationFn: async ({ userId, password }: { userId: string; password: string }) => {
+      const { error } = await supabase.auth.admin.updateUserById(userId, {
+        password: password,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Password updated successfully" });
+      setIsEditPasswordDialogOpen(false);
+      passwordForm.reset();
+      setSelectedUserId("");
+    },
+    onError: (error: any) => {
+      toast({ title: "Error updating password", description: error.message, variant: "destructive" });
+    },
+  });
+
   const onRoleSubmit = (data: RoleFormData) => {
     createRoleMutation.mutate(data);
+  };
+
+  const onUserSubmit = (data: UserFormData) => {
+    createUserMutation.mutate(data);
+  };
+
+  const onPasswordSubmit = (data: EditPasswordFormData) => {
+    updatePasswordMutation.mutate({ userId: selectedUserId, password: data.password });
+  };
+
+  const handleEditPassword = (userId: string) => {
+    setSelectedUserId(userId);
+    setIsEditPasswordDialogOpen(true);
   };
 
   const getRoleColor = (role: string) => {
     switch (role?.toLowerCase()) {
       case "admin": return "bg-red-500";
       case "editor": return "bg-blue-500";
-      case "moderator": return "bg-green-500";
       case "user": return "bg-gray-500";
       default: return "bg-gray-500";
     }
@@ -168,6 +265,107 @@ export default function AdminUsers() {
                   className="pl-10"
                 />
               </div>
+              <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add User
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Add New User</DialogTitle>
+                  </DialogHeader>
+                  <Form {...userForm}>
+                    <form onSubmit={userForm.handleSubmit(onUserSubmit)} className="space-y-4">
+                      <FormField
+                        control={userForm.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <Input type="email" placeholder="user@example.com" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={userForm.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                              <Input type="password" placeholder="Enter password" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={userForm.control}
+                        name="full_name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Full Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="John Doe" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={userForm.control}
+                        name="username"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Username</FormLabel>
+                            <FormControl>
+                              <Input placeholder="johndoe" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={userForm.control}
+                        name="role"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Role</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select role" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="user">User</SelectItem>
+                                <SelectItem value="editor">Editor</SelectItem>
+                                <SelectItem value="admin">Admin</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <DialogFooter>
+                        <Button type="submit" disabled={createUserMutation.isPending}>
+                          Create User
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
             </div>
 
             {profilesLoading ? (
@@ -213,6 +411,16 @@ export default function AdminUsers() {
                           <span>User ID:</span>
                           <span className="font-mono text-xs">{profile.id.slice(0, 8)}...</span>
                         </div>
+                      </div>
+                      <div className="flex justify-center">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditPassword(profile.id)}
+                        >
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit Password
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -281,12 +489,11 @@ export default function AdminUsers() {
                                   <SelectValue placeholder="Select role" />
                                 </SelectTrigger>
                               </FormControl>
-                              <SelectContent>
-                                <SelectItem value="admin">Admin</SelectItem>
-                                <SelectItem value="editor">Editor</SelectItem>
-                                <SelectItem value="moderator">Moderator</SelectItem>
-                                <SelectItem value="user">User</SelectItem>
-                              </SelectContent>
+                               <SelectContent>
+                                 <SelectItem value="admin">Admin</SelectItem>
+                                 <SelectItem value="editor">Editor</SelectItem>
+                                 <SelectItem value="user">User</SelectItem>
+                               </SelectContent>
                             </Select>
                             <FormMessage />
                           </FormItem>
@@ -369,6 +576,38 @@ export default function AdminUsers() {
             )}
           </TabsContent>
         </Tabs>
+
+        {/* Edit Password Dialog */}
+        <Dialog open={isEditPasswordDialogOpen} onOpenChange={setIsEditPasswordDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Update User Password</DialogTitle>
+            </DialogHeader>
+            <Form {...passwordForm}>
+              <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4">
+                <FormField
+                  control={passwordForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>New Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Enter new password" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <DialogFooter>
+                  <Button type="submit" disabled={updatePasswordMutation.isPending}>
+                    Update Password
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
