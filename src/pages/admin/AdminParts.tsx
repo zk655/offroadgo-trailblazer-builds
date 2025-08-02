@@ -27,23 +27,9 @@ interface ModFormData {
   amazon_link: string;
 }
 
-const categories = [
-  "Suspension",
-  "Bumpers & Armor",
-  "Lighting",
-  "Winches & Recovery",
-  "Tires & Wheels",
-  "Interior",
-  "Engine & Performance",
-  "Exhaust",
-  "Roof Racks",
-  "Rock Sliders",
-  "Skid Plates",
-  "Storage",
-  "Electronics",
-  "Tools",
-  "Other"
-];
+interface CategoryFormData {
+  name: string;
+}
 
 export default function AdminParts() {
   // All hooks must be at the very top before any conditionals or early returns
@@ -52,6 +38,7 @@ export default function AdminParts() {
   const queryClient = useQueryClient();
   
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const [editingMod, setEditingMod] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -66,6 +53,25 @@ export default function AdminParts() {
       rating: "",
       image_url: "",
       amazon_link: "",
+    },
+  });
+
+  const categoryForm = useForm<CategoryFormData>({
+    defaultValues: {
+      name: "",
+    },
+  });
+
+  const { data: categories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .order("name");
+      
+      if (error) throw error;
+      return data;
     },
   });
 
@@ -144,6 +150,22 @@ export default function AdminParts() {
     },
     onError: (error: any) => {
       toast({ title: "Error deleting part", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const createCategoryMutation = useMutation({
+    mutationFn: async (data: CategoryFormData) => {
+      const { error } = await supabase.from("categories").insert(data);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      toast({ title: "Category created successfully" });
+      setIsCategoryDialogOpen(false);
+      categoryForm.reset();
+    },
+    onError: (error: any) => {
+      toast({ title: "Error creating category", description: error.message, variant: "destructive" });
     },
   });
 
@@ -252,13 +274,13 @@ export default function AdminParts() {
                                 <SelectValue placeholder="Select category" />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent>
-                              {categories.map((category) => (
-                                <SelectItem key={category} value={category}>
-                                  {category}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
+                             <SelectContent>
+                               {categories?.map((category) => (
+                                 <SelectItem key={category.id} value={category.name}>
+                                   {category.name}
+                                 </SelectItem>
+                               ))}
+                             </SelectContent>
                           </Select>
                           <FormMessage />
                         </FormItem>
@@ -378,13 +400,48 @@ export default function AdminParts() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              {categories.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category}
+              {categories?.map((category) => (
+                <SelectItem key={category.id} value={category.name}>
+                  {category.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+          <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Category
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Category</DialogTitle>
+              </DialogHeader>
+              <Form {...categoryForm}>
+                <form onSubmit={categoryForm.handleSubmit((data) => createCategoryMutation.mutate(data))} className="space-y-4">
+                  <FormField
+                    control={categoryForm.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Category Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Enter category name" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <DialogFooter>
+                    <Button type="submit" disabled={createCategoryMutation.isPending}>
+                      Add Category
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {isLoading ? (
