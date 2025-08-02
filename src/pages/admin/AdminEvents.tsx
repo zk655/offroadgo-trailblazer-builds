@@ -39,13 +39,15 @@ const difficultyLevels = ["Beginner", "Intermediate", "Advanced", "Expert"];
 const terrainTypes = ["Desert", "Mountain", "Forest", "Sand", "Rock", "Mud", "Mixed"];
 
 export default function AdminEvents() {
+  // All hooks must be at the very top before any conditionals or early returns
   const { user, userRole, loading, roleLoading } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("");
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   
   const form = useForm<EventFormData>({
     defaultValues: {
@@ -67,7 +69,6 @@ export default function AdminEvents() {
     },
   });
 
-  // Move all hooks to the top before any early returns
   const { data: events, isLoading } = useQuery({
     queryKey: ["admin-events", searchTerm, selectedType],
     queryFn: async () => {
