@@ -162,30 +162,33 @@ export default function AdminUsers() {
 
   const createUserMutation = useMutation({
     mutationFn: async (data: UserFormData) => {
-      // Use regular sign up since admin.createUser requires service role
-      const { data: newUser, error: authError } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          data: {
-            full_name: data.full_name,
-            username: data.username,
-          },
+      // Get the current user's session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('No active session');
+
+      // Call the edge function to create user with admin privileges
+      const response = await fetch('https://muzlggruqnlackmbrswp.supabase.co/functions/v1/admin-create-user', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          full_name: data.full_name,
+          username: data.username,
+          role: data.role,
+        }),
       });
+
+      const result = await response.json();
       
-      if (authError) throw authError;
-      
-      // Assign role if specified and user was created
-      if (data.role && data.role !== "user" && newUser.user) {
-        const { error: roleError } = await supabase.from("user_roles").insert({
-          user_id: newUser.user.id,
-          role: data.role as 'admin' | 'editor' | 'user'
-        });
-        if (roleError) throw roleError;
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to create user');
       }
       
-      return newUser;
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
