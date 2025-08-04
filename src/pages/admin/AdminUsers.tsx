@@ -50,8 +50,8 @@ export default function AdminUsers() {
     return <Navigate to="/auth" replace />;
   }
 
-  // Handle authorization early, before other hooks
-  if (userRole !== "admin") {
+  // Handle authorization early, before other hooks - allow both admins and editors
+  if (userRole !== "admin" && userRole !== "editor") {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Card className="w-96">
@@ -59,7 +59,7 @@ export default function AdminUsers() {
             <CardTitle className="text-destructive">Access Denied</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>You don't have permission to access this page. Admin access required.</p>
+            <p>You don't have permission to access this page. Admin or Editor access required.</p>
           </CardContent>
         </Card>
       </div>
@@ -71,7 +71,7 @@ export default function AdminUsers() {
 }
 
 function AdminUsersContent() {
-  const { user } = useAuth(); // Get user context in this component too
+  const { user, userRole } = useAuth(); // Get user context and role in this component too
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
   const [isEditPasswordDialogOpen, setIsEditPasswordDialogOpen] = useState(false);
@@ -361,11 +361,13 @@ function AdminUsersContent() {
                                   <SelectValue placeholder="Select role" />
                                 </SelectTrigger>
                               </FormControl>
-                              <SelectContent>
-                                <SelectItem value="user">User</SelectItem>
-                                <SelectItem value="editor">Editor</SelectItem>
-                                <SelectItem value="admin">Admin</SelectItem>
-                              </SelectContent>
+                               <SelectContent>
+                                 <SelectItem value="user">User</SelectItem>
+                                 <SelectItem value="editor">Editor</SelectItem>
+                                 {userRole === "admin" && (
+                                   <SelectItem value="admin">Admin</SelectItem>
+                                 )}
+                               </SelectContent>
                             </Select>
                             <FormMessage />
                           </FormItem>
@@ -498,7 +500,9 @@ function AdminUsersContent() {
                                 </SelectTrigger>
                               </FormControl>
                                <SelectContent>
-                                 <SelectItem value="admin">Admin</SelectItem>
+                                 {userRole === "admin" && (
+                                   <SelectItem value="admin">Admin</SelectItem>
+                                 )}
                                  <SelectItem value="editor">Editor</SelectItem>
                                  <SelectItem value="user">User</SelectItem>
                                </SelectContent>
@@ -532,38 +536,41 @@ function AdminUsersContent() {
               </div>
             ) : (
               <div className="space-y-4">
-                {userRoles?.map((userRole) => (
-                  <Card key={userRole.id} className="hover:shadow-lg transition-shadow">
+                {userRoles?.map((roleEntry) => (
+                  <Card key={roleEntry.id} className="hover:shadow-lg transition-shadow">
                     <CardContent className="p-6">
                       <div className="flex justify-between items-start mb-4">
                         <div>
                           <h3 className="font-semibold flex items-center gap-2">
                             <Shield className="h-4 w-4" />
-                            {(userRole as any).profiles?.full_name || 
-                             (userRole as any).profiles?.username || 
-                             `User ${userRole.user_id.slice(0, 8)}`}
+                            {(roleEntry as any).profiles?.full_name || 
+                             (roleEntry as any).profiles?.username || 
+                             `User ${roleEntry.user_id.slice(0, 8)}`}
                           </h3>
                           <p className="text-sm text-muted-foreground">
-                            User ID: {userRole.user_id.slice(0, 8)}...
+                            User ID: {roleEntry.user_id.slice(0, 8)}...
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge className={`${getRoleColor(userRole.role)} text-white`}>
-                            {userRole.role}
+                          <Badge className={`${getRoleColor(roleEntry.role)} text-white`}>
+                            {roleEntry.role}
                           </Badge>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => deleteRoleMutation.mutate(userRole.id)}
-                            disabled={deleteRoleMutation.isPending}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          {/* Only allow deletion if user has permission */}
+                          {(userRole === "admin" || (userRole === "editor" && roleEntry.role !== "admin")) && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => deleteRoleMutation.mutate(roleEntry.id)}
+                              disabled={deleteRoleMutation.isPending}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
                         </div>
                       </div>
                       <div className="flex justify-between text-sm text-muted-foreground">
-                        <span>Role assigned: {new Date(userRole.created_at).toLocaleDateString()}</span>
-                        {userRole.user_id === user?.id && (
+                        <span>Role assigned: {new Date(roleEntry.created_at).toLocaleDateString()}</span>
+                        {roleEntry.user_id === user?.id && (
                           <Badge variant="outline" className="text-xs">
                             You
                           </Badge>
