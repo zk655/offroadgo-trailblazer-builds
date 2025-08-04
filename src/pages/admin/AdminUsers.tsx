@@ -162,18 +162,21 @@ export default function AdminUsers() {
 
   const createUserMutation = useMutation({
     mutationFn: async (data: UserFormData) => {
-      const { data: newUser, error: authError } = await supabase.auth.admin.createUser({
+      // Use regular sign up since admin.createUser requires service role
+      const { data: newUser, error: authError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
-        user_metadata: {
-          full_name: data.full_name,
-          username: data.username,
+        options: {
+          data: {
+            full_name: data.full_name,
+            username: data.username,
+          },
         },
       });
       
       if (authError) throw authError;
       
-      // Assign role if specified
+      // Assign role if specified and user was created
       if (data.role && data.role !== "user" && newUser.user) {
         const { error: roleError } = await supabase.from("user_roles").insert({
           user_id: newUser.user.id,
@@ -198,10 +201,9 @@ export default function AdminUsers() {
 
   const updatePasswordMutation = useMutation({
     mutationFn: async ({ userId, password }: { userId: string; password: string }) => {
-      const { error } = await supabase.auth.admin.updateUserById(userId, {
-        password: password,
-      });
-      if (error) throw error;
+      // For security, users should change their own passwords
+      // This is a limitation when using client-side auth without service role
+      throw new Error("Password updates require service role access. Users should reset their password via email.");
     },
     onSuccess: () => {
       toast({ title: "Password updated successfully" });
@@ -413,14 +415,7 @@ export default function AdminUsers() {
                         </div>
                       </div>
                       <div className="flex justify-center">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEditPassword(profile.id)}
-                        >
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit Password
-                        </Button>
+                        <p className="text-xs text-muted-foreground">Users can reset passwords via email</p>
                       </div>
                     </CardContent>
                   </Card>
