@@ -35,6 +35,43 @@ interface EditPasswordFormData {
 
 export default function AdminUsers() {
   const { user, userRole, loading, roleLoading } = useAuth();
+  
+  // Handle loading state first, before any other hooks
+  if (loading || roleLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Handle authentication early, before other hooks
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  // Handle authorization early, before other hooks
+  if (userRole !== "admin") {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="w-96">
+          <CardHeader>
+            <CardTitle className="text-destructive">Access Denied</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>You don't have permission to access this page. Admin access required.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Now we can safely use all hooks after the early returns
+  return <AdminUsersContent />;
+}
+
+function AdminUsersContent() {
+  const { user } = useAuth(); // Get user context in this component too
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
   const [isEditPasswordDialogOpen, setIsEditPasswordDialogOpen] = useState(false);
@@ -65,33 +102,6 @@ export default function AdminUsers() {
       password: "",
     },
   });
-
-  if (loading || roleLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  if (userRole !== "admin") {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="w-96">
-          <CardHeader>
-            <CardTitle className="text-destructive">Access Denied</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>You don't have permission to access this page. Admin access required.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const { data: profiles, isLoading: profilesLoading } = useQuery({
     queryKey: ["admin-profiles", searchTerm],
