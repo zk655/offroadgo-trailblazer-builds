@@ -10,6 +10,7 @@ import { Eye, EyeOff } from 'lucide-react';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,7 +21,7 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, resetPassword, user } = useAuth();
 
   // Redirect if already logged in
   if (user) {
@@ -34,7 +35,14 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      if (isLogin) {
+      if (isForgotPassword) {
+        const { error } = await resetPassword(email);
+        if (error) {
+          setError(error.message);
+        } else {
+          setMessage('Check your email for a password reset link!');
+        }
+      } else if (isLogin) {
         const { error } = await signIn(email, password);
         if (error) {
           setError(error.message);
@@ -70,18 +78,21 @@ export default function Auth() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            {isLogin ? 'Sign In' : 'Create Account'}
+            {isForgotPassword ? 'Reset Password' : (isLogin ? 'Sign In' : 'Create Account')}
           </CardTitle>
           <CardDescription className="text-center">
-            {isLogin 
-              ? 'Enter your credentials to access the admin panel' 
-              : 'Fill in your details to create an admin account'
+            {isForgotPassword 
+              ? 'Enter your email to receive a password reset link'
+              : (isLogin 
+                ? 'Enter your credentials to access the admin panel' 
+                : 'Fill in your details to create an admin account'
+              )
             }
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
+            {!isLogin && !isForgotPassword && (
               <>
                 <div className="space-y-2">
                   <Label htmlFor="username">Username</Label>
@@ -120,35 +131,37 @@ export default function Auth() {
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder="Enter your password"
-                  className="pr-10"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </Button>
+            {!isForgotPassword && (
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    placeholder="Enter your password"
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
               </div>
-            </div>
+            )}
 
-            {!isLogin && (
+            {!isLogin && !isForgotPassword && (
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <Input
@@ -175,19 +188,48 @@ export default function Auth() {
             )}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
+              {loading ? 'Loading...' : (isForgotPassword ? 'Send Reset Link' : (isLogin ? 'Sign In' : 'Create Account'))}
             </Button>
           </form>
+
+          {/* Forgot password link for login mode */}
+          {isLogin && !isForgotPassword && (
+            <div className="mt-4 text-center">
+              <Button
+                variant="link"
+                onClick={() => {
+                  setIsForgotPassword(true);
+                  setError('');
+                  setMessage('');
+                }}
+                className="text-sm"
+              >
+                Forgot your password?
+              </Button>
+            </div>
+          )}
 
           <div className="mt-6 text-center">
             <Button
               variant="link"
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={() => {
+                if (isForgotPassword) {
+                  setIsForgotPassword(false);
+                  setIsLogin(true);
+                } else {
+                  setIsLogin(!isLogin);
+                }
+                setError('');
+                setMessage('');
+              }}
               className="text-sm"
             >
-              {isLogin 
-                ? "Don't have an account? Sign up" 
-                : 'Already have an account? Sign in'
+              {isForgotPassword 
+                ? 'Back to Sign In'
+                : (isLogin 
+                  ? "Don't have an account? Sign up" 
+                  : 'Already have an account? Sign in'
+                )
               }
             </Button>
           </div>
