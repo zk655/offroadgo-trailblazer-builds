@@ -49,11 +49,12 @@ const Blog = () => {
       // Get live content first
       const liveContent = await getLiveBlogContent();
       
-      // Get local database content with proper ordering
+      // Get local database content with proper ordering - only published blogs
       const { data, error } = await supabase
         .from('blogs')
         .select('*')
-        .order('created_at', { ascending: false });
+        .not('published_at', 'is', null)
+        .order('published_at', { ascending: false });
 
       if (error) throw error;
 
