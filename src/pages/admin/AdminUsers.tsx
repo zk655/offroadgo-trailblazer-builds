@@ -555,8 +555,8 @@ function AdminUsersContent() {
                           <Badge className={`${getRoleColor(roleEntry.role)} text-white`}>
                             {roleEntry.role}
                           </Badge>
-                          {/* Only allow deletion if user has permission */}
-                          {(userRole === "admin" || (userRole === "editor" && roleEntry.role !== "admin")) && (
+                          {/* Only allow deletion for admins */}
+                          {userRole === "admin" && (
                             <Button
                               variant="outline"
                               size="sm"
