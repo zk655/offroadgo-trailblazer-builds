@@ -429,6 +429,36 @@ function AdminUsersContent() {
                           <span className="font-mono text-xs">{profile.id.slice(0, 8)}...</span>
                         </div>
                       </div>
+                      
+                      {/* Admin-only management options */}
+                      {userRole === "admin" && (
+                        <div className="flex justify-center gap-2 mb-4">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditPassword(profile.id)}
+                            className="flex items-center gap-1"
+                          >
+                            <Edit className="h-3 w-3" />
+                            Edit
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              if (confirm(`Are you sure you want to delete ${profile.full_name || profile.username}?`)) {
+                                // Delete user functionality would go here
+                                toast({ title: "User deletion not implemented", description: "This feature requires additional backend setup", variant: "destructive" });
+                              }
+                            }}
+                            className="flex items-center gap-1 text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                            Delete
+                          </Button>
+                        </div>
+                      )}
+                      
                       <div className="flex justify-center">
                         <p className="text-xs text-muted-foreground">Users can reset passwords via email</p>
                       </div>
