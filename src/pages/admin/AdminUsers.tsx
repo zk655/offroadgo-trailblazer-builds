@@ -430,9 +430,39 @@ function AdminUsersContent() {
                         </div>
                       </div>
                       
-                       <div className="flex justify-center">
-                         <p className="text-xs text-muted-foreground">Users can reset passwords via email</p>
-                       </div>
+                      {/* Admin-only management options */}
+                      {userRole === "admin" && (
+                        <div className="flex justify-center gap-2 mb-4">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditPassword(profile.id)}
+                            className="flex items-center gap-1"
+                          >
+                            <Edit className="h-3 w-3" />
+                            Edit
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              toast({ 
+                                title: "Delete User", 
+                                description: "User deletion requires service role access", 
+                                variant: "default" 
+                              });
+                            }}
+                            className="flex items-center gap-1"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                            Delete
+                          </Button>
+                        </div>
+                      )}
+                      
+                      <div className="flex justify-center">
+                        <p className="text-xs text-muted-foreground">Users can reset passwords via email</p>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
