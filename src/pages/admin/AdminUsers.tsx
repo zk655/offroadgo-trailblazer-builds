@@ -430,39 +430,9 @@ function AdminUsersContent() {
                         </div>
                       </div>
                       
-                      {/* Admin-only management options */}
-                      {userRole === "admin" && (
-                        <div className="flex justify-center gap-2 mb-4">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEditPassword(profile.id)}
-                            className="flex items-center gap-1"
-                          >
-                            <Edit className="h-3 w-3" />
-                            Edit
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              toast({ 
-                                title: "Password Reset Required", 
-                                description: "Users can reset passwords via email", 
-                                variant: "default" 
-                              });
-                            }}
-                            className="flex items-center gap-1"
-                          >
-                            <Settings className="h-3 w-3" />
-                            Reset Password
-                          </Button>
-                        </div>
-                      )}
-                      
-                      <div className="flex justify-center">
-                        <p className="text-xs text-muted-foreground">Users can reset passwords via email</p>
-                      </div>
+                       <div className="flex justify-center">
+                         <p className="text-xs text-muted-foreground">Users can reset passwords via email</p>
+                       </div>
                     </CardContent>
                   </Card>
                 ))}
