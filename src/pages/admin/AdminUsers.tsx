@@ -446,15 +446,16 @@ function AdminUsersContent() {
                             variant="outline"
                             size="sm"
                             onClick={() => {
-                              if (confirm(`Are you sure you want to delete ${profile.full_name || profile.username}?`)) {
-                                // Delete user functionality would go here
-                                toast({ title: "User deletion not implemented", description: "This feature requires additional backend setup", variant: "destructive" });
-                              }
+                              toast({ 
+                                title: "Password Reset Required", 
+                                description: "Users can reset passwords via email", 
+                                variant: "default" 
+                              });
                             }}
-                            className="flex items-center gap-1 text-destructive hover:text-destructive"
+                            className="flex items-center gap-1"
                           >
-                            <Trash2 className="h-3 w-3" />
-                            Delete
+                            <Settings className="h-3 w-3" />
+                            Reset Password
                           </Button>
                         </div>
                       )}
