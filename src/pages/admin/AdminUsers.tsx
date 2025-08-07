@@ -248,9 +248,30 @@ function AdminUsersContent() {
 
   const updatePasswordMutation = useMutation({
     mutationFn: async ({ userId, password }: { userId: string; password: string }) => {
-      // For security, users should change their own passwords
-      // This is a limitation when using client-side auth without service role
-      throw new Error("Password updates require service role access. Users should reset their password via email.");
+      // Get the current user's session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('No active session');
+
+      // Call the edge function to update password with admin privileges
+      const response = await fetch('https://muzlggruqnlackmbrswp.supabase.co/functions/v1/admin-update-password', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          password,
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to update password');
+      }
+      
+      return result;
     },
     onSuccess: () => {
       toast({ title: "Password updated successfully" });
