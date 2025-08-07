@@ -66,7 +66,7 @@ export default function AdminBlogs() {
       
       const { data, error } = await query;
       if (error) throw error;
-      return data;
+      return data || [];
     },
   });
 
@@ -401,7 +401,13 @@ export default function AdminBlogs() {
           }
         />
 
-        <div className="mb-6">
+        <div className="mb-6 space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-muted-foreground">
+              Showing {blogs?.length || 0} database blogs 
+              <span className="text-xs ml-2">(Live content from external sources appears on main blog page)</span>
+            </div>
+          </div>
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
@@ -489,10 +495,15 @@ export default function AdminBlogs() {
           </div>
         )}
 
-        {blogs && blogs.length === 0 && (
+        {blogs && blogs.length === 0 && !isLoading && (
           <Card className="p-8 text-center">
             <CardContent>
-              <p className="text-muted-foreground">No blog posts found.</p>
+              <p className="text-muted-foreground">
+                {searchTerm ? "No blog posts found matching your search." : "No blog posts found in database."}
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                Note: The main blog page also displays live content from external sources which are not managed here.
+              </p>
             </CardContent>
           </Card>
         )}
