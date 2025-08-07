@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getLiveBlogContent } from "@/services/blogService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -58,15 +59,35 @@ export default function AdminBlogs() {
   const { data: blogs, isLoading } = useQuery({
     queryKey: ["admin-blogs", searchTerm],
     queryFn: async () => {
-      let query = supabase.from("blogs").select("*").order("created_at", { ascending: false });
-      
-      if (searchTerm) {
-        query = query.or(`title.ilike.%${searchTerm}%,author.ilike.%${searchTerm}%`);
+      try {
+        // Get live content first (external sources)
+        const liveContent = await getLiveBlogContent();
+        
+        // Get local database content with proper ordering
+        const { data, error } = await supabase
+          .from('blogs')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        // Combine live and local content, ensuring local content comes first
+        let allPosts = [...(data || []), ...liveContent];
+        
+        // Apply search filter if provided
+        if (searchTerm) {
+          allPosts = allPosts.filter(post => 
+            post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            post.author?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            post.excerpt?.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        }
+        
+        return allPosts;
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+        return [];
       }
-      
-      const { data, error } = await query;
-      if (error) throw error;
-      return data || [];
     },
   });
 
@@ -404,8 +425,8 @@ export default function AdminBlogs() {
         <div className="mb-6 space-y-4">
           <div className="flex justify-between items-center">
             <div className="text-sm text-muted-foreground">
-              Showing {blogs?.length || 0} database blogs 
-              <span className="text-xs ml-2">(Live content from external sources appears on main blog page)</span>
+              Showing {blogs?.length || 0} total blog posts 
+              <span className="text-xs ml-2">(Includes database blogs and live external content)</span>
             </div>
           </div>
           <div className="relative">
@@ -461,9 +482,21 @@ export default function AdminBlogs() {
                     </div>
                   )}
                   <div className="flex justify-between items-center">
-                    <Badge variant={blog.published_at ? "default" : "outline"}>
-                      {blog.published_at ? "Published" : "Draft"}
-                    </Badge>
+                    <div className="flex gap-2">
+                      <Badge variant={blog.published_at ? "default" : "outline"}>
+                        {blog.published_at ? "Published" : "Draft"}
+                      </Badge>
+                      {blog.external_url && (
+                        <Badge variant="secondary" className="text-xs">
+                          External
+                        </Badge>
+                      )}
+                      {blog.id.startsWith('live-') && (
+                        <Badge variant="secondary" className="text-xs">
+                          Live Content
+                        </Badge>
+                      )}
+                    </div>
                     <div className="flex space-x-2">
                       <Button
                         variant="outline"
@@ -472,21 +505,25 @@ export default function AdminBlogs() {
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(blog)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => deleteMutation.mutate(blog.id)}
-                        disabled={deleteMutation.isPending}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {!blog.id.startsWith('live-') && (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEdit(blog)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => deleteMutation.mutate(blog.id)}
+                            disabled={deleteMutation.isPending}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -499,10 +536,10 @@ export default function AdminBlogs() {
           <Card className="p-8 text-center">
             <CardContent>
               <p className="text-muted-foreground">
-                {searchTerm ? "No blog posts found matching your search." : "No blog posts found in database."}
+                {searchTerm ? "No blog posts found matching your search." : "No blog posts found."}
               </p>
               <p className="text-xs text-muted-foreground mt-2">
-                Note: The main blog page also displays live content from external sources which are not managed here.
+                This view shows both database blogs and live external content, synchronized with the main blog page.
               </p>
             </CardContent>
           </Card>
