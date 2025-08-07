@@ -33,6 +33,10 @@ interface EditPasswordFormData {
   password: string;
 }
 
+interface EditRoleFormData {
+  role: string;
+}
+
 export default function AdminUsers() {
   const { user, userRole, loading, roleLoading } = useAuth();
   
@@ -75,7 +79,10 @@ function AdminUsersContent() {
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
   const [isEditPasswordDialogOpen, setIsEditPasswordDialogOpen] = useState(false);
+  const [isEditRoleDialogOpen, setIsEditRoleDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [selectedRoleId, setSelectedRoleId] = useState<string>("");
+  const [selectedUserRole, setSelectedUserRole] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -100,6 +107,12 @@ function AdminUsersContent() {
   const passwordForm = useForm<EditPasswordFormData>({
     defaultValues: {
       password: "",
+    },
+  });
+
+  const editRoleForm = useForm<EditRoleFormData>({
+    defaultValues: {
+      role: "",
     },
   });
 
@@ -167,6 +180,27 @@ function AdminUsersContent() {
     },
     onError: (error: any) => {
       toast({ title: "Error removing role", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const updateRoleMutation = useMutation({
+    mutationFn: async ({ roleId, newRole }: { roleId: string; newRole: string }) => {
+      const { error } = await supabase
+        .from("user_roles")
+        .update({ role: newRole as 'admin' | 'editor' | 'user' })
+        .eq("id", roleId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-user-roles"] });
+      toast({ title: "User role updated successfully" });
+      setIsEditRoleDialogOpen(false);
+      editRoleForm.reset();
+      setSelectedRoleId("");
+      setSelectedUserRole("");
+    },
+    onError: (error: any) => {
+      toast({ title: "Error updating role", description: error.message, variant: "destructive" });
     },
   });
 
@@ -241,9 +275,20 @@ function AdminUsersContent() {
     updatePasswordMutation.mutate({ userId: selectedUserId, password: data.password });
   };
 
+  const onEditRoleSubmit = (data: EditRoleFormData) => {
+    updateRoleMutation.mutate({ roleId: selectedRoleId, newRole: data.role });
+  };
+
   const handleEditPassword = (userId: string) => {
     setSelectedUserId(userId);
     setIsEditPasswordDialogOpen(true);
+  };
+
+  const handleEditRole = (roleId: string, currentRole: string) => {
+    setSelectedRoleId(roleId);
+    setSelectedUserRole(currentRole);
+    editRoleForm.setValue("role", currentRole);
+    setIsEditRoleDialogOpen(true);
   };
 
   const getRoleColor = (role: string) => {
@@ -582,22 +627,37 @@ function AdminUsersContent() {
                             User ID: {roleEntry.user_id.slice(0, 8)}...
                           </p>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Badge className={`${getRoleColor(roleEntry.role)} text-white`}>
-                            {roleEntry.role}
-                          </Badge>
-                          {/* Only allow deletion for admins */}
-                          {userRole === "admin" && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => deleteRoleMutation.mutate(roleEntry.id)}
-                              disabled={deleteRoleMutation.isPending}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </div>
+                         <div className="flex items-center gap-2">
+                           <Badge className={`${getRoleColor(roleEntry.role)} text-white`}>
+                             {roleEntry.role}
+                           </Badge>
+                           {/* Only allow role management for admins and editors */}
+                           {(userRole === "admin" || userRole === "editor") && (
+                             <div className="flex gap-1">
+                               <Button
+                                 variant="outline"
+                                 size="sm"
+                                 onClick={() => handleEditRole(roleEntry.id, roleEntry.role)}
+                                 disabled={updateRoleMutation.isPending}
+                                 className="flex items-center gap-1"
+                               >
+                                 <Edit className="h-3 w-3" />
+                               </Button>
+                               {/* Only admins can delete roles */}
+                               {userRole === "admin" && (
+                                 <Button
+                                   variant="outline"
+                                   size="sm"
+                                   onClick={() => deleteRoleMutation.mutate(roleEntry.id)}
+                                   disabled={deleteRoleMutation.isPending}
+                                   className="flex items-center gap-1"
+                                 >
+                                   <Trash2 className="h-3 w-3" />
+                                 </Button>
+                               )}
+                             </div>
+                           )}
+                         </div>
                       </div>
                       <div className="flex justify-between text-sm text-muted-foreground">
                         <span>Role assigned: {new Date(roleEntry.created_at).toLocaleDateString()}</span>
@@ -648,6 +708,49 @@ function AdminUsersContent() {
                 <DialogFooter>
                   <Button type="submit" disabled={updatePasswordMutation.isPending}>
                     Update Password
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Role Dialog */}
+        <Dialog open={isEditRoleDialogOpen} onOpenChange={setIsEditRoleDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Update User Role</DialogTitle>
+            </DialogHeader>
+            <Form {...editRoleForm}>
+              <form onSubmit={editRoleForm.handleSubmit(onEditRoleSubmit)} className="space-y-4">
+                <FormField
+                  control={editRoleForm.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {userRole === "admin" && (
+                            <SelectItem value="admin">Admin</SelectItem>
+                          )}
+                          <SelectItem value="editor">Editor</SelectItem>
+                          <SelectItem value="user">User</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <DialogFooter>
+                  <Button type="submit" disabled={updateRoleMutation.isPending}>
+                    Update Role
                   </Button>
                 </DialogFooter>
               </form>
