@@ -60,18 +60,30 @@ serve(async (req) => {
       )
     }
 
-    // Update the user's password with admin privileges and invalidate all sessions
+    // Update the user's password with admin privileges
     const { data: updatedUser, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
       userId,
       { 
         password,
-        email_confirm: true // Force user to be confirmed
+        email_confirm: true
       }
     )
 
+    if (updateError) {
+      console.error('Password update error:', updateError)
+      return new Response(
+        JSON.stringify({ error: updateError.message }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     // Sign out all sessions for this user to force them to use the new password
-    if (!updateError) {
+    try {
       await supabaseAdmin.auth.admin.signOut(userId, 'global')
+      console.log('Successfully signed out all sessions for user:', userId)
+    } catch (signOutError) {
+      console.error('Error signing out user sessions:', signOutError)
+      // Don't fail the password update if signout fails
     }
 
     if (updateError) {
