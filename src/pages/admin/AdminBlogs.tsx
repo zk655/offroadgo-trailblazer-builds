@@ -505,7 +505,7 @@ export default function AdminBlogs() {
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
-                      {(!blog.id.startsWith('live-') && !blog.external_url) && (
+                      {!blog.id.startsWith('live-') && (
                         <>
                           <Button
                             variant="outline"
