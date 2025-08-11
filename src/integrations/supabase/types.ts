@@ -417,6 +417,7 @@ export type Database = {
           image_url: string | null
           price: number | null
           rating: number | null
+          slug: string | null
           title: string
           updated_at: string
         }
@@ -430,6 +431,7 @@ export type Database = {
           image_url?: string | null
           price?: number | null
           rating?: number | null
+          slug?: string | null
           title: string
           updated_at?: string
         }
@@ -443,6 +445,7 @@ export type Database = {
           image_url?: string | null
           price?: number | null
           rating?: number | null
+          slug?: string | null
           title?: string
           updated_at?: string
         }
@@ -489,6 +492,7 @@ export type Database = {
           location: string | null
           longitude: number | null
           name: string
+          slug: string | null
           terrain: string | null
           updated_at: string
         }
@@ -505,6 +509,7 @@ export type Database = {
           location?: string | null
           longitude?: number | null
           name: string
+          slug?: string | null
           terrain?: string | null
           updated_at?: string
         }
@@ -521,6 +526,7 @@ export type Database = {
           location?: string | null
           longitude?: number | null
           name?: string
+          slug?: string | null
           terrain?: string | null
           updated_at?: string
         }
@@ -572,6 +578,7 @@ export type Database = {
           price: number | null
           safety_rating: number | null
           seating_capacity: number | null
+          slug: string | null
           starting_price: number | null
           tire_size: string | null
           top_speed: number | null
@@ -609,6 +616,7 @@ export type Database = {
           price?: number | null
           safety_rating?: number | null
           seating_capacity?: number | null
+          slug?: string | null
           starting_price?: number | null
           tire_size?: string | null
           top_speed?: number | null
@@ -646,6 +654,7 @@ export type Database = {
           price?: number | null
           safety_rating?: number | null
           seating_capacity?: number | null
+          slug?: string | null
           starting_price?: number | null
           tire_size?: string | null
           top_speed?: number | null
@@ -666,6 +675,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_slug: {
+        Args: { input_text: string }
+        Returns: string
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["app_role"]
