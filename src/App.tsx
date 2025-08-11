@@ -56,14 +56,14 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/vehicles" element={<Vehicles />} />
-              <Route path="/vehicles/:id" element={<VehicleDetail />} />
-              <Route path="/vehicle/:id" element={<VehicleDetail />} />
+              <Route path="/vehicles/:slug" element={<VehicleDetail />} />
+              <Route path="/vehicle/:slug" element={<VehicleDetail />} />
               <Route path="/compare" element={<Compare />} />
               <Route path="/build" element={<Build />} />
               <Route path="/products" element={<Parts />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/product/:slug" element={<ProductDetail />} />
               <Route path="/trails" element={<Trails />} />
-              <Route path="/trail/:id" element={<TrailDetail />} />
+              <Route path="/trail/:slug" element={<TrailDetail />} />
               <Route path="/adventure-start" element={<AdventureStart />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogDetail />} />

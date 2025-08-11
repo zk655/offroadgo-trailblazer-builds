@@ -23,6 +23,7 @@ import subaruOutback from '@/assets/vehicles/subaru-outback-wilderness.jpg';
 
 interface Vehicle {
   id: string;
+  slug: string;
   name: string;
   brand: string;
   type: string;
@@ -71,19 +72,19 @@ const getVehicleImage = (brand: string, name: string, image_url?: string) => {
 };
 
 const VehicleDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchVehicle = async () => {
-      if (!id) return;
+      if (!slug) return;
       
       try {
         const { data, error } = await supabase
           .from('vehicles')
           .select('*')
-          .eq('id', id)
+          .eq('slug', slug)
           .single();
           
         if (error) {
@@ -101,7 +102,7 @@ const VehicleDetail = () => {
     };
 
     fetchVehicle();
-  }, [id]);
+  }, [slug]);
 
   if (loading) {
     return (

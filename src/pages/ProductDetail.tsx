@@ -25,6 +25,7 @@ import AdPlacement from '@/components/AdPlacement';
 
 interface Product {
   id: string;
+  slug: string;
   title: string;
   category: string;
   price: number;
@@ -36,27 +37,27 @@ interface Product {
 }
 
 const ProductDetail = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (id) {
-      fetchProduct(id);
+    if (slug) {
+      fetchProduct(slug);
     }
-  }, [id]);
+  }, [slug]);
 
-  const fetchProduct = async (productId: string) => {
+  const fetchProduct = async (productSlug: string) => {
     try {
       setLoading(true);
       
-      // Fetch the main product
+      // Fetch the main product by slug
       const { data: productData, error: productError } = await supabase
         .from('mods')
         .select('*')
-        .eq('id', productId)
+        .eq('slug', productSlug)
         .single();
 
       if (productError) throw productError;
@@ -68,7 +69,7 @@ const ProductDetail = () => {
           .from('mods')
           .select('*')
           .eq('category', productData.category)
-          .neq('id', productId)
+          .neq('slug', productSlug)
           .limit(4);
 
         if (relatedError) throw relatedError;
@@ -324,7 +325,7 @@ const ProductDetail = () => {
                       key={relatedProduct.id} 
                       className="group hover:shadow-primary transition-smooth hover:-translate-y-1 overflow-hidden"
                     >
-                      <Link to={`/product/${relatedProduct.id}`}>
+                      <Link to={`/product/${relatedProduct.slug}`}>
                         <div className="relative">
                           <img
                             src={relatedProduct.image_url}

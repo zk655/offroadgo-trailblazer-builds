@@ -24,6 +24,7 @@ import AdSenseAd from '@/components/AdSenseAd';
 
 interface Trail {
   id: string;
+  slug: string;
   name: string;
   terrain: string;
   difficulty: string;
@@ -332,12 +333,12 @@ const Trails = () => {
 
                 <CardFooter className="pt-2 flex gap-2">
                   <Button asChild variant="outline" size="sm" className="flex-1">
-                    <Link to={`/trail/${trail.id}`}>
+                    <Link to={`/trail/${trail.slug}`}>
                       View Details
                     </Link>
                   </Button>
                   <Button asChild size="sm" className="flex-1">
-                    <Link to={`/trip-planner?trail=${trail.id}`}>
+                    <Link to={`/trip-planner?trail=${trail.slug}`}>
                       Add to Trip
                     </Link>
                   </Button>

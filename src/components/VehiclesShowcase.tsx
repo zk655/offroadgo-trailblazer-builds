@@ -28,6 +28,7 @@ const VehiclesShowcase = () => {
   const vehicles = [
     {
       id: 'c551e2f6-b64f-4a03-84fd-f50a9eb49fa8',
+      slug: 'jeep-wrangler-rubicon-2024',
       name: 'Jeep Wrangler Rubicon',
       brand: 'Jeep',
       year: 2024,
@@ -44,6 +45,7 @@ const VehiclesShowcase = () => {
     },
     {
       id: '073a8d5d-3540-41ec-b3a8-5ad8278937c5',
+      slug: 'ford-bronco-raptor-2024',
       name: 'Ford Bronco Raptor',
       brand: 'Ford',
       year: 2024,
@@ -60,6 +62,7 @@ const VehiclesShowcase = () => {
     },
     {
       id: '20ec7cd3-5354-49f9-b5e7-ec13ee9065c5',
+      slug: 'ram-1500-trx-2024',
       name: 'RAM 1500 TRX',
       brand: 'RAM',
       year: 2024,
@@ -76,6 +79,7 @@ const VehiclesShowcase = () => {
     },
     {
       id: '321d86ce-211e-4348-b06f-a5e8225e4365',
+      slug: 'gmc-sierra-at4x-2024',
       name: 'GMC Sierra AT4X',
       brand: 'GMC',
       year: 2024,
@@ -92,6 +96,7 @@ const VehiclesShowcase = () => {
     },
     {
       id: '318eb40b-e033-41e4-8c36-b96d6c3b86b4',
+      slug: 'chevrolet-colorado-zr2-2024',
       name: 'Chevrolet Colorado ZR2',
       brand: 'Chevrolet',
       year: 2024,
@@ -108,6 +113,7 @@ const VehiclesShowcase = () => {
     },
     {
       id: 'fce134a7-3158-44d7-b13d-955717e70ce5',
+      slug: 'toyota-4runner-trd-pro-2024',
       name: 'Toyota 4Runner TRD Pro',
       brand: 'Toyota',
       year: 2024,
@@ -124,6 +130,7 @@ const VehiclesShowcase = () => {
     },
     {
       id: 'dd55d8ca-5ce3-43ff-8d3f-8db9717c80d7',
+      slug: 'nissan-frontier-pro-4x-2024',
       name: 'Nissan Frontier Pro-4X',
       brand: 'Nissan',
       year: 2024,
@@ -140,6 +147,7 @@ const VehiclesShowcase = () => {
     },
     {
       id: '609a4fbd-b40e-4dfb-95ce-a03b19111d77',
+      slug: 'subaru-outback-wilderness-2024',
       name: 'Subaru Outback Wilderness',
       brand: 'Subaru',
       year: 2024,
@@ -230,7 +238,7 @@ const VehiclesShowcase = () => {
                 </div>
 
                 {/* View Details Button - Theme Color */}
-                <Link to={`/vehicles/${vehicle.id}`}>
+                <Link to={`/vehicles/${vehicle.slug}`}>
                   <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-xs h-8">
                     View Details
                     <ArrowRight className="h-3 w-3 ml-1" />

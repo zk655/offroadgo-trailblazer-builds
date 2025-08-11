@@ -10,6 +10,7 @@ import Footer from '@/components/Footer';
 
 interface Trail {
   id: string;
+  slug: string;
   name: string;
   location: string;
   difficulty: string;
@@ -23,23 +24,23 @@ interface Trail {
 }
 
 const TrailDetail = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const [trail, setTrail] = useState<Trail | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (id) {
-      fetchTrail(id);
+    if (slug) {
+      fetchTrail(slug);
     }
-  }, [id]);
+  }, [slug]);
 
-  const fetchTrail = async (trailId: string) => {
+  const fetchTrail = async (trailSlug: string) => {
     try {
       const { data, error } = await supabase
         .from('trails')
         .select('*')
-        .eq('id', trailId)
+        .eq('slug', trailSlug)
         .single();
 
       if (error) throw error;

@@ -19,6 +19,7 @@ import AdPlacement from '@/components/AdPlacement';
 
 interface Vehicle {
   id: string;
+  slug: string;
   name: string;
   brand: string;
   type: string;
@@ -370,12 +371,12 @@ const Vehicles = () => {
                     {/* Enhanced Action Buttons */}
                     <div className="flex gap-3">
                       <Button asChild variant="outline" size="sm" className="flex-1 group-hover:border-primary/60 group-hover:bg-primary/5 text-xs h-10 rounded-xl font-semibold transition-all duration-300">
-                        <Link to={`/vehicle/${vehicle.id}`}>
+                        <Link to={`/vehicle/${vehicle.slug}`}>
                           View Details
                         </Link>
                       </Button>
                       <Button asChild size="sm" className="flex-1 text-xs h-10 rounded-xl font-semibold bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 transition-all duration-300">
-                        <Link to={`/compare?vehicles=${vehicle.id}`}>
+                        <Link to={`/compare?vehicles=${vehicle.slug}`}>
                           Compare
                         </Link>
                       </Button>

@@ -20,6 +20,7 @@ const ProductsSection = () => {
   const products = [
     {
       id: 'a9789ecd-8210-4d72-bff5-209e9df2a328',
+      slug: 'bfgoodrich-all-terrain-ta-ko2',
       name: "BFGoodrich All-Terrain T/A KO2",
       price: "$899.99",
       originalPrice: "$1,199.99",
@@ -32,6 +33,7 @@ const ProductsSection = () => {
     },
     {
       id: 'c7ccf180-effa-4e3e-b243-5d014723f323',
+      slug: 'rigid-led-light-bar',
       name: "Rigid LED Light Bar",
       price: "$349.99",
       originalPrice: "$449.99",
@@ -44,6 +46,7 @@ const ProductsSection = () => {
     },
     {
       id: '9c4e97f7-d342-48d6-9c65-624d5700446d',
+      slug: 'arb-bull-bar',
       name: "ARB Bull Bar",
       price: "$599.99",
       originalPrice: "$749.99",
@@ -56,6 +59,7 @@ const ProductsSection = () => {
     },
     {
       id: '1cee57e6-43f7-4b7a-aa86-d7e9280afbab',
+      slug: 'bilstein-5100-shocks',
       name: "Bilstein 5100 Shocks",
       price: "$1,299.99",
       originalPrice: "$1,599.99",
@@ -68,6 +72,7 @@ const ProductsSection = () => {
     },
     {
       id: '58144f95-dd6f-45db-9284-20d8dbdbfdbd',
+      slug: 'teraflex-lift-kit',
       name: "Teraflex Lift Kit",
       price: "$749.99",
       originalPrice: "$899.99",
@@ -80,6 +85,7 @@ const ProductsSection = () => {
     },
     {
       id: '207e1d46-88c3-4ffc-a2df-c837861e93e9',
+      slug: 'rigid-industries-20-led-light-bar',
       name: "Rigid Industries 20\" LED Light Bar",
       price: "$2,199.99",
       originalPrice: "$2,599.99",
@@ -92,6 +98,7 @@ const ProductsSection = () => {
     },
     {
       id: 'b748a731-1965-4667-a74b-c1ede3b24fcd',
+      slug: 'kc-hilites-flex-led-rock-light-kit',
       name: "KC HiLiTES Flex LED Rock Light Kit",
       price: "$1,599.99",
       originalPrice: "$1,899.99",
@@ -104,6 +111,7 @@ const ProductsSection = () => {
     },
     {
       id: '842635e6-2919-4c32-8774-65a865fa5f3c',
+      slug: 'baja-designs-squadron-sport-led',
       name: "Baja Designs Squadron Sport LED",
       price: "$299.99",
       originalPrice: "$399.99",
@@ -116,6 +124,7 @@ const ProductsSection = () => {
     },
     {
       id: '6249ec13-948b-41b8-94f6-de1faaad1a32',
+      slug: 'arb-front-bumper-deluxe',
       name: "ARB Front Bumper Deluxe",
       price: "$199.99",
       originalPrice: "$249.99",
@@ -128,6 +137,7 @@ const ProductsSection = () => {
     },
     {
       id: '4840a073-dd78-4bfe-af0d-edcfa91f0940',
+      slug: 'skid-row-engine-skid-plate',
       name: "Skid Row Engine Skid Plate",
       price: "$159.99",
       originalPrice: "$199.99",
@@ -173,7 +183,7 @@ const ProductsSection = () => {
         {/* Top 4 Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.slice(0, 4).map((product) => (
-            <Link key={product.id} to={`/product/${product.id}`}>
+            <Link key={product.id} to={`/product/${product.slug}`}>
               <Card className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer">
                 {/* Product Image - Optimized */}
                 <div className="relative overflow-hidden aspect-square bg-muted/10 p-4">
