@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
-import { ArrowLeft, Calendar, User, Clock, Share2, Heart, BookOpen, Tag, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Calendar, User, Clock, Heart, BookOpen, Tag, ArrowRight } from 'lucide-react';
+import SocialShare from '@/components/SocialShare';
 import Navigation from '@/components/Navigation';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
@@ -394,15 +395,12 @@ const BlogDetail = () => {
 
           <div className="flex items-center gap-4 py-6 border-t border-b mb-8">
             <span className="text-sm font-medium">Share this article:</span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleShare}
-              className="flex items-center gap-2"
-            >
-              <Share2 className="h-4 w-4" />
-              Share
-            </Button>
+            <SocialShare
+              title={post.title}
+              excerpt={post.excerpt}
+              url={`/blog/${post.slug}`}
+              image={post.cover_image}
+            />
           </div>
 
           {relatedPosts.length > 0 && (
