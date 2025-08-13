@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users, Trophy, ExternalLink, Clock, DollarSign } from 'lucide-react';
 import { format } from 'date-fns';
 import OptimizedImage from '@/components/OptimizedImage';
+import SocialShare from '@/components/SocialShare';
 
 interface Club {
   id: string;
@@ -221,19 +222,33 @@ const ClubsEvents = () => {
                             </div>
                           )}
 
-                          <div className="flex items-center justify-between pt-4">
-                            <div className="text-sm text-muted-foreground">
-                              {event.current_participants}/{event.max_participants} participants
+                          <div className="space-y-3 pt-4">
+                            <div className="flex items-center justify-between">
+                              <div className="text-sm text-muted-foreground">
+                                {event.current_participants}/{event.max_participants} participants
+                              </div>
+                              
+                              {event.external_url && (
+                                <Button variant="outline" size="sm" asChild>
+                                  <a href={event.external_url} target="_blank" rel="noopener noreferrer">
+                                    <ExternalLink className="w-4 h-4 mr-2" />
+                                    Register
+                                  </a>
+                                </Button>
+                              )}
                             </div>
                             
-                            {event.external_url && (
-                              <Button variant="outline" size="sm" asChild>
-                                <a href={event.external_url} target="_blank" rel="noopener noreferrer">
-                                  <ExternalLink className="w-4 h-4 mr-2" />
-                                  Register
-                                </a>
-                              </Button>
-                            )}
+                            {/* Social Share */}
+                            <div className="flex justify-center">
+                              <SocialShare
+                                title={event.title}
+                                excerpt={event.description || `Join the ${event.title} rally event in ${event.location}, ${event.country}`}
+                                url={`/event/${event.id}`}
+                                image={event.image_url}
+                                variant="icon"
+                                size="sm"
+                              />
+                            </div>
                           </div>
                         </div>
                       </CardContent>
@@ -320,23 +335,37 @@ const ClubsEvents = () => {
                               {club.club_type}
                             </Badge>
                             
-                            <div className="flex gap-2">
-                              {club.website_url && (
-                                <Button variant="outline" size="sm" asChild className="flex-1">
-                                  <a href={club.website_url} target="_blank" rel="noopener noreferrer">
-                                    <ExternalLink className="w-4 h-4 mr-2" />
-                                    Website
-                                  </a>
-                                </Button>
-                              )}
+                            <div className="space-y-2">
+                              <div className="flex gap-2">
+                                {club.website_url && (
+                                  <Button variant="outline" size="sm" asChild className="flex-1">
+                                    <a href={club.website_url} target="_blank" rel="noopener noreferrer">
+                                      <ExternalLink className="w-4 h-4 mr-2" />
+                                      Website
+                                    </a>
+                                  </Button>
+                                )}
+                                
+                                {club.contact_email && (
+                                  <Button variant="outline" size="sm" asChild className="flex-1">
+                                    <a href={`mailto:${club.contact_email}`}>
+                                      Contact
+                                    </a>
+                                  </Button>
+                                )}
+                              </div>
                               
-                              {club.contact_email && (
-                                <Button variant="outline" size="sm" asChild className="flex-1">
-                                  <a href={`mailto:${club.contact_email}`}>
-                                    Contact
-                                  </a>
-                                </Button>
-                              )}
+                              {/* Social Share */}
+                              <div className="flex justify-center">
+                                <SocialShare
+                                  title={club.name}
+                                  excerpt={club.description || `Join ${club.name}, a rally club based in ${club.location}, ${club.country}`}
+                                  url={`/clubs-events#club-${club.id}`}
+                                  image={club.image_url}
+                                  variant="icon"
+                                  size="sm"
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>

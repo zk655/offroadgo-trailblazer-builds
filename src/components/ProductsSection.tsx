@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Star, Heart, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import OptimizedImage from '@/components/OptimizedImage';
+import SocialShare from '@/components/SocialShare';
 
 // Import product images
 import winchImage from '@/assets/products/winch-12000lb.jpg';
@@ -265,14 +266,28 @@ const ProductsSection = () => {
                     <span className="text-xs text-muted-foreground line-through">{product.originalPrice}</span>
                   </div>
 
-                  {/* View Details Button - Smaller */}
-                  <Button 
-                    size="sm" 
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium h-7 text-xs"
-                  >
-                    <Eye className="h-3 w-3 mr-1.5" />
-                    View Details
-                  </Button>
+                  {/* Actions */}
+                  <div className="space-y-2">
+                    <Button 
+                      size="sm" 
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium h-7 text-xs"
+                    >
+                      <Eye className="h-3 w-3 mr-1.5" />
+                      View Details
+                    </Button>
+                    
+                    {/* Social Share */}
+                    <div className="flex justify-center">
+                      <SocialShare
+                        title={product.name}
+                        excerpt={product.description}
+                        url={`/product/${product.slug}`}
+                        image={product.image}
+                        variant="icon"
+                        size="sm"
+                      />
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </Link>

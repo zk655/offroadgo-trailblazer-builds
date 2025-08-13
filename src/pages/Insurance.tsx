@@ -11,6 +11,7 @@ import { Shield, Star, DollarSign, Calendar, CheckCircle, Phone, ExternalLink, T
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import OptimizedImage from '@/components/OptimizedImage';
 import AdPlacement from '@/components/AdPlacement';
+import SocialShare from '@/components/SocialShare';
 
 interface InsuranceProvider {
   id: string;
@@ -329,22 +330,35 @@ const Insurance = () => {
                       )}
 
                       {/* Actions */}
-                      <div className="flex gap-2 pt-4">
-                        {quote.provider?.website_url && (
-                          <Button variant="default" size="sm" asChild className="flex-1">
-                            <a href={quote.provider.website_url} target="_blank" rel="noopener noreferrer">
-                              Get Quote
-                            </a>
-                          </Button>
-                        )}
+                      <div className="space-y-2 pt-4">
+                        <div className="flex gap-2">
+                          {quote.provider?.website_url && (
+                            <Button variant="default" size="sm" asChild className="flex-1">
+                              <a href={quote.provider.website_url} target="_blank" rel="noopener noreferrer">
+                                Get Quote
+                              </a>
+                            </Button>
+                          )}
+                          
+                          {quote.provider?.contact_phone && (
+                            <Button variant="outline" size="sm" asChild>
+                              <a href={`tel:${quote.provider.contact_phone}`}>
+                                <Phone className="w-4 h-4" />
+                              </a>
+                            </Button>
+                          )}
+                        </div>
                         
-                        {quote.provider?.contact_phone && (
-                          <Button variant="outline" size="sm" asChild>
-                            <a href={`tel:${quote.provider.contact_phone}`}>
-                              <Phone className="w-4 h-4" />
-                            </a>
-                          </Button>
-                        )}
+                        {/* Social Share */}
+                        <div className="flex justify-center">
+                          <SocialShare
+                            title={`${quote.provider?.name} ${quote.coverage_type} Insurance - ${quote.vehicle_type}`}
+                            excerpt={`Great insurance quote for ${quote.vehicle_type} vehicles: $${quote.monthly_premium}/month with ${quote.coverage_type} coverage`}
+                            url={`/insurance#quote-${quote.id}`}
+                            variant="icon"
+                            size="sm"
+                          />
+                        </div>
                       </div>
                     </div>
                   </CardContent>

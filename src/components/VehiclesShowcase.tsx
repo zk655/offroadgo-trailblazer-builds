@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Gauge, Mountain, Fuel, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import OptimizedImage from '@/components/OptimizedImage';
+import SocialShare from '@/components/SocialShare';
 
 // Import vehicle images with error handling
 const importImage = (imagePath: string) => {
@@ -237,13 +238,27 @@ const VehiclesShowcase = () => {
                   </div>
                 </div>
 
-                {/* View Details Button - Theme Color */}
-                <Link to={`/vehicles/${vehicle.slug}`}>
-                  <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-xs h-8">
-                    View Details
-                    <ArrowRight className="h-3 w-3 ml-1" />
-                  </Button>
-                </Link>
+                {/* Actions */}
+                <div className="space-y-2">
+                  <Link to={`/vehicles/${vehicle.slug}`}>
+                    <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-xs h-8">
+                      View Details
+                      <ArrowRight className="h-3 w-3 ml-1" />
+                    </Button>
+                  </Link>
+                  
+                  {/* Social Share */}
+                  <div className="flex justify-center">
+                    <SocialShare
+                      title={`${vehicle.year} ${vehicle.name}`}
+                      excerpt={`Check out the ${vehicle.year} ${vehicle.name} - ${vehicle.specs.horsepower} with ${vehicle.specs.groundClearance} ground clearance starting at ${vehicle.price}`}
+                      url={`/vehicles/${vehicle.slug}`}
+                      image={vehicle.image}
+                      variant="icon"
+                      size="sm"
+                    />
+                  </div>
+                </div>
               </CardContent>
             </Card>
           ))}

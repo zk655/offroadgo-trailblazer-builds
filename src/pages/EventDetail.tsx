@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
+import SocialShare from '@/components/SocialShare';
 
 interface Event {
   id: string;
@@ -260,9 +261,24 @@ const EventDetail = () => {
                   </Button>
                 )}
                 
-                <div className="text-sm text-muted-foreground text-center">
-                  Spaces available: {(event.max_participants || 0) - (event.current_participants || 0)}
-                </div>
+                  <div className="text-sm text-muted-foreground text-center">
+                    Spaces available: {(event.max_participants || 0) - (event.current_participants || 0)}
+                  </div>
+                  
+                  {/* Social Share */}
+                  <div className="pt-3 border-t">
+                    <div className="text-sm font-medium mb-2 text-center">Share Event</div>
+                    <div className="flex justify-center">
+                      <SocialShare
+                        title={event.title}
+                        excerpt={event.description || `Join the ${event.title} rally event in ${event.location}, ${event.country}`}
+                        url={`/event/${event.id}`}
+                        image={event.image_url}
+                        variant="icon"
+                        size="sm"
+                      />
+                    </div>
+                  </div>
               </CardContent>
             </Card>
 
