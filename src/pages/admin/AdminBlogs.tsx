@@ -160,6 +160,13 @@ export default function AdminBlogs() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
+      // Check if this is a database blog (UUID format) or external content
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      
+      if (!isUUID) {
+        throw new Error("Cannot delete external content. Only database blogs can be deleted.");
+      }
+      
       const { error } = await supabase.from("blogs").delete().eq("id", id);
       if (error) throw error;
     },
@@ -516,7 +523,8 @@ export default function AdminBlogs() {
                         variant="outline"
                         size="sm"
                         onClick={() => deleteMutation.mutate(blog.id)}
-                        disabled={deleteMutation.isPending}
+                        disabled={deleteMutation.isPending || !(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(blog.id))}
+                        title={!(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(blog.id)) ? "Cannot delete external content" : "Delete blog"}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
