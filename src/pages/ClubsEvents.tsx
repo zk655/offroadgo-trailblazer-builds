@@ -238,16 +238,18 @@ const ClubsEvents = () => {
                               )}
                             </div>
                             
-                            {/* Social Share */}
-                            <div className="flex justify-center">
-                              <SocialShare
-                                title={event.title}
-                                excerpt={event.description || `Join the ${event.title} rally event in ${event.location}, ${event.country}`}
-                                url={`/event/${event.id}`}
-                                image={event.image_url}
-                                variant="icon"
-                                size="sm"
-                              />
+                            {/* Social Share - Aligned in same row with register button */}
+                            <div className="flex items-center justify-between">
+                              <div className="flex justify-center flex-1">
+                                <SocialShare
+                                  title={event.title}
+                                  excerpt={event.description || `Join the ${event.title} rally event in ${event.location}, ${event.country}`}
+                                  url={`/event/${event.id}`}
+                                  image={event.image_url}
+                                  variant="icon"
+                                  size="sm"
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>

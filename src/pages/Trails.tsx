@@ -21,6 +21,7 @@ import PageHero from '@/components/PageHero';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
 import AdSenseAd from '@/components/AdSenseAd';
+import SocialShare from '@/components/SocialShare';
 
 interface Trail {
   id: string;
@@ -331,17 +332,31 @@ const Trails = () => {
                   </div>
                 </CardContent>
 
-                <CardFooter className="pt-2 flex gap-2">
-                  <Button asChild variant="outline" size="sm" className="flex-1">
-                    <Link to={`/trail/${trail.slug}`}>
-                      View Details
-                    </Link>
-                  </Button>
-                  <Button asChild size="sm" className="flex-1">
-                    <Link to={`/trip-planner?trail=${trail.slug}`}>
-                      Add to Trip
-                    </Link>
-                  </Button>
+                <CardFooter className="pt-2 space-y-2">
+                  <div className="flex gap-2">
+                    <Button asChild variant="outline" size="sm" className="flex-1">
+                      <Link to={`/trail/${trail.slug}`}>
+                        View Details
+                      </Link>
+                    </Button>
+                    <Button asChild size="sm" className="flex-1">
+                      <Link to={`/trip-planner?trail=${trail.slug}`}>
+                        Add to Trip
+                      </Link>
+                    </Button>
+                  </div>
+                  
+                  {/* Social Share */}
+                  <div className="flex justify-center">
+                    <SocialShare
+                      title={trail.name}
+                      excerpt={`Explore the ${trail.name} trail in ${trail.location}. ${trail.difficulty} difficulty, ${trail.distance} miles of ${trail.terrain} terrain.`}
+                      url={`/trail/${trail.slug}`}
+                      image={getImageUrl(trail)}
+                      variant="icon"
+                      size="sm"
+                    />
+                  </div>
                 </CardFooter>
               </Card>
             );

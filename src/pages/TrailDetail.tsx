@@ -7,6 +7,7 @@ import { ArrowLeft, MapPin, Clock, Users, Star, Navigation as NavigationIcon, Mo
 import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import SocialShare from '@/components/SocialShare';
 
 interface Trail {
   id: string;
@@ -316,6 +317,18 @@ const TrailDetail = () => {
                         <Star className="w-4 h-4 mr-2" />
                         Add to Favorites
                       </Button>
+                      
+                      {/* Social Share */}
+                      <div className="flex justify-center pt-2">
+                        <SocialShare
+                          title={trail.name}
+                          excerpt={`Check out the ${trail.name} trail in ${trail.location}. ${trail.difficulty} difficulty, ${trail.distance} miles of adventure!`}
+                          url={`/trail/${trail.slug}`}
+                          image={getImageUrl(trail)}
+                          variant="button"
+                          size="sm"
+                        />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
