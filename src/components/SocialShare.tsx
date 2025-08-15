@@ -7,7 +7,7 @@ import {
   DialogTitle, 
   DialogTrigger 
 } from '@/components/ui/dialog';
-import { Share2, Facebook, Twitter, Link2, Printer } from 'lucide-react';
+import { Share2, Facebook, Twitter, Link2, Printer, Instagram, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface SocialShareProps {
@@ -40,6 +40,9 @@ const SocialShare = ({
     twitter: `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`,
     pinterest: `https://pinterest.com/pin/create/button/?url=${encodedUrl}&media=${encodedImage}&description=${encodedTitle}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+    instagram: `https://www.instagram.com/`,
+    quora: `https://www.quora.com/q/sharelink?url=${encodedUrl}&title=${encodedTitle}`,
+    reddit: `https://reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
   };
 
   const handleShare = (platform: string) => {
@@ -129,6 +132,30 @@ const SocialShare = ({
           >
             <div className="h-4 w-4 bg-blue-700 rounded flex items-center justify-center text-white text-xs font-bold">in</div>
             LinkedIn
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleShare('instagram')}
+            className="flex items-center gap-2 justify-start"
+          >
+            <Instagram className="h-4 w-4 text-pink-500" />
+            Instagram
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleShare('quora')}
+            className="flex items-center gap-2 justify-start"
+          >
+            <MessageCircle className="h-4 w-4 text-red-600" />
+            Quora
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleShare('reddit')}
+            className="flex items-center gap-2 justify-start"
+          >
+            <div className="h-4 w-4 bg-orange-600 rounded-full flex items-center justify-center text-white text-xs font-bold">r</div>
+            Reddit
           </Button>
           <Button
             variant="outline"
