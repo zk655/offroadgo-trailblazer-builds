@@ -37,12 +37,13 @@ const SocialShare = ({
 
   const shareLinks = {
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedTitle}`,
-    twitter: `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`,
+    twitter: `https://twitter.com/intent/tweet?text=${encodedTitle}%20${encodedUrl}`,
     pinterest: `https://pinterest.com/pin/create/button/?url=${encodedUrl}&media=${encodedImage}&description=${encodedTitle}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
     instagram: `https://www.instagram.com/`,
     quora: `https://www.quora.com/q/sharelink?url=${encodedUrl}&title=${encodedTitle}`,
     reddit: `https://reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
+    whatsapp: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
   };
 
   const handleShare = (platform: string) => {
@@ -164,6 +165,14 @@ const SocialShare = ({
           >
             <Link2 className="h-4 w-4" />
             Copy Link
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleShare('whatsapp')}
+            className="flex items-center gap-2 justify-start"
+          >
+            <MessageCircle className="h-4 w-4 text-green-600" />
+            WhatsApp
           </Button>
           <Button
             variant="outline"
