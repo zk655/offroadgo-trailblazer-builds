@@ -38,6 +38,7 @@ export default function AdminBlogs() {
   const [searchTerm, setSearchTerm] = useState("");
   const [viewingBlog, setViewingBlog] = useState<any>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [removedExternalIds, setRemovedExternalIds] = useState<Set<string>>(new Set());
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -73,6 +74,9 @@ export default function AdminBlogs() {
 
         // Combine live and local content, ensuring local content comes first
         let allPosts = [...(data || []), ...liveContent];
+        
+        // Filter out removed external content
+        allPosts = allPosts.filter(post => !removedExternalIds.has(post.id));
         
         // Apply search filter if provided
         if (searchTerm) {
@@ -164,8 +168,8 @@ export default function AdminBlogs() {
       const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
       
       if (!isUUID) {
-        // For external content, we can't delete from database but we can show success message
-        // This simulates removal from the current view
+        // For external content, add to removed list and return success
+        setRemovedExternalIds(prev => new Set(prev).add(id));
         return Promise.resolve();
       }
       
