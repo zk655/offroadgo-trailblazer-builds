@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -670,6 +670,152 @@ export type Database = {
         }
         Relationships: []
       }
+      video_interactions: {
+        Row: {
+          created_at: string
+          id: string
+          interaction_type: string
+          user_id: string | null
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          interaction_type: string
+          user_id?: string | null
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          interaction_type?: string
+          user_id?: string | null
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_interactions_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      video_tags: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          usage_count: number | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          usage_count?: number | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          usage_count?: number | null
+        }
+        Relationships: []
+      }
+      videos: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          duration: number | null
+          file_size: number | null
+          id: string
+          is_featured: boolean | null
+          is_trending: boolean | null
+          like_count: number | null
+          published_at: string | null
+          resolution: string | null
+          save_count: number | null
+          seo_description: string | null
+          seo_keywords: string[] | null
+          seo_title: string | null
+          share_count: number | null
+          slug: string | null
+          status: string | null
+          tags: string[] | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          video_format: string | null
+          video_url: string
+          view_count: number | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          file_size?: number | null
+          id?: string
+          is_featured?: boolean | null
+          is_trending?: boolean | null
+          like_count?: number | null
+          published_at?: string | null
+          resolution?: string | null
+          save_count?: number | null
+          seo_description?: string | null
+          seo_keywords?: string[] | null
+          seo_title?: string | null
+          share_count?: number | null
+          slug?: string | null
+          status?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          video_format?: string | null
+          video_url: string
+          view_count?: number | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          file_size?: number | null
+          id?: string
+          is_featured?: boolean | null
+          is_trending?: boolean | null
+          like_count?: number | null
+          published_at?: string | null
+          resolution?: string | null
+          save_count?: number | null
+          seo_description?: string | null
+          seo_keywords?: string[] | null
+          seo_title?: string | null
+          share_count?: number | null
+          slug?: string | null
+          status?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_format?: string | null
+          video_url?: string
+          view_count?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -685,8 +831,8 @@ export type Database = {
       }
       has_role: {
         Args: {
-          _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
         }
         Returns: boolean
       }
