@@ -33,7 +33,7 @@ interface VideoFormData {
 }
 
 export default function AdminVideos() {
-  const { user, userRole } = useAuth();
+  const { user, userRole, loading, roleLoading } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,7 +57,19 @@ export default function AdminVideos() {
     }
   });
 
-  // Check if user has access
+  // Show loading while auth is being determined
+  if (loading || roleLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if user has access after loading is complete
   if (!user || (userRole !== 'admin' && userRole !== 'editor')) {
     return (
       <div className="flex items-center justify-center min-h-screen">
