@@ -57,6 +57,26 @@ export default function AdminVideos() {
     }
   });
 
+  // Fetch videos with search - must be called before any early returns
+  const { data: videos, isLoading } = useQuery({
+    queryKey: ['admin-videos', searchTerm],
+    queryFn: async () => {
+      let query = supabase
+        .from('videos')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (searchTerm) {
+        query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,category.ilike.%${searchTerm}%`);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
+    },
+    enabled: !loading && !roleLoading && !!user && (userRole === 'admin' || userRole === 'editor')
+  });
+
   // Show loading while auth is being determined
   if (loading || roleLoading) {
     return (
@@ -83,25 +103,6 @@ export default function AdminVideos() {
       </div>
     );
   }
-
-  // Fetch videos with search
-  const { data: videos, isLoading } = useQuery({
-    queryKey: ['admin-videos', searchTerm],
-    queryFn: async () => {
-      let query = supabase
-        .from('videos')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (searchTerm) {
-        query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,category.ilike.%${searchTerm}%`);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      return data;
-    }
-  });
 
   // Create video mutation
   const createMutation = useMutation({
