@@ -30,6 +30,7 @@ import EventDetail from "./pages/EventDetail";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import AdminBlogs from "./pages/admin/AdminBlogs";
+import AdminVideos from "./pages/admin/AdminVideos";
 import AdminVehicles from "./pages/admin/AdminVehicles";
 import AdminParts from "./pages/admin/AdminParts";
 import AdminTrails from "./pages/admin/AdminTrails";
@@ -79,6 +80,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/blogs" element={<AdminBlogs />} />
+              <Route path="/admin/videos" element={<AdminVideos />} />
               <Route path="/admin/vehicles" element={<AdminVehicles />} />
               <Route path="/admin/parts" element={<AdminParts />} />
               <Route path="/admin/products" element={<AdminParts />} />

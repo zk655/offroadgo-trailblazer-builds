@@ -12,7 +12,8 @@ import {
   Shield, 
   Calendar,
   Users,
-  LogOut
+  LogOut,
+  Video
 } from 'lucide-react';
 
 export default function Admin() {
@@ -57,6 +58,12 @@ export default function Admin() {
       description: 'Create and edit blog posts',
       icon: FileText,
       path: '/admin/blogs',
+    },
+    {
+      title: 'Video Management',
+      description: 'Upload and manage video content',
+      icon: Video,
+      path: '/admin/videos',
     },
     {
       title: 'Vehicle Management',
