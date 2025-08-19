@@ -77,34 +77,7 @@ export default function AdminVideos() {
     enabled: !loading && !roleLoading && !!user && (userRole === 'admin' || userRole === 'editor')
   });
 
-  // Show loading while auth is being determined
-  if (loading || roleLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Check if user has access after loading is complete
-  if (!user || (userRole !== 'admin' && userRole !== 'editor')) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
-          <p className="text-muted-foreground mb-4">You don't have permission to access this page.</p>
-          <Button onClick={() => window.location.href = '/auth'}>
-            Sign In
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // Create video mutation
+  // Create video mutation - must be before any early returns
   const createMutation = useMutation({
     mutationFn: async (data: VideoFormData) => {
       const { error } = await supabase.from('videos').insert([{
@@ -133,7 +106,7 @@ export default function AdminVideos() {
     }
   });
 
-  // Update video mutation
+  // Update video mutation - must be before any early returns  
   const updateMutation = useMutation({
     mutationFn: async (data: VideoFormData) => {
       const { error } = await supabase
@@ -167,7 +140,7 @@ export default function AdminVideos() {
     }
   });
 
-  // Delete video mutation
+  // Delete video mutation - must be before any early returns
   const deleteMutation = useMutation({
     mutationFn: async (videoId: string) => {
       const { error } = await supabase.from('videos').delete().eq('id', videoId);
@@ -189,6 +162,33 @@ export default function AdminVideos() {
       console.error('Error deleting video:', error);
     }
   });
+
+  // Show loading while auth is being determined
+  if (loading || roleLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if user has access after loading is complete
+  if (!user || (userRole !== 'admin' && userRole !== 'editor')) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
+          <p className="text-muted-foreground mb-4">You don't have permission to access this page.</p>
+          <Button onClick={() => window.location.href = '/auth'}>
+            Sign In
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const onSubmit = (data: VideoFormData) => {
     if (editingVideo) {
