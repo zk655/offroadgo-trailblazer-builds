@@ -33,13 +33,17 @@ interface VideoFormData {
 }
 
 export default function AdminVideos() {
+  // ALL HOOKS MUST BE CALLED AT THE TOP LEVEL - BEFORE ANY CONDITIONAL LOGIC
   const { user, userRole, loading, roleLoading } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // State hooks
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingVideo, setEditingVideo] = useState<any>(null);
 
+  // Form hook
   const form = useForm<VideoFormData>({
     defaultValues: {
       title: "",
@@ -57,7 +61,7 @@ export default function AdminVideos() {
     }
   });
 
-  // Fetch videos with search - must be called before any early returns
+  // Query hook
   const { data: videos, isLoading } = useQuery({
     queryKey: ['admin-videos', searchTerm],
     queryFn: async () => {
@@ -77,7 +81,7 @@ export default function AdminVideos() {
     enabled: !loading && !roleLoading && !!user && (userRole === 'admin' || userRole === 'editor')
   });
 
-  // Create video mutation - must be before any early returns
+  // Mutation hooks
   const createMutation = useMutation({
     mutationFn: async (data: VideoFormData) => {
       const { error } = await supabase.from('videos').insert([{
@@ -106,7 +110,6 @@ export default function AdminVideos() {
     }
   });
 
-  // Update video mutation - must be before any early returns  
   const updateMutation = useMutation({
     mutationFn: async (data: VideoFormData) => {
       const { error } = await supabase
@@ -140,7 +143,6 @@ export default function AdminVideos() {
     }
   });
 
-  // Delete video mutation - must be before any early returns
   const deleteMutation = useMutation({
     mutationFn: async (videoId: string) => {
       const { error } = await supabase.from('videos').delete().eq('id', videoId);
@@ -163,7 +165,7 @@ export default function AdminVideos() {
     }
   });
 
-  // Show loading while auth is being determined
+  // CONDITIONAL LOGIC AND EARLY RETURNS AFTER ALL HOOKS
   if (loading || roleLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -175,7 +177,6 @@ export default function AdminVideos() {
     );
   }
 
-  // Check if user has access after loading is complete
   if (!user || (userRole !== 'admin' && userRole !== 'editor')) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -190,6 +191,7 @@ export default function AdminVideos() {
     );
   }
 
+  // EVENT HANDLERS
   const onSubmit = (data: VideoFormData) => {
     if (editingVideo) {
       updateMutation.mutate(data);
@@ -228,6 +230,7 @@ export default function AdminVideos() {
     field.onChange(tags);
   };
 
+  // RENDER
   return (
     <div className="container mx-auto px-4 py-8">
       <AdminHeader
@@ -480,11 +483,11 @@ export default function AdminVideos() {
                         control={form.control}
                         name="seo_description"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem className="col-span-full">
                             <FormLabel>SEO Description</FormLabel>
                             <FormControl>
                               <Textarea 
-                                placeholder="SEO meta description"
+                                placeholder="SEO meta description" 
                                 className="min-h-16"
                                 {...field} 
                               />
@@ -496,12 +499,19 @@ export default function AdminVideos() {
                     </div>
                   </div>
 
-                  <div className="flex justify-end gap-4">
+                  <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
-                      {editingVideo ? 'Update Video' : 'Create Video'}
+                    <Button 
+                      type="submit" 
+                      disabled={createMutation.isPending || updateMutation.isPending}
+                    >
+                      {createMutation.isPending || updateMutation.isPending ? (
+                        <>Loading...</>
+                      ) : (
+                        editingVideo ? 'Update Video' : 'Create Video'
+                      )}
                     </Button>
                   </div>
                 </form>
@@ -511,12 +521,12 @@ export default function AdminVideos() {
         }
       />
 
-      {/* Search */}
+      {/* Search Bar */}
       <div className="mb-6">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search videos by title, description, or category..."
+            placeholder="Search videos..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -534,35 +544,41 @@ export default function AdminVideos() {
                 <div className="h-3 bg-muted rounded w-1/2"></div>
               </CardHeader>
               <CardContent>
-                <div className="h-32 bg-muted rounded"></div>
+                <div className="h-32 bg-muted rounded mb-4"></div>
+                <div className="space-y-2">
+                  <div className="h-3 bg-muted rounded"></div>
+                  <div className="h-3 bg-muted rounded w-2/3"></div>
+                </div>
               </CardContent>
             </Card>
           ))}
         </div>
-      ) : (
+      ) : videos && videos.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {videos?.map((video) => (
-            <Card key={video.id} className="overflow-hidden">
-              <CardHeader className="pb-2">
+          {videos.map((video) => (
+            <Card key={video.id} className="group hover:shadow-lg transition-shadow">
+              <CardHeader>
                 <div className="flex items-start justify-between">
-                  <div className="flex-1 min-w-0">
-                    <CardTitle className="text-lg truncate">{video.title}</CardTitle>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge variant={video.status === 'active' ? 'default' : 'secondary'}>
+                  <div className="flex-1">
+                    <CardTitle className="text-lg line-clamp-2">{video.title}</CardTitle>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge variant={video.status === 'active' ? 'default' : video.status === 'draft' ? 'secondary' : 'outline'}>
                         {video.status}
                       </Badge>
                       {video.category && (
-                        <Badge variant="outline">{video.category}</Badge>
+                        <Badge variant="outline" className="capitalize">
+                          {video.category}
+                        </Badge>
                       )}
                     </div>
                   </div>
-                  <div className="flex gap-1 ml-2">
-                    <Button size="sm" variant="ghost" onClick={() => handleEdit(video)}>
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button size="sm" variant="outline" onClick={() => handleEdit(video)}>
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => deleteMutation.mutate(video.id)}
                       disabled={deleteMutation.isPending}
                     >
@@ -571,31 +587,23 @@ export default function AdminVideos() {
                   </div>
                 </div>
               </CardHeader>
-              
               <CardContent>
-                {video.thumbnail_url ? (
-                  <div className="relative mb-4">
+                {video.thumbnail_url && (
+                  <div className="aspect-video bg-muted rounded-lg mb-4 overflow-hidden">
                     <img 
                       src={video.thumbnail_url} 
                       alt={video.title}
-                      className="w-full h-32 object-cover rounded"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                      <Video className="h-8 w-8 text-white" />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="h-32 bg-muted rounded flex items-center justify-center mb-4">
-                    <Video className="h-8 w-8 text-muted-foreground" />
                   </div>
                 )}
                 
                 {video.description && (
-                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                     {video.description}
                   </p>
                 )}
-                
+
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <div className="flex items-center gap-4">
                     {video.duration && (
@@ -619,12 +627,12 @@ export default function AdminVideos() {
                     </Badge>
                   )}
                 </div>
-                
+
                 {video.tags && video.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-3">
-                    {video.tags.slice(0, 3).map((tag: string, index: number) => (
+                    {video.tags.slice(0, 3).map((tag, index) => (
                       <Badge key={index} variant="secondary" className="text-xs">
-                        #{tag}
+                        {tag}
                       </Badge>
                     ))}
                     {video.tags.length > 3 && (
@@ -638,19 +646,19 @@ export default function AdminVideos() {
             </Card>
           ))}
         </div>
-      )}
-
-      {videos && videos.length === 0 && !isLoading && (
+      ) : (
         <div className="text-center py-12">
-          <Video className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No Videos Found</h3>
+          <Video className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <h3 className="text-lg font-semibold mb-2">No videos found</h3>
           <p className="text-muted-foreground mb-4">
-            {searchTerm ? 'No videos match your search criteria.' : 'Start by adding your first video.'}
+            {searchTerm ? 'No videos match your search criteria.' : 'Get started by adding your first video.'}
           </p>
-          <Button onClick={handleCreate}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Video
-          </Button>
+          {!searchTerm && (
+            <Button onClick={handleCreate}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Video
+            </Button>
+          )}
         </div>
       )}
     </div>
