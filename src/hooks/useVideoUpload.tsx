@@ -36,10 +36,16 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
         throw new Error('Video file size must be less than 100MB');
       }
 
+      // Extract video metadata client-side
+      const metadata = await extractVideoMetadata(file);
+
       // Create unique filename
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
       const filePath = `videos/${fileName}`;
+
+      // Update progress during upload
+      setUploadProgress(25);
 
       // Upload to Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
@@ -50,23 +56,43 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
         });
 
       if (uploadError) throw uploadError;
+      setUploadProgress(50);
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('videos')
         .getPublicUrl(uploadData.path);
 
+      setUploadProgress(75);
+
       const uploadedVideo: UploadedVideo = {
         id: crypto.randomUUID(),
         url: publicUrl,
         fileName: file.name,
         fileSize: file.size,
-        mimeType: file.type
+        mimeType: file.type,
+        duration: metadata.duration
       };
+
+      // Trigger background video processing
+      try {
+        await supabase.functions.invoke('process-video', {
+          body: {
+            video_id: uploadedVideo.id,
+            video_url: publicUrl,
+            file_name: file.name
+          }
+        });
+      } catch (processingError) {
+        console.warn('Video processing failed:', processingError);
+        // Continue with upload success even if processing fails
+      }
+
+      setUploadProgress(100);
 
       toast({
         title: "Success",
-        description: "Video uploaded successfully",
+        description: "Video uploaded successfully! Processing in background...",
       });
 
       onUploadSuccess?.(uploadedVideo);
@@ -84,6 +110,28 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
       setUploading(false);
       setUploadProgress(0);
     }
+  };
+
+  // Extract video metadata on client-side
+  const extractVideoMetadata = (file: File): Promise<{ duration: number; resolution: string }> => {
+    return new Promise((resolve) => {
+      const video = document.createElement('video');
+      const url = URL.createObjectURL(file);
+      
+      video.onloadedmetadata = () => {
+        const duration = Math.round(video.duration);
+        const resolution = `${video.videoWidth}x${video.videoHeight}`;
+        URL.revokeObjectURL(url);
+        resolve({ duration, resolution });
+      };
+      
+      video.onerror = () => {
+        URL.revokeObjectURL(url);
+        resolve({ duration: 0, resolution: 'unknown' });
+      };
+      
+      video.src = url;
+    });
   };
 
   const deleteVideo = async (filePath: string): Promise<void> => {

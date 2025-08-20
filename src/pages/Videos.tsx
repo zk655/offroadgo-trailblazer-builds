@@ -3,14 +3,15 @@ import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import VideoCard from '@/components/VideoCard';
+import VideoGridMasonry from '@/components/VideoGridMasonry';
 import VideoLightbox from '@/components/VideoLightbox';
 import VideoFilters from '@/components/VideoFilters';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Grid, Filter } from 'lucide-react';
+import { Search, Grid, Filter, Upload, Video as VideoIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import VideoUploadDropzone from '@/components/VideoUploadDropzone';
 
 interface Video {
   id: string;
@@ -48,6 +49,7 @@ const Videos = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<'newest' | 'trending' | 'most_viewed'>('newest');
   const [showFilters, setShowFilters] = useState(false);
+  const [showUpload, setShowUpload] = useState(false);
 
   // Fetch video tags
   const { data: videoTags = [] } = useQuery({
@@ -170,6 +172,34 @@ const Videos = () => {
     }
   };
 
+  // Handle video upload
+  const handleVideoUpload = async (videoUrl: string) => {
+    try {
+      // Create a basic video entry - the edge function will process it
+      const { data, error } = await supabase
+        .from('videos')
+        .insert([{
+          title: 'New Video Upload',
+          video_url: videoUrl,
+          status: 'draft',
+          processing_status: 'processing'
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast.success('Video uploaded! Processing in background...');
+      setShowUpload(false);
+      
+      // Refresh videos list
+      window.location.reload();
+    } catch (error) {
+      console.error('Error creating video entry:', error);
+      toast.error('Failed to create video entry');
+    }
+  };
+
   if (error) {
     return (
       <div className="min-h-screen bg-background">
@@ -207,16 +237,26 @@ const Videos = () => {
                 Discover epic adventures, detailed builds, and expert reviews from the off-road community
               </p>
               
-              {/* Search Bar */}
-              <div className="relative max-w-md mx-auto">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  type="text"
-                  placeholder="Search videos..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-3 text-base"
-                />
+              {/* Search and Upload Bar */}
+              <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input
+                    type="text"
+                    placeholder="Search videos..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 pr-4 py-3 text-base"
+                  />
+                </div>
+                <Button
+                  onClick={() => setShowUpload(true)}
+                  size="lg"
+                  className="px-6 py-3 text-base"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload Video
+                </Button>
               </div>
             </div>
           </div>
@@ -259,36 +299,30 @@ const Videos = () => {
         {/* Videos Grid */}
         <section className="py-8">
           <div className="container mx-auto px-4">
-            {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="aspect-video bg-muted animate-pulse rounded-lg" />
-                ))}
-              </div>
-            ) : videos.length === 0 ? (
+            {videos.length === 0 && !isLoading ? (
               <div className="text-center py-16">
+                <VideoIcon className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
                 <h3 className="text-xl font-semibold mb-2">No videos found</h3>
-                <p className="text-muted-foreground">Try adjusting your search or filters</p>
+                <p className="text-muted-foreground mb-4">Be the first to share your off-road adventure!</p>
+                <Button onClick={() => setShowUpload(true)}>
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload Your First Video
+                </Button>
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-                  {videos.map((video, index) => (
-                    <VideoCard
-                      key={video.id}
-                      video={video}
-                      onPlay={() => handleVideoView(video)}
-                      onLike={() => handleVideoInteraction(video.id, 'like')}
-                      onSave={() => handleVideoInteraction(video.id, 'save')}
-                      onShare={() => handleVideoInteraction(video.id, 'share')}
-                      priority={index < 8}
-                    />
-                  ))}
-                </div>
+                <VideoGridMasonry
+                  videos={videos}
+                  onPlay={handleVideoView}
+                  onLike={(videoId) => handleVideoInteraction(videoId, 'like')}
+                  onSave={(videoId) => handleVideoInteraction(videoId, 'save')}
+                  onShare={(videoId) => handleVideoInteraction(videoId, 'share')}
+                  loading={isLoading}
+                />
 
                 {/* Load More Button */}
                 {hasNextPage && (
-                  <div className="text-center">
+                  <div className="text-center mt-8">
                     <Button
                       onClick={() => fetchNextPage()}
                       disabled={isFetchingNextPage}
@@ -303,6 +337,25 @@ const Videos = () => {
             )}
           </div>
         </section>
+
+        {/* Video Upload Modal */}
+        {showUpload && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="bg-background rounded-lg p-6 max-w-md w-full">
+              <h3 className="text-lg font-semibold mb-4">Upload Video</h3>
+              <VideoUploadDropzone
+                onVideoUploaded={handleVideoUpload}
+              />
+              <Button
+                variant="outline"
+                onClick={() => setShowUpload(false)}
+                className="w-full mt-4"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Video Lightbox */}
         {selectedVideo && (
