@@ -743,6 +743,8 @@ export type Database = {
           is_featured: boolean | null
           is_trending: boolean | null
           like_count: number | null
+          metadata_extracted: boolean | null
+          processing_status: string | null
           published_at: string | null
           resolution: string | null
           save_count: number | null
@@ -753,6 +755,7 @@ export type Database = {
           slug: string | null
           status: string | null
           tags: string[] | null
+          thumbnail_generated: boolean | null
           thumbnail_url: string | null
           title: string
           updated_at: string
@@ -770,6 +773,8 @@ export type Database = {
           is_featured?: boolean | null
           is_trending?: boolean | null
           like_count?: number | null
+          metadata_extracted?: boolean | null
+          processing_status?: string | null
           published_at?: string | null
           resolution?: string | null
           save_count?: number | null
@@ -780,6 +785,7 @@ export type Database = {
           slug?: string | null
           status?: string | null
           tags?: string[] | null
+          thumbnail_generated?: boolean | null
           thumbnail_url?: string | null
           title: string
           updated_at?: string
@@ -797,6 +803,8 @@ export type Database = {
           is_featured?: boolean | null
           is_trending?: boolean | null
           like_count?: number | null
+          metadata_extracted?: boolean | null
+          processing_status?: string | null
           published_at?: string | null
           resolution?: string | null
           save_count?: number | null
@@ -807,6 +815,7 @@ export type Database = {
           slug?: string | null
           status?: string | null
           tags?: string[] | null
+          thumbnail_generated?: boolean | null
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
@@ -835,6 +844,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      process_video_metadata: {
+        Args: { original_filename: string; video_id: string; video_url: string }
+        Returns: Json
       }
     }
     Enums: {
