@@ -55,7 +55,21 @@ const Insurance = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('insurance_providers')
-        .select('*')
+        .select(`
+          id,
+          name,
+          company_name,
+          logo_url,
+          website_url,
+          description,
+          coverage_areas,
+          specializes_in,
+          rating,
+          created_at,
+          updated_at,
+          contact_phone,
+          contact_email
+        `)
         .order('rating', { ascending: false });
       
       if (error) throw error;

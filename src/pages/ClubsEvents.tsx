@@ -53,7 +53,21 @@ const ClubsEvents = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('clubs')
-        .select('*')
+        .select(`
+          id,
+          name,
+          location,
+          country,
+          description,
+          website_url,
+          club_type,
+          image_url,
+          founded_year,
+          member_count,
+          created_at,
+          updated_at,
+          contact_email
+        `)
         .order('name');
       
       if (error) throw error;
