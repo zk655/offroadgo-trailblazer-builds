@@ -97,52 +97,48 @@ async function extractVideoMetadata(videoUrl: string) {
 
 async function generateThumbnail(videoUrl: string, videoId: string, supabase: any) {
   try {
-    // For now, generate a placeholder thumbnail
-    // In production, you'd extract actual frames from the video
-    const canvas = new OffscreenCanvas(640, 360);
-    const ctx = canvas.getContext('2d');
+    // Generate a simple placeholder thumbnail using a data URL
+    const width = 640;
+    const height = 360;
     
-    if (ctx) {
-      // Create a gradient placeholder
-      const gradient = ctx.createLinearGradient(0, 0, 640, 360);
-      gradient.addColorStop(0, '#1e293b');
-      gradient.addColorStop(1, '#334155');
-      
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, 640, 360);
-      
-      // Add play icon
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '48px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('▶', 320, 200);
-      
-      // Convert to blob
-      const blob = await canvas.convertToBlob({ type: 'image/jpeg', quality: 0.8 });
-      
-      // Upload thumbnail to storage
-      const fileName = `thumbnails/${videoId}-thumb.jpg`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('videos')
-        .upload(fileName, blob, {
-          contentType: 'image/jpeg',
-          cacheControl: '3600'
-        });
-      
-      if (uploadError) {
-        console.error('Thumbnail upload error:', uploadError);
-        return null;
-      }
-      
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('videos')
-        .getPublicUrl(uploadData.path);
-      
-      return publicUrl;
+    // Create a simple SVG placeholder
+    const svgThumbnail = `
+      <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#bg)"/>
+        <circle cx="${width/2}" cy="${height/2}" r="40" fill="rgba(255,255,255,0.9)"/>
+        <polygon points="${width/2-15},${height/2-15} ${width/2-15},${height/2+15} ${width/2+15},${height/2}" fill="#334155"/>
+      </svg>
+    `;
+    
+    // Convert SVG to blob
+    const blob = new Blob([svgThumbnail], { type: 'image/svg+xml' });
+    
+    // Upload thumbnail to storage
+    const fileName = `thumbnails/${videoId}-thumb.svg`;
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('videos')
+      .upload(fileName, blob, {
+        contentType: 'image/svg+xml',
+        cacheControl: '3600'
+      });
+    
+    if (uploadError) {
+      console.error('Thumbnail upload error:', uploadError);
+      return null;
     }
     
-    return null;
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('videos')
+      .getPublicUrl(uploadData.path);
+    
+    return publicUrl;
   } catch (error) {
     console.error('Error generating thumbnail:', error);
     return null;

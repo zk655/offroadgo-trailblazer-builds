@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -50,6 +50,7 @@ const Videos = () => {
   const [sortBy, setSortBy] = useState<'newest' | 'trending' | 'most_viewed'>('newest');
   const [showFilters, setShowFilters] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
+  const queryClient = useQueryClient();
 
   // Fetch video tags
   const { data: videoTags = [] } = useQuery({
@@ -175,25 +176,44 @@ const Videos = () => {
   // Handle video upload
   const handleVideoUpload = async (videoUrl: string) => {
     try {
+      // Extract video ID from the upload response
+      const fileName = videoUrl.split('/').pop()?.split('.')[0] || crypto.randomUUID();
+      
       // Create a basic video entry - the edge function will process it
       const { data, error } = await supabase
         .from('videos')
         .insert([{
           title: 'New Video Upload',
           video_url: videoUrl,
-          status: 'draft',
-          processing_status: 'processing'
+          status: 'active',
+          processing_status: 'pending',
+          category: 'offroad',
+          slug: `new-video-${Date.now()}`,
+          published_at: new Date().toISOString()
         }])
         .select()
         .single();
 
       if (error) throw error;
 
+      // Trigger video processing with the correct video ID
+      try {
+        await supabase.functions.invoke('process-video', {
+          body: {
+            video_id: data.id,
+            video_url: videoUrl,
+            file_name: fileName
+          }
+        });
+      } catch (processingError) {
+        console.warn('Video processing failed:', processingError);
+      }
+
       toast.success('Video uploaded! Processing in background...');
       setShowUpload(false);
       
       // Refresh videos list
-      window.location.reload();
+      queryClient.invalidateQueries({ queryKey: ['videos'] });
     } catch (error) {
       console.error('Error creating video entry:', error);
       toast.error('Failed to create video entry');

@@ -74,20 +74,6 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
         duration: metadata.duration
       };
 
-      // Trigger background video processing
-      try {
-        await supabase.functions.invoke('process-video', {
-          body: {
-            video_id: uploadedVideo.id,
-            video_url: publicUrl,
-            file_name: file.name
-          }
-        });
-      } catch (processingError) {
-        console.warn('Video processing failed:', processingError);
-        // Continue with upload success even if processing fails
-      }
-
       setUploadProgress(100);
 
       toast({

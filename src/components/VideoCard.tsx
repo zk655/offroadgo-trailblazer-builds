@@ -60,17 +60,26 @@ const VideoCard: React.FC<VideoCardProps> = ({
       onClick={onPlay}
     >
       {/* Thumbnail Container */}
-      <div className="relative aspect-video overflow-hidden">
-        <OptimizedImage
-          src={video.thumbnail_url || '/placeholder.svg'}
-          alt={video.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          loading={priority ? 'eager' : 'lazy'}
-        />
+      <div className="relative aspect-video overflow-hidden bg-muted">
+        {video.thumbnail_url && video.thumbnail_url !== '/placeholder.svg' ? (
+          <OptimizedImage
+            src={video.thumbnail_url}
+            alt={video.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            loading={priority ? 'eager' : 'lazy'}
+            fallbackSrc="/placeholder.svg"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-600 flex items-center justify-center">
+            <div className="rounded-full bg-white/20 p-4">
+              <Play className="h-8 w-8 text-white" />
+            </div>
+          </div>
+        )}
         
         {/* Duration Overlay */}
         <div className="absolute bottom-2 right-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
-          {formatDuration(video.duration)}
+          {formatDuration(video.duration || 0)}
         </div>
 
         {/* Featured/Trending Badge */}
