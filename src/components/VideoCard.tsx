@@ -64,7 +64,8 @@ const VideoCard: React.FC<VideoCardProps> = ({
         {video.thumbnail_url && 
          video.thumbnail_url !== '/placeholder.svg' && 
          video.thumbnail_url !== video.video_url && 
-         !video.thumbnail_url.includes('.mp4') ? (
+         !video.thumbnail_url.includes('.mp4') &&
+         !video.thumbnail_url.includes('.svg') ? (
           <OptimizedImage
             src={video.thumbnail_url}
             alt={video.title}
