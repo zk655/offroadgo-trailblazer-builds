@@ -134,7 +134,10 @@ const VideoLightbox: React.FC<VideoLightboxProps> = ({
             <video
               ref={videoRef}
               className="w-full h-full object-contain"
-              poster={video.thumbnail_url}
+              poster={video.thumbnail_url && 
+                      video.thumbnail_url !== video.video_url && 
+                      !video.thumbnail_url.includes('.mp4') ? 
+                      video.thumbnail_url : '/placeholder.svg'}
               preload="metadata"
               onClick={togglePlayPause}
               controls={false}
@@ -142,6 +145,9 @@ const VideoLightbox: React.FC<VideoLightboxProps> = ({
               onError={(e) => {
                 console.error('Video playback error:', e);
                 console.log('Video URL:', video.video_url);
+              }}
+              onLoadedMetadata={() => {
+                console.log('Video metadata loaded');
               }}
             >
               <source src={video.video_url} type="video/mp4" />

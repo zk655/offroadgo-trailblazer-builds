@@ -125,15 +125,18 @@ const VideoGridMasonry: React.FC<VideoGridMasonryProps> = ({
               >
                 {/* Thumbnail Container */}
                 <div className="relative aspect-video overflow-hidden">
-                  {video.thumbnail_url && video.thumbnail_url !== '/placeholder.svg' ? (
+                  {video.thumbnail_url && 
+                   video.thumbnail_url !== '/placeholder.svg' && 
+                   video.thumbnail_url !== video.video_url && 
+                   !video.thumbnail_url.includes('.mp4') ? (
                     <OptimizedImage
                       src={video.thumbnail_url}
                       alt={video.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                       fallbackSrc="/placeholder.svg"
-                      onError={(e) => {
-                        console.error('Thumbnail failed to load:', video.thumbnail_url);
+                      onError={() => {
+                        console.warn('Thumbnail failed to load:', video.thumbnail_url);
                       }}
                     />
                   ) : (
@@ -141,12 +144,15 @@ const VideoGridMasonry: React.FC<VideoGridMasonryProps> = ({
                       <div className="rounded-full bg-white/20 p-4">
                         <Play className="h-8 w-8 text-white" />
                       </div>
+                      <div className="absolute bottom-2 left-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
+                        No Thumbnail
+                      </div>
                     </div>
                   )}
                   
                   {/* Duration Overlay */}
                   <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded-md font-medium">
-                    {formatDuration(video.duration)}
+                    {video.duration && video.duration > 0 ? formatDuration(video.duration) : '0:00'}
                   </div>
 
                   {/* Featured/Trending Badge */}
