@@ -137,8 +137,16 @@ const VideoLightbox: React.FC<VideoLightboxProps> = ({
               poster={video.thumbnail_url}
               preload="metadata"
               onClick={togglePlayPause}
+              controls={false}
+              playsInline
+              onError={(e) => {
+                console.error('Video playback error:', e);
+                console.log('Video URL:', video.video_url);
+              }}
             >
               <source src={video.video_url} type="video/mp4" />
+              <source src={video.video_url} type="video/webm" />
+              <source src={video.video_url} type="video/ogg" />
               Your browser does not support the video tag.
             </video>
 
