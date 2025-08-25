@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { generateVideoSlug } from '@/utils/videoHelpers';
 
 interface UploadedVideo {
   id: string;
@@ -36,12 +37,14 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
         throw new Error('Video file size must be less than 100MB');
       }
 
-      // Extract video metadata client-side
-      const metadata = await extractVideoMetadata(file);
+      // Generate SEO-friendly title from filename
+      const baseTitle = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' ');
+      const seoTitle = baseTitle.charAt(0).toUpperCase() + baseTitle.slice(1);
 
       // Create unique filename
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const slug = generateVideoSlug(seoTitle);
+      const fileName = `${slug}.${fileExt}`;
       const filePath = `videos/${fileName}`;
 
       // Update progress during upload
@@ -65,20 +68,49 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
 
       setUploadProgress(75);
 
+      // Create video record in database
+      const { data: videoRecord, error: dbError } = await supabase
+        .from('videos')
+        .insert({
+          title: seoTitle,
+          slug: slug,
+          video_url: publicUrl,
+          status: 'processing',
+          processing_status: 'pending',
+          category: 'offroad',
+          published_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (dbError) throw dbError;
+
+      // Trigger video processing
+      const { error: processingError } = await supabase.functions.invoke('video-processor', {
+        body: {
+          video_id: videoRecord.id,
+          video_url: publicUrl,
+          title: seoTitle
+        }
+      });
+
+      if (processingError) {
+        console.warn('Video processing failed:', processingError);
+      }
       const uploadedVideo: UploadedVideo = {
-        id: crypto.randomUUID(),
+        id: videoRecord.id,
         url: publicUrl,
         fileName: file.name,
         fileSize: file.size,
         mimeType: file.type,
-        duration: metadata.duration
+        duration: 0 // Will be updated by processing
       };
 
       setUploadProgress(100);
 
       toast({
         title: "Success",
-        description: "Video uploaded successfully! Processing in background...",
+        description: "Video uploaded successfully! Processing thumbnail and metadata...",
       });
 
       onUploadSuccess?.(uploadedVideo);
@@ -98,27 +130,6 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
     }
   };
 
-  // Extract video metadata on client-side
-  const extractVideoMetadata = (file: File): Promise<{ duration: number; resolution: string }> => {
-    return new Promise((resolve) => {
-      const video = document.createElement('video');
-      const url = URL.createObjectURL(file);
-      
-      video.onloadedmetadata = () => {
-        const duration = Math.round(video.duration);
-        const resolution = `${video.videoWidth}x${video.videoHeight}`;
-        URL.revokeObjectURL(url);
-        resolve({ duration, resolution });
-      };
-      
-      video.onerror = () => {
-        URL.revokeObjectURL(url);
-        resolve({ duration: 0, resolution: 'unknown' });
-      };
-      
-      video.src = url;
-    });
-  };
 
   const deleteVideo = async (filePath: string): Promise<void> => {
     try {

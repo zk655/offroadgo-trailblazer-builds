@@ -230,6 +230,24 @@ export default function AdminVideos() {
     field.onChange(tags);
   };
 
+  const handleVideoUpload = async (videoUrl: string) => {
+    try {
+      // The video upload hook now handles database creation and processing
+      toast({
+        title: "Success",
+        description: "Video uploaded and processing started",
+      });
+      
+      // Refresh the videos list
+      queryClient.invalidateQueries({ queryKey: ['admin-videos'] });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to process video upload",
+        variant: "destructive",
+      });
+    }
+  };
   // RENDER
   return (
     <div className="container mx-auto px-4 py-8">
@@ -342,14 +360,17 @@ export default function AdminVideos() {
                             <FormControl>
                               <div className="space-y-2">
                                 <VideoUploadDropzone
-                                  onVideoUploaded={field.onChange}
+                                  onVideoUploaded={(url) => {
+                                    field.onChange(url);
+                                    handleVideoUpload(url);
+                                  }}
                                   variant="compact"
                                 />
                                 {field.value && (
                                   <Input 
                                     placeholder="Video URL" 
                                     value={field.value}
-                                    onChange={field.onChange}
+                                    onChange={(e) => field.onChange(e.target.value)}
                                   />
                                 )}
                               </div>
@@ -632,7 +653,7 @@ export default function AdminVideos() {
                   <div className="flex flex-wrap gap-1 mt-3">
                     {video.tags.slice(0, 3).map((tag, index) => (
                       <Badge key={index} variant="secondary" className="text-xs">
-                        {tag}
+                        #{tag}
                       </Badge>
                     ))}
                     {video.tags.length > 3 && (
@@ -640,6 +661,17 @@ export default function AdminVideos() {
                         +{video.tags.length - 3}
                       </Badge>
                     )}
+                  </div>
+                )}
+
+                {/* Processing Status */}
+                {video.processing_status && video.processing_status !== 'completed' && (
+                  <div className="mt-2">
+                    <Badge variant="outline" className="text-xs">
+                      {video.processing_status === 'pending' && '⏳ Processing...'}
+                      {video.processing_status === 'processing' && '🔄 Processing...'}
+                      {video.processing_status === 'failed' && '❌ Failed'}
+                    </Badge>
                   </div>
                 )}
               </CardContent>

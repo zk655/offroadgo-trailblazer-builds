@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Play, Heart, Bookmark, Share2, Eye } from 'lucide-react';
+import { Play, Heart, Bookmark, Share2, Eye, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import OptimizedImage from '@/components/OptimizedImage';
 import SocialShare from '@/components/SocialShare';
 import { formatDuration, formatNumber } from '@/utils/videoHelpers';
+import { motion } from 'framer-motion';
 
 interface Video {
   id: string;
@@ -52,12 +53,18 @@ const VideoCard: React.FC<VideoCardProps> = ({
     onShare();
   };
 
+  const handlePlayClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onPlay();
+  };
   return (
-    <div 
-      className="group relative bg-card rounded-lg overflow-hidden shadow-card hover:shadow-primary transition-all duration-300 cursor-pointer"
+    <motion.div 
+      className="group relative bg-card rounded-lg overflow-hidden shadow-card hover:shadow-primary transition-all duration-300 cursor-pointer border border-border/50"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={onPlay}
+      onClick={handlePlayClick}
+      whileHover={{ y: -4, scale: 1.02 }}
+      transition={{ duration: 0.2 }}
     >
       {/* Thumbnail Container */}
       <div className="relative aspect-video overflow-hidden bg-muted">
@@ -78,23 +85,24 @@ const VideoCard: React.FC<VideoCardProps> = ({
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-600 flex items-center justify-center">
-            <div className="rounded-full bg-white/20 p-4">
-              <Play className="h-8 w-8 text-white" />
+            <div className="rounded-full bg-white/20 p-6">
+              <Play className="h-12 w-12 text-white" />
             </div>
-            <div className="absolute bottom-2 left-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
-              No Thumbnail
+            <div className="absolute bottom-3 left-3 bg-black/80 text-white text-xs px-3 py-1.5 rounded-md">
+              <Clock className="h-3 w-3 inline mr-1" />
+              Video Ready
             </div>
           </div>
         )}
         
         {/* Duration Overlay */}
-        <div className="absolute bottom-2 right-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
+        <div className="absolute bottom-3 right-3 bg-black/80 text-white text-xs px-2 py-1 rounded-md font-medium">
           {video.duration && video.duration > 0 ? formatDuration(video.duration) : '0:00'}
         </div>
 
         {/* Featured/Trending Badge */}
         {(video.is_featured || video.is_trending) && (
-          <div className="absolute top-2 left-2">
+          <div className="absolute top-3 left-3">
             <Badge variant={video.is_featured ? "default" : "secondary"}>
               {video.is_featured ? 'Featured' : 'Trending'}
             </Badge>
@@ -105,17 +113,22 @@ const VideoCard: React.FC<VideoCardProps> = ({
         <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-300 ${
           isHovered ? 'opacity-100' : 'opacity-0'
         }`}>
-          <Button
-            variant="hero"
-            size="lg"
-            className="rounded-full w-16 h-16 p-0"
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Play className="h-6 w-6 fill-current" />
-          </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              className="rounded-full w-16 h-16 p-0 bg-white/90 hover:bg-white text-black shadow-lg"
+            >
+              <Play className="h-6 w-6 fill-current ml-1" />
+            </Button>
+          </motion.div>
         </div>
 
         {/* Hover Actions */}
-        <div className={`absolute top-2 right-2 flex flex-col gap-2 transition-opacity duration-300 ${
+        <div className={`absolute top-3 right-3 flex flex-col gap-2 transition-opacity duration-300 ${
           isHovered ? 'opacity-100' : 'opacity-0'
         }`}>
           <Button
@@ -125,7 +138,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
               e.stopPropagation();
               onLike();
             }}
-            className="bg-background/75 hover:bg-background w-10 h-10 p-0 rounded-full"
+            className="bg-background/80 hover:bg-background w-8 h-8 p-0 rounded-full backdrop-blur-sm"
           >
             <Heart className="h-4 w-4" />
           </Button>
@@ -134,7 +147,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
             variant="ghost"
             size="sm"
             onClick={handleShareClick}
-            className="bg-background/75 hover:bg-background w-10 h-10 p-0 rounded-full"
+            className="bg-background/80 hover:bg-background w-8 h-8 p-0 rounded-full backdrop-blur-sm"
           >
             <Share2 className="h-4 w-4" />
           </Button>
@@ -146,7 +159,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
               e.stopPropagation();
               onSave();
             }}
-            className="bg-background/75 hover:bg-background w-10 h-10 p-0 rounded-full"
+            className="bg-background/80 hover:bg-background w-8 h-8 p-0 rounded-full backdrop-blur-sm"
           >
             <Bookmark className="h-4 w-4" />
           </Button>
@@ -161,18 +174,20 @@ const VideoCard: React.FC<VideoCardProps> = ({
         </h3>
 
         {/* Category */}
-        <p className="text-xs text-muted-foreground mb-2">{video.category}</p>
+        <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium">
+          {video.category}
+        </p>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-1 mb-3">
-          {video.tags.slice(0, 3).map((tag) => (
-            <Badge key={tag} variant="secondary" className="text-xs">
+          {video.tags.slice(0, 2).map(tag => (
+            <Badge key={tag} variant="outline" className="text-xs px-2 py-0.5">
               #{tag}
             </Badge>
           ))}
-          {video.tags.length > 3 && (
-            <Badge variant="outline" className="text-xs">
-              +{video.tags.length - 3}
+          {video.tags.length > 2 && (
+            <Badge variant="outline" className="text-xs px-2 py-0.5">
+              +{video.tags.length - 2}
             </Badge>
           )}
         </div>
@@ -181,18 +196,18 @@ const VideoCard: React.FC<VideoCardProps> = ({
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             <Eye className="h-3 w-3" />
-            <span>{formatNumber(video.view_count)}</span>
+            <span>{formatNumber(video.view_count || 0)}</span>
           </div>
           
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
               <Heart className="h-3 w-3" />
-              <span>{formatNumber(video.like_count)}</span>
+              <span>{formatNumber(video.like_count || 0)}</span>
             </div>
             
             <div className="flex items-center gap-1">
               <Bookmark className="h-3 w-3" />
-              <span>{formatNumber(video.save_count)}</span>
+              <span>{formatNumber(video.save_count || 0)}</span>
             </div>
           </div>
         </div>
@@ -210,7 +225,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
           />
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

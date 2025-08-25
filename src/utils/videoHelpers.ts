@@ -110,7 +110,9 @@ export const generateVideoSlug = (title: string): string => {
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
-    .trim();
+    .trim()
+    .substring(0, 60) // Limit length for SEO
+    + '-' + Date.now().toString(36); // Ensure uniqueness
 };
 
 /**
@@ -151,4 +153,57 @@ export const generateEmbedCode = (videoUrl: string, title: string): string => {
   <source src="${videoUrl}" type="video/mp4">
   <p>Your browser doesn't support HTML5 video. <a href="${videoUrl}">Download the video</a> instead.</p>
 </video>`;
+};
+/**
+ * Generate video streaming URL with proper headers
+ */
+export const generateStreamingUrl = (videoId: string): string => {
+  const baseUrl = import.meta.env.VITE_SUPABASE_URL;
+  return `${baseUrl}/functions/v1/video-stream?id=${videoId}&action=stream`;
+};
+
+/**
+ * Track video view
+ */
+export const trackVideoView = async (videoId: string): Promise<void> => {
+  try {
+    const baseUrl = import.meta.env.VITE_SUPABASE_URL;
+    await fetch(`${baseUrl}/functions/v1/video-stream?id=${videoId}&action=view`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+      }
+    });
+  } catch (error) {
+    console.error('Error tracking video view:', error);
+  }
+};
+
+/**
+ * Extract video metadata from file
+ */
+export const extractVideoMetadata = (file: File): Promise<{
+  duration: number;
+  resolution: string;
+  fileSize: number;
+}> => {
+  return new Promise((resolve) => {
+    const video = document.createElement('video');
+    const url = URL.createObjectURL(file);
+    
+    video.onloadedmetadata = () => {
+      const duration = Math.round(video.duration);
+      const resolution = `${video.videoWidth}x${video.videoHeight}`;
+      URL.revokeObjectURL(url);
+      resolve({ duration, resolution, fileSize: file.size });
+    };
+    
+    video.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve({ duration: 0, resolution: 'unknown', fileSize: file.size });
+    };
+    
+    video.src = url;
+  });
 };
