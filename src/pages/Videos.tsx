@@ -8,9 +8,7 @@ import VideoFilters from '@/components/VideoFilters';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Grid, Filter, Upload, Video as VideoIcon, Play } from 'lucide-react';
-import { toast } from 'sonner';
-import VideoUploadDropzone from '@/components/VideoUploadDropzone';
+import { Search, Filter, Play } from 'lucide-react';
 import AdPlacement from '@/components/AdPlacement';
 
 
@@ -28,7 +26,6 @@ const Videos = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<'newest' | 'trending' | 'most_viewed'>('newest');
   const [showFilters, setShowFilters] = useState(false);
-  const [showUpload, setShowUpload] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const queryClient = useQueryClient();
 
@@ -64,19 +61,6 @@ const Videos = () => {
     staleTime: 15 * 60 * 1000, // 15 minutes cache
   });
 
-  // Handle video upload
-  const handleVideoUpload = async (videoUrl: string) => {
-    try {
-      toast.success('Video uploaded successfully! Processing thumbnail and metadata...');
-      setShowUpload(false);
-      
-      // Refresh videos list
-      queryClient.invalidateQueries({ queryKey: ['videos-grid'] });
-    } catch (error) {
-      console.error('Error creating video entry:', error);
-      toast.error('Failed to process video upload');
-    }
-  };
 
   // Clear search with debounce
   useEffect(() => {
@@ -114,9 +98,9 @@ const Videos = () => {
                 Discover epic adventures, detailed builds, and expert reviews from the off-road community
               </p>
               
-              {/* Search and Upload Bar */}
-              <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
-                <div className="relative flex-1">
+              {/* Search Bar */}
+              <div className="flex justify-center max-w-2xl mx-auto">
+                <div className="relative w-full">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                   <Input
                     type="text"
@@ -126,14 +110,6 @@ const Videos = () => {
                     className="pl-10 pr-4 py-3 text-base"
                   />
                 </div>
-                <Button
-                  onClick={() => setShowUpload(true)}
-                  size="lg"
-                  className="px-6 py-3 text-base"
-                >
-                  <Upload className="h-4 w-4 mr-2" />
-                  Upload Video
-                </Button>
               </div>
             </div>
           </div>
@@ -226,24 +202,6 @@ const Videos = () => {
           </div>
         </section>
 
-        {/* Video Upload Modal */}
-        {showUpload && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-background rounded-lg p-6 max-w-md w-full">
-              <h3 className="text-lg font-semibold mb-4">Upload Video</h3>
-              <VideoUploadDropzone
-                onVideoUploaded={handleVideoUpload}
-              />
-              <Button
-                variant="outline"
-                onClick={() => setShowUpload(false)}
-                className="w-full mt-4"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        )}
 
 
         <Footer />

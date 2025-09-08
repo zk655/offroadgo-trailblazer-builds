@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { generateVideoSlug } from '@/utils/videoHelpers';
+import { autoGenerateThumbnail } from '@/utils/thumbnailGenerator';
 
 interface UploadedVideo {
   id: string;
@@ -85,7 +86,18 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
 
       if (dbError) throw dbError;
 
-      // Trigger video processing
+      // Auto-generate thumbnail from first frame
+      try {
+        console.log('Generating thumbnail for video:', videoRecord.id);
+        await autoGenerateThumbnail(publicUrl, videoRecord.id);
+        console.log('Thumbnail generated successfully');
+        setUploadProgress(90);
+      } catch (thumbnailError) {
+        console.error('Failed to generate thumbnail:', thumbnailError);
+        // Continue without thumbnail - not a critical error
+      }
+
+      // Trigger video processing for streaming optimization
       try {
         await supabase.functions.invoke('video-processor', {
           body: {
@@ -97,6 +109,13 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
       } catch (processingError) {
         console.warn('Video processing failed:', processingError);
       }
+
+      // Update status to active
+      await supabase
+        .from('videos')
+        .update({ status: 'active' })
+        .eq('id', videoRecord.id);
+
       const uploadedVideo: UploadedVideo = {
         id: videoRecord.id,
         url: publicUrl,

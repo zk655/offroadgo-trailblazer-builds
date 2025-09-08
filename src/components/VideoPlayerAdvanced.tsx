@@ -151,10 +151,10 @@ const VideoPlayerAdvanced: React.FC<VideoPlayerAdvancedProps> = ({
   }
 
   return (
-    <div className={`relative bg-black rounded-lg overflow-hidden group ${className}`}>
+    <div className={`relative bg-black overflow-hidden group ${className}`}>
       <video
         ref={videoRef}
-        className="w-full h-full object-contain"
+        className="w-full h-full object-contain max-h-[70vh] lg:max-h-none"
         poster={thumbnailUrl}
         preload="metadata"
         playsInline

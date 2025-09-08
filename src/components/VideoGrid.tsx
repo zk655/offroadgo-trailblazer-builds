@@ -225,18 +225,18 @@ const VideoGrid: React.FC<VideoGridProps> = ({
 
       {/* Video Player Modal */}
       <Dialog open={isPlayerOpen} onOpenChange={setIsPlayerOpen}>
-        <DialogContent className="max-w-6xl w-full h-[90vh] p-0">
+        <DialogContent className="max-w-7xl w-[95vw] max-h-[95vh] p-0 overflow-hidden">
           {selectedVideo && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 h-full">
+            <div className="flex flex-col lg:flex-row h-[95vh]">
               {/* Video Player */}
-              <div className="lg:col-span-2 bg-black">
+              <div className="flex-1 bg-black min-h-0">
                 <VideoPlayerAdvanced
                   videoId={selectedVideo.id}
                   videoUrl={selectedVideo.video_url}
                   thumbnailUrl={selectedVideo.thumbnail_url}
                   title={selectedVideo.title}
                   autoPlay={true}
-                  className="h-full"
+                  className="w-full h-full"
                   onViewTracked={() => {
                     // Update local state
                     setSelectedVideo(prev => prev ? {
@@ -248,69 +248,71 @@ const VideoGrid: React.FC<VideoGridProps> = ({
               </div>
 
               {/* Video Info Sidebar */}
-              <div className="bg-background border-l p-6 overflow-y-auto">
-                <div className="space-y-4">
-                  <div>
-                    <h2 className="text-xl font-bold leading-tight">{selectedVideo.title}</h2>
-                    {selectedVideo.description && (
-                      <p className="text-sm text-muted-foreground mt-2">
-                        {selectedVideo.description}
-                      </p>
+              <div className="w-full lg:w-80 xl:w-96 bg-background border-l flex flex-col max-h-full">
+                <div className="p-4 md:p-6 overflow-y-auto flex-1">
+                  <div className="space-y-4">
+                    <div>
+                      <h2 className="text-lg md:text-xl font-bold leading-tight">{selectedVideo.title}</h2>
+                      {selectedVideo.description && (
+                        <p className="text-sm text-muted-foreground mt-2 line-clamp-3">
+                          {selectedVideo.description}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-3 gap-2 md:gap-4 text-center">
+                      <div>
+                        <div className="text-lg md:text-2xl font-bold text-primary">
+                          {(selectedVideo.view_count || 0).toLocaleString()}
+                        </div>
+                        <div className="text-xs text-muted-foreground">Views</div>
+                      </div>
+                      <div>
+                        <div className="text-lg md:text-2xl font-bold text-primary">
+                          {(selectedVideo.like_count || 0).toLocaleString()}
+                        </div>
+                        <div className="text-xs text-muted-foreground">Likes</div>
+                      </div>
+                      <div>
+                        <div className="text-lg md:text-2xl font-bold text-primary">
+                          {(selectedVideo.save_count || 0).toLocaleString()}
+                        </div>
+                        <div className="text-xs text-muted-foreground">Saves</div>
+                      </div>
+                    </div>
+
+                    {/* Tags */}
+                    {selectedVideo.tags && selectedVideo.tags.length > 0 && (
+                      <div>
+                        <h3 className="font-semibold mb-2">Tags</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedVideo.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="px-2 py-1 bg-muted rounded-md text-xs"
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                     )}
-                  </div>
 
-                  {/* Stats */}
-                  <div className="grid grid-cols-3 gap-4 text-center">
-                    <div>
-                      <div className="text-2xl font-bold text-primary">
-                        {(selectedVideo.view_count || 0).toLocaleString()}
+                    {/* Video Details */}
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Duration:</span>
+                        <span>{formatDuration(selectedVideo.duration)}</span>
                       </div>
-                      <div className="text-xs text-muted-foreground">Views</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-primary">
-                        {(selectedVideo.like_count || 0).toLocaleString()}
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Category:</span>
+                        <span className="capitalize">{selectedVideo.category}</span>
                       </div>
-                      <div className="text-xs text-muted-foreground">Likes</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-primary">
-                        {(selectedVideo.save_count || 0).toLocaleString()}
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Published:</span>
+                        <span>{new Date(selectedVideo.published_at).toLocaleDateString()}</span>
                       </div>
-                      <div className="text-xs text-muted-foreground">Saves</div>
-                    </div>
-                  </div>
-
-                  {/* Tags */}
-                  {selectedVideo.tags && selectedVideo.tags.length > 0 && (
-                    <div>
-                      <h3 className="font-semibold mb-2">Tags</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedVideo.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-2 py-1 bg-muted rounded-md text-xs"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Video Details */}
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Duration:</span>
-                      <span>{formatDuration(selectedVideo.duration)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Category:</span>
-                      <span>{selectedVideo.category}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Published:</span>
-                      <span>{new Date(selectedVideo.published_at).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>
