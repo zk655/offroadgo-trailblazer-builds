@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import VideoCard from '@/components/VideoCard';
-import VideoPlayer from '@/components/VideoPlayer';
+import VideoPlayerAdvanced from '@/components/VideoPlayerAdvanced';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
+import { formatDuration } from '@/utils/videoHelpers';
 
 interface Video {
   id: string;
@@ -229,7 +230,7 @@ const VideoGrid: React.FC<VideoGridProps> = ({
             <div className="grid grid-cols-1 lg:grid-cols-3 h-full">
               {/* Video Player */}
               <div className="lg:col-span-2 bg-black">
-                <VideoPlayer
+                <VideoPlayerAdvanced
                   videoId={selectedVideo.id}
                   videoUrl={selectedVideo.video_url}
                   thumbnailUrl={selectedVideo.thumbnail_url}

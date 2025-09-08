@@ -86,15 +86,15 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
       if (dbError) throw dbError;
 
       // Trigger video processing
-      const { error: processingError } = await supabase.functions.invoke('video-processor', {
-        body: {
-          video_id: videoRecord.id,
-          video_url: publicUrl,
-          title: seoTitle
-        }
-      });
-
-      if (processingError) {
+      try {
+        await supabase.functions.invoke('video-processor', {
+          body: {
+            video_id: videoRecord.id,
+            video_url: publicUrl,
+            title: seoTitle
+          }
+        });
+      } catch (processingError) {
         console.warn('Video processing failed:', processingError);
       }
       const uploadedVideo: UploadedVideo = {

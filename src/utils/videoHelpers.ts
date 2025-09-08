@@ -72,32 +72,30 @@ export const validateVideoFile = (file: File): { isValid: boolean; error?: strin
 };
 
 /**
- * Extract video metadata (duration, resolution, etc.)
+ * Extract video metadata from file
  */
 export const extractVideoMetadata = (file: File): Promise<{
   duration: number;
   resolution: string;
   fileSize: number;
 }> => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const video = document.createElement('video');
-    video.preload = 'metadata';
+    const url = URL.createObjectURL(file);
     
     video.onloadedmetadata = () => {
-      window.URL.revokeObjectURL(video.src);
-      
-      resolve({
-        duration: Math.floor(video.duration),
-        resolution: `${video.videoWidth}x${video.videoHeight}`,
-        fileSize: file.size
-      });
+      const duration = Math.round(video.duration);
+      const resolution = `${video.videoWidth}x${video.videoHeight}`;
+      URL.revokeObjectURL(url);
+      resolve({ duration, resolution, fileSize: file.size });
     };
     
     video.onerror = () => {
-      reject(new Error('Failed to load video metadata'));
+      URL.revokeObjectURL(url);
+      resolve({ duration: 0, resolution: 'unknown', fileSize: file.size });
     };
     
-    video.src = URL.createObjectURL(file);
+    video.src = url;
   });
 };
 
@@ -154,12 +152,12 @@ export const generateEmbedCode = (videoUrl: string, title: string): string => {
   <p>Your browser doesn't support HTML5 video. <a href="${videoUrl}">Download the video</a> instead.</p>
 </video>`;
 };
+
 /**
  * Generate video streaming URL with proper headers
  */
 export const generateStreamingUrl = (videoId: string): string => {
-  const baseUrl = import.meta.env.VITE_SUPABASE_URL;
-  return `${baseUrl}/functions/v1/video-stream?id=${videoId}&action=stream`;
+  return `https://muzlggruqnlackmbrswp.supabase.co/functions/v1/video-stream?id=${videoId}&action=stream`;
 };
 
 /**
@@ -167,43 +165,14 @@ export const generateStreamingUrl = (videoId: string): string => {
  */
 export const trackVideoView = async (videoId: string): Promise<void> => {
   try {
-    const baseUrl = import.meta.env.VITE_SUPABASE_URL;
-    await fetch(`${baseUrl}/functions/v1/video-stream?id=${videoId}&action=view`, {
+    await fetch(`https://muzlggruqnlackmbrswp.supabase.co/functions/v1/video-stream?id=${videoId}&action=view`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11emxnZ3J1cW5sYWNrbWJyc3dwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyNTMxNzYsImV4cCI6MjA2NzgyOTE3Nn0.xRYny_LpkUVMtoL_5Sqme5xmb-evzxLWrjpDQHGy0pA`,
         'Content-Type': 'application/json',
       }
     });
   } catch (error) {
     console.error('Error tracking video view:', error);
   }
-};
-
-/**
- * Extract video metadata from file
- */
-export const extractVideoMetadata = (file: File): Promise<{
-  duration: number;
-  resolution: string;
-  fileSize: number;
-}> => {
-  return new Promise((resolve) => {
-    const video = document.createElement('video');
-    const url = URL.createObjectURL(file);
-    
-    video.onloadedmetadata = () => {
-      const duration = Math.round(video.duration);
-      const resolution = `${video.videoWidth}x${video.videoHeight}`;
-      URL.revokeObjectURL(url);
-      resolve({ duration, resolution, fileSize: file.size });
-    };
-    
-    video.onerror = () => {
-      URL.revokeObjectURL(url);
-      resolve({ duration: 0, resolution: 'unknown', fileSize: file.size });
-    };
-    
-    video.src = url;
-  });
 };
