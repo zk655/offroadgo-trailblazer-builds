@@ -1,10 +1,10 @@
 /**
- * Generates a thumbnail from the first frame of a video
+ * Generates a high-quality thumbnail from a video frame
  * @param videoUrl - URL of the video file
- * @param timeInSeconds - Time in seconds to capture (default: 1)
+ * @param timeInSeconds - Time in seconds to capture (default: 3)
  * @returns Promise<string> - Base64 encoded thumbnail image
  */
-export const generateVideoThumbnail = (videoUrl: string, timeInSeconds: number = 2): Promise<string> => {
+export const generateVideoThumbnail = (videoUrl: string, timeInSeconds: number = 3): Promise<string> => {
   return new Promise((resolve, reject) => {
     const video = document.createElement('video');
     const canvas = document.createElement('canvas');
@@ -15,25 +15,37 @@ export const generateVideoThumbnail = (videoUrl: string, timeInSeconds: number =
       return;
     }
 
+    // Set video properties for better quality capture
     video.crossOrigin = 'anonymous';
     video.preload = 'metadata';
+    video.muted = true; // Ensure autoplay works
+    video.playsInline = true;
     
     video.onloadedmetadata = () => {
-      // Set canvas dimensions to match video
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      // Set canvas to optimal thumbnail size (16:9 aspect ratio)
+      const aspectRatio = video.videoWidth / video.videoHeight;
+      const targetWidth = 1280;
+      const targetHeight = Math.round(targetWidth / aspectRatio);
       
-      // Seek to the specified time
-      video.currentTime = Math.min(timeInSeconds, video.duration);
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      
+      // Seek to the specified time (ensure it's within video duration)
+      const seekTime = Math.min(timeInSeconds, Math.max(1, video.duration - 1));
+      video.currentTime = seekTime;
     };
 
     video.onseeked = () => {
       try {
-        // Draw the current frame to canvas
+        // Set canvas context for high quality rendering
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
+        // Draw the current frame to canvas with proper scaling
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         
-        // Convert to base64 image
-        const thumbnail = canvas.toDataURL('image/jpeg', 0.8);
+        // Convert to high-quality JPEG
+        const thumbnail = canvas.toDataURL('image/jpeg', 0.85);
         resolve(thumbnail);
       } catch (error) {
         reject(error);
@@ -44,10 +56,18 @@ export const generateVideoThumbnail = (videoUrl: string, timeInSeconds: number =
       }
     };
 
-    video.onerror = () => {
+    video.onerror = (error) => {
+      console.error('Video loading error:', error);
       reject(new Error('Failed to load video for thumbnail generation'));
       video.remove();
       canvas.remove();
+    };
+
+    video.ontimeupdate = () => {
+      // Additional check to ensure we're at the right time
+      if (Math.abs(video.currentTime - timeInSeconds) < 0.1) {
+        video.ontimeupdate = null; // Remove listener
+      }
     };
 
     // Start loading the video

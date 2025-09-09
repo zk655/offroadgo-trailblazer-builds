@@ -27,38 +27,43 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
       setUploading(true);
       setUploadProgress(0);
 
-      // Validate file
-      if (!file.type.startsWith('video/')) {
-        throw new Error('Please select a valid video file');
+      // Validate file type - accept various video formats
+      const validTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/mkv', 'video/webm', 'video/quicktime'];
+      const isValidType = validTypes.some(type => file.type.includes(type.split('/')[1])) || 
+                         file.name.match(/\.(mp4|mov|avi|mkv|webm|m4v)$/i);
+      
+      if (!isValidType) {
+        throw new Error('Please select a valid video file (MP4, MOV, AVI, MKV, WebM)');
       }
 
-      // Check file size (max 100MB)
-      const maxSize = 100 * 1024 * 1024;
+      // Check file size (max 500MB for better quality uploads)
+      const maxSize = 500 * 1024 * 1024;
       if (file.size > maxSize) {
-        throw new Error('Video file size must be less than 100MB');
+        throw new Error('Video file size must be less than 500MB');
       }
 
       // Generate SEO-friendly title from filename
       const baseTitle = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' ');
       const seoTitle = baseTitle.charAt(0).toUpperCase() + baseTitle.slice(1);
-
-      // Create unique filename
-      const fileExt = file.name.split('.').pop();
       const slug = generateVideoSlug(seoTitle);
-      const fileName = `${slug}.${fileExt}`;
-      const filePath = `videos/${fileName}`;
 
-      // Step 1: Create initial video record with processing status
+      setUploadProgress(10);
+
+      // Step 1: Create SINGLE video record with processing status
       const { data: videoRecord, error: dbError } = await supabase
         .from('videos')
         .insert({
           title: seoTitle,
           slug: slug,
-          video_url: '', // Will be updated after upload
+          video_url: '', // Will be updated with final processed URL
           status: 'processing',
-          processing_status: 'pending', // Use valid value instead of 'uploading'
+          processing_status: 'pending',
           category: 'offroad',
-          published_at: new Date().toISOString()
+          video_format: 'mp4', // Final format after processing
+          published_at: new Date().toISOString(),
+          seo_title: `${seoTitle} | OffRoadGo Videos`,
+          seo_description: `Watch ${seoTitle} - Premium off-road video content in high definition.`,
+          seo_keywords: ['off-road', 'adventure', '4x4', 'video', ...seoTitle.toLowerCase().split(' ')]
         })
         .select()
         .single();
@@ -66,88 +71,97 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
       if (dbError) throw dbError;
       setUploadProgress(20);
 
-      // Step 2: Upload video to storage
+      // Step 2: Upload original video to raw storage
+      const originalFileName = `raw/${videoRecord.id}_original.${file.name.split('.').pop()}`;
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('videos')
-        .upload(filePath, file, {
+        .upload(originalFileName, file, {
           cacheControl: '3600',
           upsert: false
         });
 
       if (uploadError) throw uploadError;
-      setUploadProgress(50);
+      setUploadProgress(40);
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
+      // Get original video URL
+      const { data: { publicUrl: originalUrl } } = supabase.storage
         .from('videos')
         .getPublicUrl(uploadData.path);
 
-      // Step 3: Update video record with URL and set processing for thumbnail
-      await supabase
-        .from('videos')
-        .update({ 
-          video_url: publicUrl,
-          processing_status: 'processing' // Use valid value
-        })
-        .eq('id', videoRecord.id);
+      setUploadProgress(50);
 
-      setUploadProgress(60);
-
-      // Step 4: Auto-generate thumbnail from video at 2 seconds
-      let thumbnailUrl = '';
-      try {
-        console.log('Generating thumbnail for video:', videoRecord.id);
-        thumbnailUrl = await autoGenerateThumbnail(publicUrl, videoRecord.id);
-        console.log('Thumbnail generated successfully:', thumbnailUrl);
-        setUploadProgress(80);
-      } catch (thumbnailError) {
-        console.error('Failed to generate thumbnail:', thumbnailError);
-        // Continue without thumbnail - not a critical error
-      }
-
-      // Step 5: Trigger video processing for metadata extraction
-      try {
-        await supabase.functions.invoke('video-processor', {
-          body: {
-            video_id: videoRecord.id,
-            video_url: publicUrl,
-            title: seoTitle
-          }
-        });
-      } catch (processingError) {
-        console.warn('Video processing failed:', processingError);
-      }
-
-      setUploadProgress(90);
-
-      // Step 6: Update status to ready and save thumbnail URL
-      await supabase
-        .from('videos')
-        .update({ 
-          status: 'active',
-          processing_status: 'completed',
-          thumbnail_url: thumbnailUrl
-        })
-        .eq('id', videoRecord.id);
-
-      const uploadedVideo: UploadedVideo = {
-        id: videoRecord.id,
-        url: publicUrl,
-        fileName: file.name,
-        fileSize: file.size,
-        mimeType: file.type,
-        duration: 0 // Will be updated by processing
-      };
-
-      setUploadProgress(100);
-
-      toast({
-        title: "Success",
-        description: "Video uploaded successfully with auto-generated thumbnail!",
+      // Step 3: Trigger comprehensive video processing (transcoding, HLS, thumbnail, SEO)
+      const { data: processingResult, error: processingError } = await supabase.functions.invoke('process-video', {
+        body: {
+          video_id: videoRecord.id,
+          original_url: originalUrl,
+          title: seoTitle,
+          file_size: file.size,
+          original_format: file.name.split('.').pop()?.toLowerCase() || 'mp4'
+        }
       });
 
-      onUploadSuccess?.(uploadedVideo);
-      return uploadedVideo;
+      if (processingError) {
+        console.error('Processing failed:', processingError);
+        // Update record to failed status
+        await supabase
+          .from('videos')
+          .update({ 
+            status: 'failed',
+            processing_status: 'failed'
+          })
+          .eq('id', videoRecord.id);
+        throw new Error('Video processing failed. Please try again.');
+      }
+
+      setUploadProgress(70);
+
+      // Step 4: Wait for processing completion and get final URLs
+      let attempts = 0;
+      const maxAttempts = 30; // 5 minutes max
+      
+      while (attempts < maxAttempts) {
+        const { data: videoData } = await supabase
+          .from('videos')
+          .select('processing_status, video_url, thumbnail_url, status')
+          .eq('id', videoRecord.id)
+          .single();
+
+        if (videoData?.processing_status === 'completed' && videoData?.video_url) {
+          setUploadProgress(100);
+          
+          const uploadedVideo: UploadedVideo = {
+            id: videoRecord.id,
+            url: videoData.video_url,
+            fileName: file.name,
+            fileSize: file.size,
+            mimeType: 'video/mp4', // Final format
+            duration: 0 // Will be set by processing
+          };
+
+          toast({
+            title: "Success",
+            description: "Video uploaded and processed successfully with HLS streaming and auto-generated thumbnail!",
+          });
+
+          onUploadSuccess?.(uploadedVideo);
+          return uploadedVideo;
+        }
+        
+        if (videoData?.processing_status === 'failed') {
+          throw new Error('Video processing failed during transcoding');
+        }
+
+        // Update progress based on processing status
+        if (videoData?.processing_status === 'transcoding') {
+          setUploadProgress(Math.min(95, 70 + attempts * 2));
+        }
+
+        attempts++;
+        await new Promise(resolve => setTimeout(resolve, 10000)); // Wait 10 seconds
+      }
+
+      throw new Error('Video processing timed out. Please check the admin panel for status.');
 
     } catch (error) {
       console.error('Video upload error:', error);

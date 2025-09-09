@@ -68,7 +68,7 @@ export default function AdminVideos() {
       let query = supabase
         .from('videos')
         .select('*')
-        .in('status', ['active', 'draft', 'archived']) // Exclude processing videos
+        .in('status', ['active', 'ready']) // Only show completed videos
         .order('created_at', { ascending: false });
 
       if (searchTerm) {
