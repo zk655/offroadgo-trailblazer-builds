@@ -68,6 +68,7 @@ export default function AdminVideos() {
       let query = supabase
         .from('videos')
         .select('*')
+        .in('status', ['ready', 'active', 'draft', 'archived']) // Exclude processing videos
         .order('created_at', { ascending: false });
 
       if (searchTerm) {
@@ -609,13 +610,21 @@ export default function AdminVideos() {
                 </div>
               </CardHeader>
               <CardContent>
-                {video.thumbnail_url && (
+                {video.thumbnail_url && !video.thumbnail_url.includes('.svg') ? (
                   <div className="aspect-video bg-muted rounded-lg mb-4 overflow-hidden">
                     <img 
                       src={video.thumbnail_url} 
                       alt={video.title}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        // Hide thumbnail if it fails to load
+                        e.currentTarget.style.display = 'none';
+                      }}
                     />
+                  </div>
+                ) : (
+                  <div className="aspect-video bg-muted rounded-lg mb-4 flex items-center justify-center">
+                    <Video className="h-8 w-8 text-muted-foreground" />
                   </div>
                 )}
                 
@@ -668,6 +677,8 @@ export default function AdminVideos() {
                 {video.processing_status && video.processing_status !== 'completed' && (
                   <div className="mt-2">
                     <Badge variant="outline" className="text-xs">
+                      {video.processing_status === 'uploading' && '📤 Uploading...'}
+                      {video.processing_status === 'generating_thumbnail' && '🖼️ Generating thumbnail...'}
                       {video.processing_status === 'pending' && '⏳ Processing...'}
                       {video.processing_status === 'processing' && '🔄 Processing...'}
                       {video.processing_status === 'failed' && '❌ Failed'}

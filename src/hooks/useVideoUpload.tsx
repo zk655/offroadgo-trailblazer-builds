@@ -48,10 +48,25 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
       const fileName = `${slug}.${fileExt}`;
       const filePath = `videos/${fileName}`;
 
-      // Update progress during upload
-      setUploadProgress(25);
+      // Step 1: Create initial video record with processing status
+      const { data: videoRecord, error: dbError } = await supabase
+        .from('videos')
+        .insert({
+          title: seoTitle,
+          slug: slug,
+          video_url: '', // Will be updated after upload
+          status: 'processing',
+          processing_status: 'uploading',
+          category: 'offroad',
+          published_at: new Date().toISOString()
+        })
+        .select()
+        .single();
 
-      // Upload to Supabase Storage
+      if (dbError) throw dbError;
+      setUploadProgress(20);
+
+      // Step 2: Upload video to storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('videos')
         .upload(filePath, file, {
@@ -67,37 +82,30 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
         .from('videos')
         .getPublicUrl(uploadData.path);
 
-      setUploadProgress(75);
-
-      // Create video record in database
-      const { data: videoRecord, error: dbError } = await supabase
+      // Step 3: Update video record with URL and generate thumbnail
+      await supabase
         .from('videos')
-        .insert({
-          title: seoTitle,
-          slug: slug,
+        .update({ 
           video_url: publicUrl,
-          status: 'processing',
-          processing_status: 'pending',
-          category: 'offroad',
-          published_at: new Date().toISOString()
+          processing_status: 'generating_thumbnail'
         })
-        .select()
-        .single();
+        .eq('id', videoRecord.id);
 
-      if (dbError) throw dbError;
+      setUploadProgress(60);
 
-      // Auto-generate thumbnail from first frame
+      // Step 4: Auto-generate thumbnail from video at 2 seconds
+      let thumbnailUrl = '';
       try {
         console.log('Generating thumbnail for video:', videoRecord.id);
-        await autoGenerateThumbnail(publicUrl, videoRecord.id);
-        console.log('Thumbnail generated successfully');
-        setUploadProgress(90);
+        thumbnailUrl = await autoGenerateThumbnail(publicUrl, videoRecord.id);
+        console.log('Thumbnail generated successfully:', thumbnailUrl);
+        setUploadProgress(80);
       } catch (thumbnailError) {
         console.error('Failed to generate thumbnail:', thumbnailError);
         // Continue without thumbnail - not a critical error
       }
 
-      // Trigger video processing for streaming optimization
+      // Step 5: Trigger video processing for metadata extraction
       try {
         await supabase.functions.invoke('video-processor', {
           body: {
@@ -110,10 +118,16 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
         console.warn('Video processing failed:', processingError);
       }
 
-      // Update status to active
+      setUploadProgress(90);
+
+      // Step 6: Update status to ready and save thumbnail URL
       await supabase
         .from('videos')
-        .update({ status: 'active' })
+        .update({ 
+          status: 'ready',
+          processing_status: 'completed',
+          thumbnail_url: thumbnailUrl
+        })
         .eq('id', videoRecord.id);
 
       const uploadedVideo: UploadedVideo = {
@@ -129,7 +143,7 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
 
       toast({
         title: "Success",
-        description: "Video uploaded successfully! Processing thumbnail and metadata...",
+        description: "Video uploaded successfully with auto-generated thumbnail!",
       });
 
       onUploadSuccess?.(uploadedVideo);

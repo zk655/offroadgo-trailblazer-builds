@@ -4,7 +4,7 @@
  * @param timeInSeconds - Time in seconds to capture (default: 1)
  * @returns Promise<string> - Base64 encoded thumbnail image
  */
-export const generateVideoThumbnail = (videoUrl: string, timeInSeconds: number = 1): Promise<string> => {
+export const generateVideoThumbnail = (videoUrl: string, timeInSeconds: number = 2): Promise<string> => {
   return new Promise((resolve, reject) => {
     const video = document.createElement('video');
     const canvas = document.createElement('canvas');
@@ -97,8 +97,8 @@ export const uploadThumbnailToStorage = async (thumbnailBase64: string, videoId:
  */
 export const autoGenerateThumbnail = async (videoUrl: string, videoId: string): Promise<string> => {
   try {
-    // Generate thumbnail from first frame
-    const thumbnailBase64 = await generateVideoThumbnail(videoUrl, 1);
+    // Generate thumbnail from video at 2 seconds
+    const thumbnailBase64 = await generateVideoThumbnail(videoUrl, 2);
     
     // Upload to storage
     const thumbnailUrl = await uploadThumbnailToStorage(thumbnailBase64, videoId);
