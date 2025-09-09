@@ -56,7 +56,7 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
           slug: slug,
           video_url: '', // Will be updated after upload
           status: 'processing',
-          processing_status: 'uploading',
+          processing_status: 'pending', // Use valid value instead of 'uploading'
           category: 'offroad',
           published_at: new Date().toISOString()
         })
@@ -82,12 +82,12 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
         .from('videos')
         .getPublicUrl(uploadData.path);
 
-      // Step 3: Update video record with URL and generate thumbnail
+      // Step 3: Update video record with URL and set processing for thumbnail
       await supabase
         .from('videos')
         .update({ 
           video_url: publicUrl,
-          processing_status: 'generating_thumbnail'
+          processing_status: 'processing' // Use valid value
         })
         .eq('id', videoRecord.id);
 
@@ -124,7 +124,7 @@ export function useVideoUpload({ onUploadSuccess }: UseVideoUploadProps = {}) {
       await supabase
         .from('videos')
         .update({ 
-          status: 'ready',
+          status: 'active',
           processing_status: 'completed',
           thumbnail_url: thumbnailUrl
         })

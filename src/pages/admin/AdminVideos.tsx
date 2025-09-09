@@ -68,7 +68,7 @@ export default function AdminVideos() {
       let query = supabase
         .from('videos')
         .select('*')
-        .in('status', ['ready', 'active', 'draft', 'archived']) // Exclude processing videos
+        .in('status', ['active', 'draft', 'archived']) // Exclude processing videos
         .order('created_at', { ascending: false });
 
       if (searchTerm) {
@@ -379,89 +379,30 @@ export default function AdminVideos() {
                             <FormMessage />
                           </FormItem>
                         )}
-                      />
+                       />
 
-                      <FormField
-                        control={form.control}
-                        name="thumbnail_url"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Thumbnail URL</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter thumbnail URL" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="duration"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Duration (seconds)</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  type="number" 
-                                  placeholder="300"
-                                  {...field}
-                                  onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="resolution"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Resolution</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="720p">720p</SelectItem>
-                                  <SelectItem value="1080p">1080p</SelectItem>
-                                  <SelectItem value="1440p">1440p</SelectItem>
-                                  <SelectItem value="4K">4K</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <FormField
-                        control={form.control}
-                        name="status"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Status</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="draft">Draft</SelectItem>
-                                <SelectItem value="active">Active</SelectItem>
-                                <SelectItem value="archived">Archived</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                       <FormField
+                         control={form.control}
+                         name="status"
+                         render={({ field }) => (
+                           <FormItem>
+                             <FormLabel>Status</FormLabel>
+                             <Select onValueChange={field.onChange} defaultValue={field.value}>
+                               <FormControl>
+                                 <SelectTrigger>
+                                   <SelectValue />
+                                 </SelectTrigger>
+                               </FormControl>
+                               <SelectContent>
+                                 <SelectItem value="draft">Draft</SelectItem>
+                                 <SelectItem value="active">Active</SelectItem>
+                                 <SelectItem value="archived">Archived</SelectItem>
+                               </SelectContent>
+                             </Select>
+                             <FormMessage />
+                           </FormItem>
+                         )}
+                       />
                     </div>
                   </div>
 
@@ -677,8 +618,6 @@ export default function AdminVideos() {
                 {video.processing_status && video.processing_status !== 'completed' && (
                   <div className="mt-2">
                     <Badge variant="outline" className="text-xs">
-                      {video.processing_status === 'uploading' && '📤 Uploading...'}
-                      {video.processing_status === 'generating_thumbnail' && '🖼️ Generating thumbnail...'}
                       {video.processing_status === 'pending' && '⏳ Processing...'}
                       {video.processing_status === 'processing' && '🔄 Processing...'}
                       {video.processing_status === 'failed' && '❌ Failed'}
