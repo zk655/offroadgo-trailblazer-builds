@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import VideoUploadDropzone from "@/components/VideoUploadDropzone";
 import { Plus, Edit, Trash2, Search, Video, Clock, Eye, Heart } from "lucide-react";
-import { formatDuration } from "@/utils/videoHelpers";
+import { formatDuration, generateVideoSlug } from "@/utils/videoHelpers";
 
 interface VideoFormData {
   title: string;
@@ -42,6 +42,7 @@ export default function AdminVideos() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingVideo, setEditingVideo] = useState<any>(null);
+  const [uploadedVideoUrl, setUploadedVideoUrl] = useState<string>("");
 
   // Form hook
   const form = useForm<VideoFormData>({
@@ -85,12 +86,50 @@ export default function AdminVideos() {
   // Mutation hooks
   const createMutation = useMutation({
     mutationFn: async (data: VideoFormData) => {
-      const { error } = await supabase.from('videos').insert([{
-        ...data,
-        tags: data.tags,
-        seo_keywords: data.seo_keywords
-      }]);
-      if (error) throw error;
+      // Check if there's an existing processing record for this video URL
+      const { data: existingVideos } = await supabase
+        .from('videos')
+        .select('id')
+        .eq('video_url', data.video_url)
+        .eq('status', 'processing');
+
+      if (existingVideos && existingVideos.length > 0) {
+        // Update existing processing record
+        const { error } = await supabase
+          .from('videos')
+          .update({
+            ...data,
+            status: 'ready',
+            processing_status: 'completed',
+            tags: data.tags,
+            seo_keywords: data.seo_keywords,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existingVideos[0].id);
+        if (error) throw error;
+      } else {
+        // Create new record
+        const slug = generateVideoSlug(data.title);
+        const { error } = await supabase.from('videos').insert([{
+          ...data,
+          slug,
+          status: 'ready',
+          processing_status: 'completed',
+          tags: data.tags,
+          seo_keywords: data.seo_keywords
+        }]);
+        if (error) throw error;
+      }
+
+      // Trigger video processing for transcoding and thumbnail generation
+      if (data.video_url) {
+        await supabase.functions.invoke('process-video', {
+          body: {
+            video_url: data.video_url,
+            title: data.title
+          }
+        });
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-videos'] });
@@ -99,6 +138,7 @@ export default function AdminVideos() {
         description: "Video created successfully",
       });
       setIsDialogOpen(false);
+      setUploadedVideoUrl("");
       form.reset();
     },
     onError: (error) => {
@@ -222,7 +262,20 @@ export default function AdminVideos() {
 
   const handleCreate = () => {
     setEditingVideo(null);
-    form.reset();
+    form.reset({
+      title: "",
+      description: "",
+      video_url: uploadedVideoUrl,
+      thumbnail_url: "",
+      category: "",
+      tags: [],
+      duration: 0,
+      resolution: "1080p",
+      status: "draft",
+      seo_title: "",
+      seo_description: "",
+      seo_keywords: []
+    });
     setIsDialogOpen(true);
   };
 
@@ -231,23 +284,10 @@ export default function AdminVideos() {
     field.onChange(tags);
   };
 
-  const handleVideoUpload = async (videoUrl: string) => {
-    try {
-      // The video upload hook now handles database creation and processing
-      toast({
-        title: "Success",
-        description: "Video uploaded and processing started",
-      });
-      
-      // Refresh the videos list
-      queryClient.invalidateQueries({ queryKey: ['admin-videos'] });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to process video upload",
-        variant: "destructive",
-      });
-    }
+  const handleVideoUpload = (videoUrl: string) => {
+    // Store uploaded video URL for use in form
+    setUploadedVideoUrl(videoUrl);
+    form.setValue('video_url', videoUrl);
   };
   // RENDER
   return (
@@ -256,14 +296,19 @@ export default function AdminVideos() {
         title="Video Management"
         description="Manage your video content library"
         action={
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={handleCreate}>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Video
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <div className="flex gap-2">
+            <VideoUploadDropzone
+              onVideoUploaded={handleVideoUpload}
+              variant="compact"
+            />
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={handleCreate}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Video
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>
                   {editingVideo ? 'Edit Video' : 'Add New Video'}
@@ -352,34 +397,23 @@ export default function AdminVideos() {
                     </div>
 
                     <div className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="video_url"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Video Upload</FormLabel>
-                            <FormControl>
-                              <div className="space-y-2">
-                                <VideoUploadDropzone
-                                  onVideoUploaded={(url) => {
-                                    field.onChange(url);
-                                    handleVideoUpload(url);
-                                  }}
-                                  variant="compact"
-                                />
-                                {field.value && (
-                                  <Input 
-                                    placeholder="Video URL" 
-                                    value={field.value}
-                                    onChange={(e) => field.onChange(e.target.value)}
-                                  />
-                                )}
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                       />
+                       <FormField
+                         control={form.control}
+                         name="video_url"
+                         render={({ field }) => (
+                           <FormItem>
+                             <FormLabel>Video URL</FormLabel>
+                             <FormControl>
+                               <Input 
+                                 placeholder="Video URL (use Upload Video button above)" 
+                                 value={field.value}
+                                 onChange={(e) => field.onChange(e.target.value)}
+                               />
+                             </FormControl>
+                             <FormMessage />
+                           </FormItem>
+                         )}
+                        />
 
                        <FormField
                          control={form.control}
@@ -481,6 +515,7 @@ export default function AdminVideos() {
               </Form>
             </DialogContent>
           </Dialog>
+          </div>
         }
       />
 
