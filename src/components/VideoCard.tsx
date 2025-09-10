@@ -3,6 +3,7 @@ import { Play, Heart, Bookmark, Share2, Eye, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import OptimizedImage from '@/components/OptimizedImage';
+import VideoThumbnailPlaceholder from '@/components/VideoThumbnailPlaceholder';
 import SocialShare from '@/components/SocialShare';
 import { formatDuration, formatNumber } from '@/utils/videoHelpers';
 import { motion } from 'framer-motion';
@@ -84,15 +85,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
             }}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-600 flex items-center justify-center">
-            <div className="rounded-full bg-white/20 p-6">
-              <Play className="h-12 w-12 text-white" />
-            </div>
-            <div className="absolute bottom-3 left-3 bg-black/80 text-white text-xs px-3 py-1.5 rounded-md">
-              <Clock className="h-3 w-3 inline mr-1" />
-              Video Ready
-            </div>
-          </div>
+          <VideoThumbnailPlaceholder title={video.title} />
         )}
         
         {/* Duration Overlay */}

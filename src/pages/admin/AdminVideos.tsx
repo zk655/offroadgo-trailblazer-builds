@@ -14,6 +14,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import VideoUploadDropzone from "@/components/VideoUploadDropzone";
+import ThumbnailUploadDropzone from "@/components/ThumbnailUploadDropzone";
 import { Plus, Edit, Trash2, Search, Video, Clock, Eye, Heart } from "lucide-react";
 import { formatDuration, generateVideoSlug } from "@/utils/videoHelpers";
 
@@ -43,6 +44,7 @@ export default function AdminVideos() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingVideo, setEditingVideo] = useState<any>(null);
   const [uploadedVideoUrl, setUploadedVideoUrl] = useState<string>("");
+  const [uploadedThumbnailUrl, setUploadedThumbnailUrl] = useState<string>("");
 
   // Form hook
   const form = useForm<VideoFormData>({
@@ -139,6 +141,7 @@ export default function AdminVideos() {
       });
       setIsDialogOpen(false);
       setUploadedVideoUrl("");
+      setUploadedThumbnailUrl("");
       form.reset();
     },
     onError: (error) => {
@@ -172,6 +175,7 @@ export default function AdminVideos() {
       });
       setIsDialogOpen(false);
       setEditingVideo(null);
+      setUploadedThumbnailUrl("");
       form.reset();
     },
     onError: (error) => {
@@ -266,7 +270,7 @@ export default function AdminVideos() {
       title: "",
       description: "",
       video_url: uploadedVideoUrl,
-      thumbnail_url: "",
+      thumbnail_url: uploadedThumbnailUrl,
       category: "",
       tags: [],
       duration: 0,
@@ -288,6 +292,12 @@ export default function AdminVideos() {
     // Store uploaded video URL for use in form
     setUploadedVideoUrl(videoUrl);
     form.setValue('video_url', videoUrl);
+  };
+
+  const handleThumbnailUpload = (thumbnailUrl: string) => {
+    // Store uploaded thumbnail URL for use in form
+    setUploadedThumbnailUrl(thumbnailUrl);
+    form.setValue('thumbnail_url', thumbnailUrl);
   };
   // RENDER
   return (
@@ -397,7 +407,7 @@ export default function AdminVideos() {
                     </div>
 
                     <div className="space-y-4">
-                       <FormField
+                        <FormField
                          control={form.control}
                          name="video_url"
                          render={({ field }) => (
@@ -409,6 +419,30 @@ export default function AdminVideos() {
                                  value={field.value}
                                  onChange={(e) => field.onChange(e.target.value)}
                                />
+                             </FormControl>
+                             <FormMessage />
+                           </FormItem>
+                         )}
+                        />
+
+                        <FormField
+                         control={form.control}
+                         name="thumbnail_url"
+                         render={({ field }) => (
+                           <FormItem>
+                             <FormLabel>Thumbnail URL</FormLabel>
+                             <FormControl>
+                               <div className="space-y-2">
+                                 <Input 
+                                   placeholder="Thumbnail URL (or upload below)" 
+                                   value={field.value}
+                                   onChange={(e) => field.onChange(e.target.value)}
+                                 />
+                                 <ThumbnailUploadDropzone
+                                   onThumbnailUploaded={handleThumbnailUpload}
+                                   variant="compact"
+                                 />
+                               </div>
                              </FormControl>
                              <FormMessage />
                            </FormItem>

@@ -14,6 +14,7 @@ import {
 import { useVideoPlayer } from '@/hooks/useVideoPlayer';
 import { formatDuration } from '@/utils/videoHelpers';
 import OptimizedImage from '@/components/OptimizedImage';
+import VideoThumbnailPlaceholder from '@/components/VideoThumbnailPlaceholder';
 
 interface VideoPlayerProps {
   videoId: string;
@@ -138,23 +139,29 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       )}
 
       {/* Thumbnail Overlay (before play) */}
-      {!isPlaying && !isLoading && thumbnailUrl && (
+      {!isPlaying && !isLoading && (
         <div className="absolute inset-0 cursor-pointer" onClick={play}>
-          <OptimizedImage
-            src={thumbnailUrl}
-            alt={title}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
-          <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-            <Button
-              variant="secondary"
-              size="lg"
-              className="rounded-full w-20 h-20 p-0 bg-white/90 hover:bg-white text-black shadow-lg"
-            >
-              <Play className="h-8 w-8 fill-current ml-1" />
-            </Button>
-          </div>
+          {thumbnailUrl ? (
+            <>
+              <OptimizedImage
+                src={thumbnailUrl}
+                alt={title}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="rounded-full w-20 h-20 p-0 bg-white/90 hover:bg-white text-black shadow-lg"
+                >
+                  <Play className="h-8 w-8 fill-current ml-1" />
+                </Button>
+              </div>
+            </>
+          ) : (
+            <VideoThumbnailPlaceholder title={title} />
+          )}
         </div>
       )}
 
