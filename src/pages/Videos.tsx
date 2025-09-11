@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
@@ -6,9 +6,9 @@ import Footer from '@/components/Footer';
 import VideoGrid from '@/components/VideoGrid';
 import VideoFilters from '@/components/VideoFilters';
 import SEO from '@/components/SEO';
+import PageHero from '@/components/PageHero';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Search, Filter, Play } from 'lucide-react';
+import { Filter, Play } from 'lucide-react';
 import AdPlacement from '@/components/AdPlacement';
 
 
@@ -22,7 +22,6 @@ interface VideoTag {
 
 
 const Videos = () => {
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<'newest' | 'trending' | 'most_viewed'>('newest');
   const [showFilters, setShowFilters] = useState(false);
@@ -62,15 +61,6 @@ const Videos = () => {
   });
 
 
-  // Clear search with debounce
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // Trigger re-fetch when search changes
-      queryClient.invalidateQueries({ queryKey: ['videos-grid'] });
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery, queryClient]);
 
   return (
     <>
@@ -84,36 +74,11 @@ const Videos = () => {
         <Navigation />
         
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-br from-primary/10 via-background to-accent/5 py-16 pt-20">
-          <div className="container mx-auto px-4">
-            <div className="text-center max-w-3xl mx-auto">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <Play className="h-8 w-8 text-primary" />
-                <span className="text-sm font-medium text-muted-foreground">Premium Video Content</span>
-              </div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                Off-Road <span className="text-primary">Videos</span>
-              </h1>
-              <p className="text-xl text-muted-foreground mb-8">
-                Discover epic adventures, detailed builds, and expert reviews from the off-road community
-              </p>
-              
-              {/* Search Bar */}
-              <div className="flex justify-center max-w-2xl mx-auto">
-                <div className="relative w-full">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                  <Input
-                    type="text"
-                    placeholder="Search videos..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 pr-4 py-3 text-base"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <PageHero
+          title="Off-Road Videos"
+          subtitle="Discover epic adventures, detailed builds, and expert reviews from the off-road community"
+          icon={Play}
+        />
 
         {/* Ad Section - After Hero */}
         <section className="py-4 md:py-6 bg-muted/5">
@@ -187,7 +152,7 @@ const Videos = () => {
         <section className="py-8">
           <div className="container mx-auto px-4">
             <VideoGrid
-              searchQuery={searchQuery}
+              searchQuery=""
               selectedTags={selectedTags}
               sortBy={sortBy}
               category={selectedCategory}
