@@ -306,18 +306,13 @@ export default function AdminVideos() {
         title="Video Management"
         description="Manage your video content library"
         action={
-          <div className="flex gap-2">
-            <VideoUploadDropzone
-              onVideoUploaded={handleVideoUpload}
-              variant="compact"
-            />
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button onClick={handleCreate}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Video
-                </Button>
-              </DialogTrigger>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={handleCreate}>
+                <Plus className="mr-2 h-4 w-4" />
+                Create Video
+              </Button>
+            </DialogTrigger>
               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>
@@ -406,7 +401,7 @@ export default function AdminVideos() {
                       />
                     </div>
 
-                    <div className="space-y-4">
+                     <div className="space-y-4">
                         <FormField
                          control={form.control}
                          name="video_url"
@@ -414,11 +409,17 @@ export default function AdminVideos() {
                            <FormItem>
                              <FormLabel>Video URL</FormLabel>
                              <FormControl>
-                               <Input 
-                                 placeholder="Video URL (use Upload Video button above)" 
-                                 value={field.value}
-                                 onChange={(e) => field.onChange(e.target.value)}
-                               />
+                               <div className="space-y-2">
+                                 <Input 
+                                   placeholder="Video URL (or upload below)" 
+                                   value={field.value}
+                                   onChange={(e) => field.onChange(e.target.value)}
+                                 />
+                                 <VideoUploadDropzone
+                                   onVideoUploaded={handleVideoUpload}
+                                   variant="compact"
+                                 />
+                               </div>
                              </FormControl>
                              <FormMessage />
                            </FormItem>
@@ -549,7 +550,6 @@ export default function AdminVideos() {
               </Form>
             </DialogContent>
           </Dialog>
-          </div>
         }
       />
 
