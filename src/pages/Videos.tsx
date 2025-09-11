@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import VideoGrid from '@/components/VideoGrid';
+import VideoGridWithMasonry from '@/components/VideoGridWithMasonry';
 import VideoFilters from '@/components/VideoFilters';
 import SEO from '@/components/SEO';
 import PageHero from '@/components/PageHero';
@@ -81,7 +81,7 @@ const Videos = () => {
         />
 
         {/* Ad Section - After Hero */}
-        <section className="py-4 md:py-6 bg-muted/5">
+        <section className="py-2 bg-muted/5">
           <div className="container mx-auto px-4">
             <AdPlacement position="top" pageType="other" />
           </div>
@@ -89,7 +89,7 @@ const Videos = () => {
 
         {/* Categories Section */}
         {categories.length > 0 && (
-          <section className="py-8 bg-muted/20">
+          <section className="py-4 bg-muted/20">
             <div className="container mx-auto px-4">
               <div className="flex flex-wrap gap-2 justify-center">
                 <Button
@@ -114,9 +114,10 @@ const Videos = () => {
             </div>
           </section>
         )}
+        
         {/* Filters and Controls */}
         <section className="border-b bg-card/50">
-          <div className="container mx-auto px-4 py-6">
+          <div className="container mx-auto px-4 py-3">
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
               <div className="flex items-center gap-4">
                 <Button
@@ -141,17 +142,10 @@ const Videos = () => {
           </div>
         </section>
 
-        {/* Ad Section - After Filters */}
-        <section className="py-4 md:py-6 bg-muted/10">
-          <div className="container mx-auto px-4">
-            <AdPlacement position="middle" pageType="other" />
-          </div>
-        </section>
-
         {/* Videos Grid */}
-        <section className="py-8">
+        <section className="py-6">
           <div className="container mx-auto px-4">
-            <VideoGrid
+            <VideoGridWithMasonry
               searchQuery=""
               selectedTags={selectedTags}
               sortBy={sortBy}
@@ -161,7 +155,7 @@ const Videos = () => {
         </section>
 
         {/* Ad Section - After Videos */}
-        <section className="py-4 md:py-6 bg-muted/5">
+        <section className="py-2 bg-muted/5">
           <div className="container mx-auto px-4">
             <AdPlacement position="bottom" pageType="other" />
           </div>
