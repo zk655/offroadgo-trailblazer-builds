@@ -101,7 +101,7 @@ export default function AdminVideos() {
           .from('videos')
           .update({
             ...data,
-            status: 'ready',
+            status: 'active',
             processing_status: 'completed',
             tags: data.tags,
             seo_keywords: data.seo_keywords,
@@ -115,7 +115,7 @@ export default function AdminVideos() {
         const { error } = await supabase.from('videos').insert([{
           ...data,
           slug,
-          status: 'ready',
+          status: 'active',
           processing_status: 'completed',
           tags: data.tags,
           seo_keywords: data.seo_keywords
