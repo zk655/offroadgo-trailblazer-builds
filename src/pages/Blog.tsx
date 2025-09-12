@@ -8,6 +8,8 @@ import { Search, BookOpen, Grid } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
 import SEO from '@/components/SEO';
+import StructuredData from '@/components/StructuredData';
+import SEOHead from '@/components/SEOHead';
 import Footer from '@/components/Footer';
 import AdSenseAd from '@/components/AdSenseAd';
 import AdPlacement from '@/components/AdPlacement';
@@ -131,12 +133,27 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
+      <SEOHead 
         title="Off-Road Adventure Blog - 4x4 Stories & Guides"
         description="Stories, guides, and insights from the 4x4 community. Learn from experts and fellow off-road adventurers. Latest tips and adventures."
         keywords="off-road blog, 4x4 stories, adventure guides, jeep adventures, off-road tips, trail reports"
         url="/blog"
+        type="website"
       />
+      
+      <StructuredData 
+        type="WebSite"
+        data={{
+          name: "OffRoadGo Blog",
+          url: "https://offroadgo.com/blog",
+          description: "Stories, guides, and insights from the 4x4 community",
+          publisher: {
+            "@type": "Organization",
+            name: "OffRoadGo"
+          }
+        }}
+      />
+      
       <Navigation />
       
       {/* Hero Section */}

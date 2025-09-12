@@ -6,6 +6,8 @@ import ProductsSection from '@/components/ProductsSection';
 import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
+import StructuredData from '@/components/StructuredData';
+import SEOHead from '@/components/SEOHead';
 import AdPlacement from '@/components/AdPlacement';
 import ClubsEventsSection from '@/components/ClubsEventsSection';
 import InsuranceSection from '@/components/InsuranceSection';
@@ -21,12 +23,34 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
+      <SEOHead 
         title="OffRoadGo - Premium 4x4 Adventures & Off-Road Vehicles"
         description="Discover epic off-road trails, premium 4x4 vehicles, and professional-grade parts. Build your dream off-road machine and explore the world beyond the pavement."
         keywords="4x4 vehicles, off-road adventures, trails, jeep, toyota, ford, bronco, wrangler, lifted trucks, off-road parts, accessories"
         url="/"
+        type="website"
       />
+      
+      <StructuredData 
+        type="Organization"
+        data={{
+          name: "OffRoadGo",
+          url: "https://offroadgo.com",
+          logo: "https://offroadgo.com/logo.png",
+          description: "Premium 4x4 vehicles, parts, and off-road adventures",
+          sameAs: [
+            "https://facebook.com/offroadgo",
+            "https://instagram.com/offroadgo",
+            "https://twitter.com/offroadgo"
+          ],
+          contactPoint: {
+            "@type": "ContactPoint",
+            telephone: "+1-555-OFF-ROAD",
+            contactType: "Customer Support"
+          }
+        }}
+      />
+      
       <Navigation />
       <HeroSection />
       

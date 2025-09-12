@@ -9,6 +9,9 @@ import { ArrowLeft, Calendar, User, Clock, Heart, BookOpen, Tag, ArrowRight } fr
 import SocialShare from '@/components/SocialShare';
 import Navigation from '@/components/Navigation';
 import SEO from '@/components/SEO';
+import StructuredData from '@/components/StructuredData';
+import SEOHead from '@/components/SEOHead';
+import Breadcrumb from '@/components/Breadcrumb';
 import Footer from '@/components/Footer';
 import AdSenseAd from '@/components/AdSenseAd';
 import '../styles/blog.css';
@@ -305,24 +308,55 @@ const BlogDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
-        title={`${post.title} - OffRoadGo Blog`}
+      <SEOHead 
+        title={post.title}
         description={post.excerpt}
         keywords={post.tags?.join(', ')}
         url={`/blog/${post.slug}`}
         image={post.cover_image}
+        type="article"
+        article={{
+          author: post.author,
+          publishedTime: post.published_at,
+          modifiedTime: post.published_at,
+          section: "Off-Road",
+          tags: post.tags
+        }}
       />
+      
+      <StructuredData 
+        type="Article"
+        data={{
+          headline: post.title,
+          description: post.excerpt,
+          image: post.cover_image,
+          author: post.author,
+          datePublished: post.published_at,
+          dateModified: post.published_at,
+          url: `https://offroadgo.com/blog/${post.slug}`,
+          category: "Off-Road",
+          keywords: post.tags?.join(', ')
+        }}
+      />
+      
       <Navigation />
       
       <article className="container mx-auto px-4 pt-20 pb-12">
         <div className="max-w-4xl mx-auto">
-          <nav className="mb-8">
+          <nav className="mb-8 space-y-4">
             <Button variant="ghost" asChild className="p-0 h-auto">
               <Link to="/blog" className="flex items-center text-muted-foreground hover:text-foreground">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Blog
               </Link>
             </Button>
+            
+            <Breadcrumb 
+              items={[
+                { name: 'Blog', href: '/blog' },
+                { name: post.title, href: `/blog/${post.slug}` }
+              ]}
+            />
           </nav>
 
           <header className="mb-8">
