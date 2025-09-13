@@ -5,7 +5,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import VideoGridWithMasonry from '@/components/VideoGridWithMasonry';
 import VideoFilters from '@/components/VideoFilters';
-import SEO from '@/components/SEO';
+import SEOHead from '@/components/SEOHead';
 import PageHero from '@/components/PageHero';
 import { Button } from '@/components/ui/button';
 import { Filter, Play } from 'lucide-react';
@@ -64,10 +64,13 @@ const Videos = () => {
 
   return (
     <>
-      <SEO 
-        title="Off-Road Videos - OffroadGo"
-        description="Watch the best off-road adventures, vehicle reviews, and trail guides. From Jeep builds to overlanding tips, discover amazing off-road content."
-        keywords="off-road videos, jeep videos, overlanding, mud terrain, rock crawling, vehicle builds"
+      <SEOHead 
+        title="Epic Off-Road Videos - Adventures, Reviews & Trail Guides"
+        description="Watch the best off-road adventures, vehicle reviews, and trail guides. From Jeep builds to overlanding tips, discover amazing 4x4 content and inspiration."
+        keywords="off-road videos, jeep videos, overlanding, mud terrain, rock crawling, vehicle builds, 4x4 adventures, trail videos"
+        url="/videos"
+        type="website"
+        image="https://offroadgo.com/og-videos.jpg"
       />
       
       <div className="min-h-screen bg-background">

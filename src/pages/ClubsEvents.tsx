@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import SEO from '@/components/SEO';
+import SEOHead from '@/components/SEOHead';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -105,11 +105,13 @@ const ClubsEvents = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
-        title="Rally Clubs & Events - OffRoadGo"
-        description="Discover rally clubs and upcoming motorsport events worldwide. Join the off-road community and participate in exciting competitions."
-        keywords="rally clubs, motorsport events, off-road competitions, racing, WRC, rally championship"
+      <SEOHead 
+        title="Off-Road Clubs & Events - Join the Adventure Community"
+        description="Discover off-road clubs and upcoming events worldwide. Join the 4x4 community and participate in exciting competitions, rallies, and adventure meetups."
+        keywords="off-road clubs, 4x4 events, motorsport events, rally clubs, off-road competitions, racing, adventure meetups"
         url="/clubs-events"
+        type="website"
+        image="https://offroadgo.com/og-clubs-events.jpg"
       />
       <Navigation />
 

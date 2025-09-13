@@ -9,7 +9,7 @@ import { Car, Search, Filter, Star, Fuel, Gauge, TrendingUp, Zap, Shield, Users,
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
 import { supabase } from '@/integrations/supabase/client';
-import SEO from '@/components/SEO';
+import SEOHead from '@/components/SEOHead';
 import Footer from '@/components/Footer';
 import AdSenseAd from '@/components/AdSenseAd';
 import OptimizedImage from '@/components/OptimizedImage';
@@ -141,11 +141,13 @@ const Vehicles = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
+      <SEOHead 
         title="4x4 Off-Road Vehicles - Browse Premium SUVs & Trucks"
         description="Explore our extensive collection of 4x4 off-road vehicles. Compare specs, features, and find your perfect adventure companion from top brands like Ford, Jeep, Toyota, and more."
         keywords="4x4 vehicles, off-road SUV, pickup trucks, jeep wrangler, ford bronco, toyota 4runner, lifted trucks, AWD vehicles"
         url="/vehicles"
+        type="website"
+        image="https://offroadgo.com/og-vehicles.jpg"
       />
       <Navigation />
       

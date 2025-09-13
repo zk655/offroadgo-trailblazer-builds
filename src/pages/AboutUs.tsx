@@ -1,6 +1,6 @@
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import SEO from '@/components/SEO';
+import SEOHead from '@/components/SEOHead';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Users, Target, Award, Heart } from 'lucide-react';
@@ -31,10 +31,13 @@ const AboutUs = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
-        title="About Us - Off-Road Experts"
-        description="Learn about OffRoadGo - your trusted source for 4x4 vehicles, parts, and off-road adventures. Meet our team of off-road experts."
-        keywords="about us, off-road experts, 4x4 specialists, team, company"
+      <SEOHead 
+        title="About OffRoadGo - Your Off-Road Adventure Experts"
+        description="Learn about OffRoadGo - your trusted source for 4x4 vehicles, parts, and off-road adventures. Meet our team of passionate off-road experts and enthusiasts."
+        keywords="about offroad go, off-road experts, 4x4 specialists, team, company, off-road community"
+        url="/about"
+        type="website"
+        image="https://offroadgo.com/og-about.jpg"
       />
       
       <Navigation />

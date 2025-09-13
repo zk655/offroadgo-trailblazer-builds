@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import SEO from '@/components/SEO';
+import SEOHead from '@/components/SEOHead';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -147,11 +147,13 @@ const Insurance = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
-        title="Best Truck & SUV Insurance - OffRoadGo"
-        description="Find the best insurance rates for trucks, SUVs, and off-road vehicles. Compare quotes from top providers with comprehensive coverage options."
-        keywords="truck insurance, SUV insurance, vehicle insurance, auto insurance quotes, off-road vehicle coverage"
+      <SEOHead 
+        title="Best Truck & SUV Insurance - Compare Rates & Coverage"
+        description="Find the best insurance rates for trucks, SUVs, and off-road vehicles. Compare quotes from top providers with comprehensive coverage options and exclusive discounts."
+        keywords="truck insurance, SUV insurance, vehicle insurance, auto insurance quotes, off-road vehicle coverage, insurance comparison"
         url="/insurance"
+        type="website"
+        image="https://offroadgo.com/og-insurance.jpg"
       />
       <Navigation />
 

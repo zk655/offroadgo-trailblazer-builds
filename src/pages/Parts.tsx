@@ -9,7 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Search, Filter, Star, Eye, Heart, Package, Zap, Shield, Lightbulb, Settings, Wrench, Music, Archive, Tent, Armchair, AlertTriangle } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
-import SEO from '@/components/SEO';
+import SEOHead from '@/components/SEOHead';
 import Footer from '@/components/Footer';
 import AdSenseAd from '@/components/AdSenseAd';
 import OptimizedImage from '@/components/OptimizedImage';
@@ -213,11 +213,13 @@ const Parts = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
+      <SEOHead 
         title="Premium 4x4 Parts & Accessories - Off-Road Products"
         description="Shop premium 4x4 parts and accessories. Find LED light bars, winches, lift kits, bumpers, and more. All products feature Amazon affiliate links for easy purchasing."
         keywords="4x4 parts, off-road accessories, LED light bars, winches, lift kits, bumpers, rock sliders, recovery gear"
-        url="/products"
+        url="/parts"
+        type="website"
+        image="https://offroadgo.com/og-parts.jpg"
       />
       <Navigation />
       

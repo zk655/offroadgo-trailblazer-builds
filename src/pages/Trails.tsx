@@ -18,7 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Search, Filter, MapPin, Mountain, Compass, Route } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
-import SEO from '@/components/SEO';
+import SEOHead from '@/components/SEOHead';
 import Footer from '@/components/Footer';
 import AdSenseAd from '@/components/AdSenseAd';
 import SocialShare from '@/components/SocialShare';
@@ -192,11 +192,13 @@ const Trails = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
+      <SEOHead 
         title="Epic 4x4 Trails & Off-Road Adventure Routes"
         description="Discover epic off-road trails and adventure routes. From beginner-friendly paths to expert 4x4 challenges. Find your next adventure destination."
         keywords="4x4 trails, off-road routes, adventure trails, jeep trails, mountain trails, desert trails, rock crawling"
         url="/trails"
+        type="website"
+        image="https://offroadgo.com/og-trails.jpg"
       />
       <Navigation />
       
