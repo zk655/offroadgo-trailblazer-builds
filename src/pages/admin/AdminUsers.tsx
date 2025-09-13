@@ -122,7 +122,9 @@ function AdminUsersContent() {
       let query = supabase.from("profiles").select("*").order("created_at", { ascending: false });
       
       if (searchTerm) {
-        query = query.or(`username.ilike.%${searchTerm}%,full_name.ilike.%${searchTerm}%`);
+        // Escape special SQL characters to prevent injection
+        const escapedTerm = searchTerm.replace(/[%_]/g, '\\$&');
+        query = query.or(`username.ilike.%${escapedTerm}%,full_name.ilike.%${escapedTerm}%`);
       }
       
       const { data, error } = await query;

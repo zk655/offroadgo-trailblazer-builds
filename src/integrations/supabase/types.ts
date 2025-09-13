@@ -437,6 +437,13 @@ export type Database = {
             referencedRelation: "insurance_providers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "insurance_quotes_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "insurance_providers_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       mods: {
@@ -860,7 +867,54 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      insurance_providers_public: {
+        Row: {
+          company_name: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          coverage_areas: string[] | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          logo_url: string | null
+          name: string | null
+          rating: number | null
+          specializes_in: string[] | null
+          updated_at: string | null
+          website_url: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          contact_email?: never
+          contact_phone?: never
+          coverage_areas?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          logo_url?: string | null
+          name?: string | null
+          rating?: number | null
+          specializes_in?: string[] | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          contact_email?: never
+          contact_phone?: never
+          coverage_areas?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          logo_url?: string | null
+          name?: string | null
+          rating?: number | null
+          specializes_in?: string[] | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       generate_slug: {

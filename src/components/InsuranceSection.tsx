@@ -32,7 +32,7 @@ const InsuranceSection = () => {
         .from('insurance_quotes')
         .select(`
           *,
-          provider:insurance_providers(name, rating, logo_url)
+          provider:insurance_providers_public(name, rating, logo_url)
         `)
         .in('vehicle_type', ['truck', 'SUV', 'pickup'])
         .order('monthly_premium')

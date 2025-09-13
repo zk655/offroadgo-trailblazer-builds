@@ -14,6 +14,7 @@ import SEOHead from '@/components/SEOHead';
 import Breadcrumb from '@/components/Breadcrumb';
 import Footer from '@/components/Footer';
 import AdSenseAd from '@/components/AdSenseAd';
+import { sanitizeHtml } from '@/utils/sanitizer';
 import '../styles/blog.css';
 
 interface BlogPost {
@@ -411,9 +412,9 @@ const BlogDetail = () => {
             <div 
               className="blog-content" 
               dangerouslySetInnerHTML={{ 
-                __html: post.content 
+                __html: sanitizeHtml(post.content 
                   ? post.content.replace(/<pre class="ql-syntax"[^>]*>/g, '<div>').replace(/<\/pre>/g, '</div>')
-                  : generateDetailedContent(post.slug) 
+                  : generateDetailedContent(post.slug))
               }}
             />
           </div>
