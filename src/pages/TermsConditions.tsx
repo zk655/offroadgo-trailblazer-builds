@@ -1,6 +1,6 @@
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import SEO from '@/components/SEO';
+import SEOHead from '@/components/SEOHead';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -82,10 +82,13 @@ const TermsConditions = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
-        title="Terms & Conditions - Service Agreement"
-        description="Read the Terms and Conditions for using OffRoadGo services. Important legal information about using our website and purchasing products."
-        keywords="terms and conditions, service agreement, legal, user agreement, purchase terms"
+      <SEOHead 
+        title="Terms & Conditions - OffRoadGo"
+        description="Read OffRoadGo's terms and conditions, including user responsibilities, service usage guidelines, and legal agreements."
+        keywords="terms conditions, legal terms, user agreement, service terms, OffRoadGo policies"
+        url="/terms-conditions"
+        type="website"
+        noindex={true}
       />
       
       <Navigation />

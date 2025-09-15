@@ -22,6 +22,7 @@ import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import AdPlacement from '@/components/AdPlacement';
+import SEOHead from '@/components/SEOHead';
 
 interface Product {
   id: string;
@@ -166,6 +167,14 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title={`${product.title} - ${product.brand} | Off-Road Parts`}
+        description={`${product.description} ${product.brand} ${product.title} - $${formatPrice(product.price)}. Top-rated ${product.category} with ${product.rating} stars.`}
+        keywords={`${product.brand}, ${product.title}, ${product.category}, off-road parts, 4x4 accessories, modification`}
+        url={`/products/${product.slug}`}
+        type="product"
+        image={product.image_url}
+      />
       <Navigation />
       
       <main className="pt-16">

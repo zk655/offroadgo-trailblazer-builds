@@ -8,6 +8,7 @@ import { ArrowLeft, Car, Gauge, Fuel, TrendingUp, Users, Calendar, Award, Cog, Z
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import AdPlacement from '@/components/AdPlacement';
+import SEOHead from '@/components/SEOHead';
 import { supabase } from '@/integrations/supabase/client';
 
 // Import vehicle images
@@ -148,6 +149,14 @@ const VehicleDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title={`${vehicle.year} ${vehicle.brand} ${vehicle.name} - Detailed Review`}
+        description={`Complete review of the ${vehicle.year} ${vehicle.brand} ${vehicle.name}. Engine: ${vehicle.engine}, Ground clearance: ${vehicle.ground_clearance}", Towing: ${vehicle.towing_capacity.toLocaleString()} lbs.`}
+        keywords={`${vehicle.brand}, ${vehicle.name}, ${vehicle.year}, ${vehicle.type}, 4x4 vehicle, off-road, review, specs`}
+        url={`/vehicles/${vehicle.slug}`}
+        type="article"
+        image={vehicleImageUrl}
+      />
       <Navigation />
       
       {/* Hero Section */}

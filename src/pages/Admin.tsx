@@ -15,6 +15,7 @@ import {
   LogOut,
   Video
 } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
 
 export default function Admin() {
   const { user, signOut, userRole, loading, roleLoading } = useAuth();
@@ -107,7 +108,16 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
+    <>
+      <SEOHead 
+        title="Admin Dashboard - OffRoadGo"
+        description="Manage OffRoadGo content including blogs, vehicles, products, trails, and user accounts from the admin dashboard."
+        keywords="admin dashboard, content management, website administration"
+        url="/admin"
+        type="website"
+        noindex={true}
+      />
+      <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-start mb-8">
           <div>
@@ -176,5 +186,6 @@ export default function Admin() {
         </Card>
       </div>
     </div>
+    </>
   );
 }

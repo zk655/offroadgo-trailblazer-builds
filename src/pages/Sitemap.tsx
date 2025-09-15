@@ -1,6 +1,6 @@
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import SEO from '@/components/SEO';
+import SEOHead from '@/components/SEOHead';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
@@ -65,10 +65,13 @@ const Sitemap = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
-        title="Sitemap - Navigate Our Off-Road Resources"
-        description="Complete sitemap of OffRoadGo website. Find all pages including vehicles, products, trails, guides, and company information."
-        keywords="sitemap, navigation, website map, off-road resources, 4x4 content"
+      <SEOHead 
+        title="Sitemap - OffRoadGo"
+        description="Navigate through all OffRoadGo content including vehicles, products, trails, guides, and resources for off-road enthusiasts."
+        keywords="sitemap, site navigation, content overview, OffRoadGo pages, website structure"
+        url="/sitemap"
+        type="website"
+        noindex={true}
       />
       
       <Navigation />

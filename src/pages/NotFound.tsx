@@ -1,10 +1,20 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Home } from "lucide-react";
+import SEOHead from "@/components/SEOHead";
 
 const NotFound = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <>
+      <SEOHead 
+        title="Page Not Found - OffRoadGo"
+        description="The page you're looking for doesn't exist. Return to OffRoadGo homepage or browse our 4x4 vehicles and off-road content."
+        keywords="404 error, page not found, OffRoadGo"
+        url="/404"
+        type="website"
+        noindex={true}
+      />
+      <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center space-y-6 max-w-md mx-auto px-4">
         <div className="space-y-2">
           <h1 className="text-6xl font-bold text-primary">404</h1>
@@ -30,6 +40,7 @@ const NotFound = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

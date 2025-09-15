@@ -29,6 +29,7 @@ const Index = () => {
         keywords="4x4 vehicles, off-road adventures, trails, jeep, toyota, ford, bronco, wrangler, lifted trucks, off-road parts, accessories"
         url="/"
         type="website"
+        image="/src/assets/hero-offroad-1.jpg"
       />
       
       <StructuredData 

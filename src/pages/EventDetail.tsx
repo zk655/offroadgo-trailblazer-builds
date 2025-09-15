@@ -11,7 +11,7 @@ import {
 import { format } from 'date-fns';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import SEO from '@/components/SEO';
+import SEOHead from '@/components/SEOHead';
 import SocialShare from '@/components/SocialShare';
 
 interface Event {
@@ -119,9 +119,13 @@ const EventDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
+      <SEOHead 
         title={`${event.title} - Rally Event Details`}
-        description={event.description || `Join the ${event.title} rally event in ${event.location}, ${event.country}`}
+        description={event.description || `Join the ${event.title} rally event in ${event.location}, ${event.country}. Date: ${format(new Date(event.start_date), 'PPP')}`}
+        keywords={`rally event, ${event.event_type}, ${event.terrain_type}, ${event.location}, ${event.country}, off-road competition`}
+        url={`/event/${event.id}`}
+        type="article"
+        image={event.image_url}
       />
       <Navigation />
       

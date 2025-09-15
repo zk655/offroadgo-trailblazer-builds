@@ -1,6 +1,6 @@
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import SEO from '@/components/SEO';
+import SEOHead from '@/components/SEOHead';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -65,10 +65,13 @@ const PrivacyPolicy = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO 
-        title="Privacy Policy - Your Data Protection Rights"
-        description="Learn how OffRoadGo protects your privacy and handles your personal information. Comprehensive privacy policy and data protection information."
-        keywords="privacy policy, data protection, personal information, cookies, GDPR"
+      <SEOHead 
+        title="Privacy Policy - OffRoadGo"
+        description="Learn about OffRoadGo's privacy practices, data collection, and how we protect your information while delivering the best off-road experience."
+        keywords="privacy policy, data protection, user privacy, terms of service, OffRoadGo legal"
+        url="/privacy-policy"
+        type="website"
+        noindex={true}
       />
       
       <Navigation />

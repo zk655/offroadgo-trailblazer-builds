@@ -10,6 +10,7 @@ import { Wrench, Plus, X, Save, Car, DollarSign, Package } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
 import OptimizedImage from '@/components/OptimizedImage';
+import SEOHead from '@/components/SEOHead';
 
 interface Vehicle {
   id: string;
@@ -161,6 +162,14 @@ const Build = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title="Build Your Ultimate 4x4 Rig - Off-Road Vehicle Builder"
+        description="Create your perfect 4x4 off-road setup. Choose a vehicle, add modifications, calculate costs, and build your dream adventure rig with our builder tool."
+        keywords="4x4 build tool, off-road vehicle builder, jeep modifications, lift kit calculator, off-road parts, vehicle customization"
+        url="/build"
+        type="website"
+        image="/src/assets/products/suspension-lift-kit.jpg"
+      />
       <Navigation />
       
       {/* Hero Section */}

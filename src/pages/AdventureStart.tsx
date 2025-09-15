@@ -16,6 +16,7 @@ import {
 import { Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import SEOHead from '@/components/SEOHead';
 
 const AdventureStart = () => {
   const adventureTypes = [
@@ -74,6 +75,14 @@ const AdventureStart = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title="Start Your Off-Road Adventure - Choose Your Path"
+        description="Begin your epic off-road journey. Choose your adventure style - trail explorer, build master, or community leader. Start your 4x4 adventure today."
+        keywords="start off-road adventure, 4x4 journey, trail explorer, off-road community, adventure planning, outdoor activities"
+        url="/adventure-start"
+        type="website"
+        image="/src/assets/hero-offroad-2.jpg"
+      />
       <Navigation />
       
       <main className="pt-16">

@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Scale, Plus, X, Car, Fuel, Mountain, DollarSign, Gauge, Users, Truck, Zap, Clock, Shield, Award } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
+import SEOHead from '@/components/SEOHead';
 
 interface Vehicle {
   id: string;
@@ -137,6 +138,14 @@ const Compare = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title="Compare 4x4 Vehicles Side by Side - OffRoadGo"
+        description="Compare up to 4 off-road vehicles side by side. Compare specs, pricing, towing capacity, ground clearance, and more to find your perfect 4x4 match."
+        keywords="compare 4x4 vehicles, vehicle comparison, off-road specs, jeep vs ford, bronco vs wrangler, 4x4 comparison tool"
+        url="/compare"
+        type="website"
+        image="/src/assets/vehicles/jeep-wrangler-rubicon.jpg"
+      />
       <Navigation />
       
       {/* Hero Section */}
