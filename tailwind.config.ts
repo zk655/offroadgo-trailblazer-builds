@@ -62,16 +62,17 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				adventure: {
-					orange: 'hsl(var(--adventure-orange))',
-					'orange-light': 'hsl(var(--adventure-orange-light))',
-					stone: 'hsl(var(--adventure-stone))',
-					blue: 'hsl(var(--adventure-blue))'
+				nav: {
+					DEFAULT: 'hsl(var(--nav-background))',
+					foreground: 'hsl(var(--nav-foreground))',
+					hover: 'hsl(var(--nav-hover))',
+					border: 'hsl(var(--nav-border))'
 				}
 			},
 			fontFamily: {
 				'sans': ['Inter', 'system-ui', 'sans-serif'],
-				'heading': ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
+				'heading': ['Oswald', 'system-ui', 'sans-serif'],
+				'display': ['Oswald', 'system-ui', 'sans-serif'],
 			},
 			boxShadow: {
 				'glow': 'var(--shadow-glow)',

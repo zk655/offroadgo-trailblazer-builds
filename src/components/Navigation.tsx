@@ -1,61 +1,55 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Menu, X, Mountain, ChevronDown } from 'lucide-react';
+import { Menu, X, Mountain, ChevronDown, MapPin, ShoppingCart, Wrench, User } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const location = useLocation();
 
-  // Track scroll position for glass effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Close mobile menu when route changes
+  // Close mobile menu and dropdowns when route changes
   useEffect(() => {
     setIsMenuOpen(false);
+    setActiveDropdown(null);
   }, [location]);
 
   const navItems = [
-    { href: '/', label: 'Home' },
     { 
       href: '/vehicles', 
-      label: 'Vehicles',
+      label: 'VEHICLES',
       submenu: [
-        { href: '/vehicles', label: 'Browse All Models', id: 'browse-models' },
-        { href: '/compare', label: 'Compare Vehicles', id: 'compare-vehicles' }
+        { href: '/vehicles', label: 'Browse All Models' },
+        { href: '/compare', label: 'Compare Vehicles' }
+      ]
+    },
+    { 
+      href: '/trails', 
+      label: 'CAPABILITY',
+      submenu: [
+        { href: '/trails', label: 'Trail Guide' },
+        { href: '/build', label: 'Build Your Rig' }
       ]
     },
     { 
       href: '/clubs-events', 
-      label: 'Events',
+      label: 'EVENTS',
       submenu: [
-        { href: '/clubs-events', label: 'Rally Events', id: 'rally-events' },
-        { href: '/clubs-events', label: 'Clubs & Teams', id: 'clubs-teams' }
+        { href: '/clubs-events', label: 'Rally Events' },
+        { href: '/clubs-events', label: 'Clubs & Community' }
       ]
     },
     { 
-      href: '/insurance', 
-      label: 'Insurance',
+      href: '/products', 
+      label: 'PARTS',
       submenu: [
-        { href: '/insurance', label: 'Compare Quotes', id: 'compare-quotes' },
-        { href: '/insurance', label: 'Coverage Guide', id: 'coverage-guide' }
+        { href: '/products', label: 'All Parts & Accessories' },
+        { href: '/insurance', label: 'Insurance' }
       ]
     },
-    { href: '/trails', label: 'Trails' },
-    { href: '/videos', label: 'Videos' },
-    { href: '/build', label: 'Build' },
-    { href: '/products', label: 'Products' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/about', label: 'About' },
+    { href: '/blog', label: 'BLOG' },
+    { href: '/videos', label: 'VIDEOS' },
   ];
 
   const isActiveRoute = (href: string) => {
@@ -64,109 +58,111 @@ const Navigation = () => {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled 
-        ? 'glass-effect border-b border-border/20 py-1' 
-        : 'bg-transparent py-2'
-    }`}>
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-14 md:h-16">
-          {/* Logo */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Link to="/" className="flex items-center space-x-2 md:space-x-3 font-heading font-black text-xl md:text-2xl group">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl premium-gradient flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <Mountain className="h-5 w-5 md:h-7 md:w-7 text-white" />
+    <>
+      {/* Top utility bar */}
+      <div className="bg-nav text-nav-foreground text-xs py-2 hidden md:block">
+        <div className="container mx-auto px-4 flex justify-end items-center gap-6">
+          <Link to="/auth" className="flex items-center gap-1 hover:text-accent transition-colors">
+            <User className="w-3 h-3" />
+            Sign In / Create Account
+          </Link>
+          <ThemeToggle />
+        </div>
+      </div>
+
+      {/* Main Navigation */}
+      <nav className="bg-nav text-nav-foreground sticky top-0 z-50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-14">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-2 font-display font-bold text-2xl tracking-wider">
+              <div className="w-10 h-10 bg-accent flex items-center justify-center">
+                <Mountain className="h-6 w-6 text-accent-foreground" />
               </div>
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent hidden sm:block">
-                OffRoadGo
-              </span>
+              <span className="hidden sm:block">OFFROADGO</span>
             </Link>
-          </motion.div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4 lg:space-x-8">
-            {navItems.map((item, index) => (
-              <motion.div
-                key={item.href}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="relative group"
-              >
-                <Link
-                  to={item.href}
-                  className={`text-foreground hover:text-primary transition-all duration-300 font-semibold relative group flex items-center gap-1 ${
-                    isActiveRoute(item.href) ? 'text-primary' : ''
-                  }`}
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center h-full">
+              {navItems.map((item) => (
+                <div
+                  key={item.href}
+                  className="relative h-full"
+                  onMouseEnter={() => item.submenu && setActiveDropdown(item.label)}
+                  onMouseLeave={() => setActiveDropdown(null)}
                 >
-                  {item.label}
-                  {item.submenu && <ChevronDown className="w-4 h-4" />}
-                  <span className={`absolute bottom-0 left-0 h-0.5 premium-gradient transition-all duration-300 ${
-                    isActiveRoute(item.href) ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`}></span>
-                </Link>
+                  <Link
+                    to={item.href}
+                    className={`h-full flex items-center gap-1 px-4 text-sm font-medium tracking-wide transition-colors hover:bg-nav-hover ${
+                      isActiveRoute(item.href) ? 'border-b-2 border-accent' : ''
+                    }`}
+                  >
+                    {item.label}
+                    {item.submenu && <ChevronDown className="w-3 h-3" />}
+                  </Link>
 
-                {/* Submenu */}
-                {item.submenu && (
-                  <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                    <div className="bg-background border border-border rounded-xl shadow-lg py-2 min-w-[180px] backdrop-blur-sm">
-                      {item.submenu.map((subItem) => (
-                        <Link
-                          key={`${subItem.href}-${subItem.id}`}
-                          to={subItem.href}
-                          className="block px-4 py-3 text-sm text-foreground hover:text-primary hover:bg-primary/10 transition-colors border-b border-border/10 last:border-b-0"
-                        >
-                          {subItem.label}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            ))}
-            
-            <div className="flex items-center ml-2 lg:ml-4">
-              <ThemeToggle />
+                  {/* Mega Menu Dropdown */}
+                  <AnimatePresence>
+                    {item.submenu && activeDropdown === item.label && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute top-full left-0 bg-nav border-t border-nav-border min-w-[220px] z-50"
+                      >
+                        {item.submenu.map((subItem, idx) => (
+                          <Link
+                            key={idx}
+                            to={subItem.href}
+                            className="block px-6 py-3 text-sm text-nav-foreground hover:bg-nav-hover hover:text-accent transition-colors border-b border-nav-border last:border-b-0"
+                          >
+                            {subItem.label}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
             </div>
-          </div>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-2">
-            <ThemeToggle />
-            <motion.button
-              className="p-2 rounded-xl hover:bg-primary/10 transition-colors"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              whileTap={{ scale: 0.95 }}
-              aria-label="Toggle menu"
-            >
-              <AnimatePresence mode="wait">
-                {isMenuOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <X className="h-6 w-6" />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="menu"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Menu className="h-6 w-6" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
+            {/* Action Buttons */}
+            <div className="hidden lg:flex items-center gap-1 h-full">
+              <Link
+                to="/trails"
+                className="h-full flex items-center gap-2 px-4 text-sm font-medium hover:bg-nav-hover transition-colors border-l border-nav-border"
+              >
+                <MapPin className="w-4 h-4" />
+                <span className="hidden xl:block">FIND A TRAIL</span>
+              </Link>
+              <Link
+                to="/products"
+                className="h-full flex items-center gap-2 px-4 text-sm font-medium hover:bg-nav-hover transition-colors border-l border-nav-border"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                <span className="hidden xl:block">SHOP PARTS</span>
+              </Link>
+              <Link
+                to="/build"
+                className="h-full flex items-center gap-2 px-4 text-sm font-medium hover:bg-nav-hover transition-colors border-l border-nav-border"
+              >
+                <Wrench className="w-4 h-4" />
+                <span className="hidden xl:block">BUILD & PRICE</span>
+              </Link>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="lg:hidden flex items-center gap-2">
+              <ThemeToggle />
+              <button
+                className="p-2 hover:bg-nav-hover transition-colors"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label="Toggle menu"
+              >
+                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -174,52 +170,67 @@ const Navigation = () => {
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              className="md:hidden mt-4 glass-effect rounded-2xl border border-border/20"
+              className="lg:hidden bg-nav border-t border-nav-border"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="py-6 px-4 space-y-4">
-                {navItems.map((item, index) => (
-                  <motion.div
-                    key={item.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                  >
+              <div className="container mx-auto px-4 py-4">
+                {navItems.map((item) => (
+                  <div key={item.href} className="border-b border-nav-border last:border-b-0">
                     <Link
                       to={item.href}
-                      className={`block py-3 px-4 rounded-xl transition-all duration-300 font-semibold text-lg ${
-                        isActiveRoute(item.href)
-                          ? 'bg-primary/10 text-primary'
-                          : 'text-foreground hover:bg-primary/5 hover:text-primary'
+                      className={`block py-4 text-sm font-medium tracking-wide ${
+                        isActiveRoute(item.href) ? 'text-accent' : ''
                       }`}
                     >
                       {item.label}
                     </Link>
-                    {item.submenu && isActiveRoute(item.href) && (
-                      <div className="ml-4 mt-2 space-y-1">
-                        {item.submenu.map((subItem) => (
+                    {item.submenu && (
+                      <div className="pl-4 pb-2">
+                        {item.submenu.map((subItem, idx) => (
                           <Link
-                            key={`mobile-${subItem.href}-${subItem.id}`}
+                            key={idx}
                             to={subItem.href}
-                            className="block py-2 px-4 text-sm text-muted-foreground hover:text-primary transition-colors"
+                            className="block py-2 text-xs text-muted-foreground hover:text-accent"
                           >
                             {subItem.label}
                           </Link>
                         ))}
                       </div>
                     )}
-                  </motion.div>
+                  </div>
                 ))}
                 
+                {/* Mobile Action Links */}
+                <div className="pt-4 grid grid-cols-3 gap-2">
+                  <Link to="/trails" className="flex flex-col items-center gap-1 py-3 bg-nav-hover text-center">
+                    <MapPin className="w-5 h-5" />
+                    <span className="text-xs">Find Trail</span>
+                  </Link>
+                  <Link to="/products" className="flex flex-col items-center gap-1 py-3 bg-nav-hover text-center">
+                    <ShoppingCart className="w-5 h-5" />
+                    <span className="text-xs">Shop</span>
+                  </Link>
+                  <Link to="/build" className="flex flex-col items-center gap-1 py-3 bg-nav-hover text-center">
+                    <Wrench className="w-5 h-5" />
+                    <span className="text-xs">Build</span>
+                  </Link>
+                </div>
+
+                <Link
+                  to="/auth"
+                  className="block mt-4 py-3 text-center text-sm bg-accent text-accent-foreground font-medium"
+                >
+                  Sign In / Create Account
+                </Link>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 };
 
