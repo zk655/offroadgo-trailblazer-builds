@@ -84,10 +84,10 @@ const Navigation = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center h-full">
-              {navItems.map((item) => (
+              {navItems.map((item, index) => (
                 <div
                   key={item.href}
-                  className="relative h-full"
+                  className="relative h-full flex items-center"
                   onMouseEnter={() => item.submenu && setActiveDropdown(item.label)}
                   onMouseLeave={() => setActiveDropdown(null)}
                 >
@@ -100,6 +100,11 @@ const Navigation = () => {
                     {item.label}
                     {item.submenu && <ChevronDown className="w-3 h-3" />}
                   </Link>
+
+                  {/* Separator line after each menu item */}
+                  {index < navItems.length - 1 && (
+                    <div className="h-5 w-px bg-nav-border" />
+                  )}
 
                   {/* Mega Menu Dropdown */}
                   <AnimatePresence>
