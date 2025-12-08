@@ -76,19 +76,19 @@ const Videos = () => {
       <div className="min-h-screen bg-background">
         <Navigation />
         
+        {/* Ad Space After Navigation */}
+        <AdPlacement 
+          position="top" 
+          pageType="other"
+          className="py-2 bg-muted/10 border-b border-border/30"
+        />
+        
         {/* Hero Section */}
         <PageHero
           title="Off-Road Videos"
           subtitle="Discover epic adventures, detailed builds, and expert reviews from the off-road community"
           icon={Play}
         />
-
-        {/* Ad Section - After Hero */}
-        <section className="py-2 bg-muted/5">
-          <div className="container mx-auto px-4">
-            <AdPlacement position="top" pageType="other" />
-          </div>
-        </section>
 
         {/* Categories Section */}
         {categories.length > 0 && (

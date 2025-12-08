@@ -156,19 +156,19 @@ const Blog = () => {
       
       <Navigation />
       
+      {/* Ad Space After Navigation */}
+      <AdPlacement 
+        position="top" 
+        pageType="blog"
+        className="py-2 bg-muted/10 border-b border-border/30"
+      />
+      
       {/* Hero Section */}
       <PageHero
         title="Off-Road Adventure Blog"
         subtitle="Stories, guides, and insights from the 4x4 community. Learn from experts and fellow off-road adventurers."
         icon={BookOpen}
       />
-
-      {/* Ad Section 1 - After Hero */}
-      <section className="py-4 md:py-6 bg-muted/5">
-        <div className="container mx-auto px-4">
-          <AdPlacement position="top" pageType="blog" />
-        </div>
-      </section>
 
       <div className="container mx-auto px-4 py-8">
         {/* Search and Filters */}

@@ -223,19 +223,19 @@ const Parts = () => {
       />
       <Navigation />
       
+      {/* Ad Space After Navigation */}
+      <AdPlacement 
+        position="top" 
+        pageType="parts"
+        className="py-2 bg-muted/10 border-b border-border/30"
+      />
+      
       {/* Hero Section */}
       <PageHero
         title="Premium 4x4 Parts & Accessories"
         subtitle="Discover professional-grade off-road equipment designed to enhance your adventures. From lighting solutions to protection gear."
         icon={Package}
       />
-
-      {/* Ad Section 1 - After Hero */}
-      <section className="py-4 md:py-6 bg-muted/5">
-        <div className="container mx-auto px-4">
-          <AdPlacement position="top" pageType="parts" />
-        </div>
-      </section>
 
       {/* Featured Categories - Compact */}
       <section className="py-8 px-4 sm:px-6 lg:px-8 bg-muted/20">

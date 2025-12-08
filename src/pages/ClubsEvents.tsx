@@ -11,6 +11,7 @@ import { Calendar, MapPin, Users, Trophy, ExternalLink, Clock, DollarSign } from
 import { format } from 'date-fns';
 import OptimizedImage from '@/components/OptimizedImage';
 import SocialShare from '@/components/SocialShare';
+import AdPlacement from '@/components/AdPlacement';
 
 interface Club {
   id: string;
@@ -114,6 +115,13 @@ const ClubsEvents = () => {
         image="https://offroadgo.com/og-clubs-events.jpg"
       />
       <Navigation />
+      
+      {/* Ad Space After Navigation */}
+      <AdPlacement 
+        position="top" 
+        pageType="other"
+        className="py-2 bg-muted/10 border-b border-border/30"
+      />
 
       {/* Hero Section */}
       <section className="relative py-20 bg-gradient-to-br from-primary via-primary-dark to-secondary overflow-hidden">

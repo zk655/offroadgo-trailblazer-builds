@@ -151,19 +151,19 @@ const Vehicles = () => {
       />
       <Navigation />
       
+      {/* Ad Space After Navigation */}
+      <AdPlacement 
+        position="top" 
+        pageType="vehicles"
+        className="py-2 bg-muted/10 border-b border-border/30"
+      />
+      
       {/* Hero Section */}
       <PageHero
         title="4x4 Off-Road Vehicles"
         subtitle="Discover the perfect 4x4 vehicle for your next adventure. Compare specs, features, and find your ideal off-road companion built to conquer any terrain."
         icon={Car}
       />
-
-      {/* Ad Section 1 - After Hero */}
-      <section className="py-4 md:py-6 bg-muted/5">
-        <div className="container mx-auto px-4">
-          <AdPlacement position="top" pageType="vehicles" />
-        </div>
-      </section>
 
       <div className="container mx-auto px-4 py-8">
         {/* Filters */}

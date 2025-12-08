@@ -21,6 +21,7 @@ import PageHero from '@/components/PageHero';
 import SEOHead from '@/components/SEOHead';
 import Footer from '@/components/Footer';
 import AdSenseAd from '@/components/AdSenseAd';
+import AdPlacement from '@/components/AdPlacement';
 import SocialShare from '@/components/SocialShare';
 
 interface Trail {
@@ -202,23 +203,19 @@ const Trails = () => {
       />
       <Navigation />
       
+      {/* Ad Space After Navigation */}
+      <AdPlacement 
+        position="top" 
+        pageType="other"
+        className="py-2 bg-muted/10 border-b border-border/30"
+      />
+      
       {/* Hero Section */}
       <PageHero
         title="Epic 4x4 Trails"
         subtitle="Discover epic off-road trails and adventure routes. From beginner-friendly paths to expert 4x4 challenges."
         icon={Route}
       />
-
-      {/* Ad Section 1 - After Hero */}
-      <section className="py-2 md:py-4 bg-muted/5">
-        <div className="w-full overflow-hidden">
-          <AdSenseAd 
-            slot="8773228071"
-            layout="in-article"
-            className="w-full"
-          />
-        </div>
-      </section>
 
       <div className="container mx-auto px-4 py-8">
         {/* Filters */}

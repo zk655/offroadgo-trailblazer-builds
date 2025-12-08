@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { X, Play, FileText, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Play, FileText, Shield, ChevronLeft, ChevronRight, Car } from 'lucide-react';
+import VehicleSearchBar from './VehicleSearchBar';
 
 // Import truck images
 import fordBroncoImg from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
@@ -191,35 +192,43 @@ const TruckBrandsCarousel = () => {
   };
 
   return (
-    <section className="py-8 bg-muted/30">
+    <section className="py-6 bg-nav-dark border-b border-border/30">
       <div className="container mx-auto px-4">
-        <h2 className="text-center font-display text-2xl md:text-3xl font-bold mb-6 text-foreground">
-          TOP OFFROAD TRUCKS
-        </h2>
+        {/* Search Bar */}
+        <VehicleSearchBar />
+        
+        {/* Section Title */}
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="h-px flex-1 max-w-16 bg-gradient-to-r from-transparent to-accent/50" />
+          <h2 className="text-center font-display text-lg md:text-xl font-bold text-foreground tracking-wider uppercase">
+            Top Offroad Trucks
+          </h2>
+          <div className="h-px flex-1 max-w-16 bg-gradient-to-l from-transparent to-accent/50" />
+        </div>
         
         {/* Circular Brand Selector */}
         <div className="relative">
           {/* Scroll Buttons */}
           <button
             onClick={scrollLeft}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-background/80 hover:bg-background p-2 rounded-full shadow-lg transition-all"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-card/90 hover:bg-card p-2 rounded-full shadow-lg transition-all border border-border/50"
             aria-label="Scroll left"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5 text-foreground" />
           </button>
           
           <button
             onClick={scrollRight}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-background/80 hover:bg-background p-2 rounded-full shadow-lg transition-all"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-card/90 hover:bg-card p-2 rounded-full shadow-lg transition-all border border-border/50"
             aria-label="Scroll right"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-5 h-5 text-foreground" />
           </button>
 
           {/* Brand Circles Container */}
           <div className="overflow-hidden mx-10">
             <motion.div
-              className="flex gap-4 md:gap-6 justify-center py-4"
+              className="flex gap-3 md:gap-5 justify-center py-3"
               animate={{ x: -scrollPosition }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             >
@@ -227,17 +236,17 @@ const TruckBrandsCarousel = () => {
                 <motion.button
                   key={brand.id}
                   onClick={() => setSelectedBrand(selectedBrand?.id === brand.id ? null : brand)}
-                  className={`flex-shrink-0 flex flex-col items-center gap-2 group transition-all ${
-                    selectedBrand?.id === brand.id ? 'scale-110' : ''
+                  className={`flex-shrink-0 flex flex-col items-center gap-1.5 group transition-all ${
+                    selectedBrand?.id === brand.id ? 'scale-105' : ''
                   }`}
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.08 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <div
-                    className={`w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-3 transition-all shadow-lg ${
+                    className={`w-14 h-14 md:w-[4.5rem] md:h-[4.5rem] rounded-full overflow-hidden border-2 transition-all shadow-md ${
                       selectedBrand?.id === brand.id
-                        ? 'border-accent ring-4 ring-accent/30'
-                        : 'border-border group-hover:border-accent/50'
+                        ? 'border-accent ring-2 ring-accent/40 shadow-accent/20 shadow-lg'
+                        : 'border-border/60 group-hover:border-accent/60'
                     }`}
                   >
                     <img
@@ -246,8 +255,8 @@ const TruckBrandsCarousel = () => {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <span className={`text-xs md:text-sm font-semibold tracking-wide transition-colors ${
-                    selectedBrand?.id === brand.id ? 'text-accent' : 'text-foreground group-hover:text-accent'
+                  <span className={`text-[10px] md:text-xs font-bold tracking-wider transition-colors ${
+                    selectedBrand?.id === brand.id ? 'text-accent' : 'text-muted-foreground group-hover:text-accent'
                   }`}>
                     {brand.shortName}
                   </span>
@@ -264,21 +273,21 @@ const TruckBrandsCarousel = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="mt-6 overflow-hidden"
+              transition={{ duration: 0.25 }}
+              className="mt-4 overflow-hidden"
             >
-              <div className="bg-card rounded-xl border border-border p-6 relative">
+              <div className="bg-card/95 backdrop-blur-sm rounded-xl border border-border/50 p-5 relative shadow-xl">
                 {/* Close Button */}
                 <button
                   onClick={() => setSelectedBrand(null)}
-                  className="absolute top-4 right-4 p-2 hover:bg-muted rounded-full transition-colors"
+                  className="absolute top-3 right-3 p-1.5 hover:bg-muted rounded-full transition-colors"
                   aria-label="Close panel"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4 text-muted-foreground" />
                 </button>
 
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-accent">
+                <div className="flex items-center gap-3 mb-5 pb-4 border-b border-border/30">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-accent shadow-md">
                     <img
                       src={selectedBrand.image}
                       alt={selectedBrand.name}
@@ -286,31 +295,31 @@ const TruckBrandsCarousel = () => {
                     />
                   </div>
                   <div>
-                    <h3 className="font-display text-2xl font-bold text-foreground">
+                    <h3 className="font-display text-xl font-bold text-foreground">
                       {selectedBrand.name}
                     </h3>
-                    <p className="text-sm text-muted-foreground">Off-Road Vehicles & Resources</p>
+                    <p className="text-xs text-muted-foreground">Off-Road Vehicles & Resources</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* Models Section */}
                   <div>
-                    <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                      <span className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
-                        🚗
+                    <h4 className="font-semibold text-sm text-foreground mb-2 flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center">
+                        <Car className="w-3 h-3 text-accent" />
                       </span>
                       Models
                     </h4>
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       {selectedBrand.models.map((model, idx) => (
                         <Link
                           key={idx}
                           to="/vehicles"
-                          className="block p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
+                          className="block p-2.5 bg-muted/40 rounded-lg hover:bg-muted/70 transition-colors"
                         >
                           <p className="font-medium text-sm text-foreground">{model.name}</p>
-                          <p className="text-xs text-muted-foreground">{model.year} • {model.price}</p>
+                          <p className="text-[11px] text-muted-foreground">{model.year} • {model.price}</p>
                         </Link>
                       ))}
                     </div>
@@ -318,20 +327,20 @@ const TruckBrandsCarousel = () => {
 
                   {/* Blogs Section */}
                   <div>
-                    <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                      <span className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
-                        <FileText className="w-4 h-4 text-accent" />
+                    <h4 className="font-semibold text-sm text-foreground mb-2 flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center">
+                        <FileText className="w-3 h-3 text-accent" />
                       </span>
                       Blog Articles
                     </h4>
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       {selectedBrand.blogs.map((blog, idx) => (
                         <Link
                           key={idx}
                           to={`/blog/${blog.slug}`}
-                          className="block p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
+                          className="block p-2.5 bg-muted/40 rounded-lg hover:bg-muted/70 transition-colors"
                         >
-                          <p className="text-sm text-foreground hover:text-accent transition-colors">
+                          <p className="text-sm text-foreground hover:text-accent transition-colors line-clamp-2">
                             {blog.title}
                           </p>
                         </Link>
@@ -341,28 +350,28 @@ const TruckBrandsCarousel = () => {
 
                   {/* Videos Section */}
                   <div>
-                    <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                      <span className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
-                        <Play className="w-4 h-4 text-accent" />
+                    <h4 className="font-semibold text-sm text-foreground mb-2 flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center">
+                        <Play className="w-3 h-3 text-accent" />
                       </span>
                       Videos
                     </h4>
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                       {selectedBrand.videos.map((video, idx) => (
                         <Link
                           key={idx}
                           to="/videos"
-                          className="block p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
+                          className="block p-2.5 bg-muted/40 rounded-lg hover:bg-muted/70 transition-colors"
                         >
-                          <div className="flex items-center gap-3">
-                            <div className="w-12 h-8 rounded overflow-hidden">
+                          <div className="flex items-center gap-2">
+                            <div className="w-10 h-7 rounded overflow-hidden flex-shrink-0">
                               <img
                                 src={video.thumbnail}
                                 alt={video.title}
                                 className="w-full h-full object-cover"
                               />
                             </div>
-                            <p className="text-sm text-foreground">{video.title}</p>
+                            <p className="text-sm text-foreground line-clamp-1">{video.title}</p>
                           </div>
                         </Link>
                       ))}
@@ -371,17 +380,17 @@ const TruckBrandsCarousel = () => {
 
                   {/* Insurance Section */}
                   <div>
-                    <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                      <span className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
-                        <Shield className="w-4 h-4 text-accent" />
+                    <h4 className="font-semibold text-sm text-foreground mb-2 flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center">
+                        <Shield className="w-3 h-3 text-accent" />
                       </span>
                       Insurance Info
                     </h4>
-                    <div className="p-3 bg-muted/50 rounded-lg">
-                      <p className="text-sm text-foreground mb-3">{selectedBrand.insuranceInfo}</p>
+                    <div className="p-2.5 bg-muted/40 rounded-lg">
+                      <p className="text-sm text-foreground mb-2">{selectedBrand.insuranceInfo}</p>
                       <Link
                         to="/insurance"
-                        className="text-sm text-accent hover:underline font-medium"
+                        className="text-sm text-accent hover:underline font-medium inline-flex items-center gap-1"
                       >
                         Get Quotes →
                       </Link>
