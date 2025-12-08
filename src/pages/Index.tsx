@@ -11,6 +11,7 @@ import SEOHead from '@/components/SEOHead';
 import AdPlacement from '@/components/AdPlacement';
 import ClubsEventsSection from '@/components/ClubsEventsSection';
 import InsuranceSection from '@/components/InsuranceSection';
+import TruckBrandsCarousel from '@/components/TruckBrandsCarousel';
 import { useAutoDataSync } from '@/hooks/useAutoDataSync';
 
 const Index = () => {
@@ -53,11 +54,22 @@ const Index = () => {
       />
       
       <Navigation />
-      <HeroSection />
       
-      {/* Ad Section 1 - After Hero */}
+      {/* Ad Space After Navigation */}
       <AdPlacement 
         position="top" 
+        pageType="home"
+        className="py-3 md:py-4 bg-muted/10 border-b border-border"
+      />
+      
+      <HeroSection />
+      
+      {/* Top Offroad Trucks Carousel */}
+      <TruckBrandsCarousel />
+      
+      {/* Ad Section 1 - After Trucks */}
+      <AdPlacement 
+        position="middle" 
         pageType="home"
         className="py-4 md:py-6 bg-muted/5"
       />
