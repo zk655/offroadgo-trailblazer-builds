@@ -156,6 +156,13 @@ const Insurance = () => {
         image="https://offroadgo.com/og-insurance.jpg"
       />
       <Navigation />
+      
+      {/* Ad Space After Navigation */}
+      <AdPlacement 
+        position="top" 
+        pageType="insurance"
+        className="py-2 bg-muted/10 border-b border-border/30"
+      />
 
       {/* Hero Section */}
       <section className="relative py-20 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 overflow-hidden">
@@ -168,13 +175,6 @@ const Insurance = () => {
           <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
             Protect your trucks and SUVs with comprehensive coverage from top-rated insurance providers. Compare rates and find the perfect policy.
           </p>
-        </div>
-      </section>
-
-      {/* Ad Section 1 - After Hero */}
-      <section className="py-4 md:py-6 bg-muted/5">
-        <div className="container mx-auto px-4">
-          <AdPlacement position="top" pageType="insurance" />
         </div>
       </section>
 
