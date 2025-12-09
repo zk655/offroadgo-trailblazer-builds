@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Mountain, ChevronDown, MapPin, ShoppingCart, Wrench, User } from 'lucide-react';
+import { Menu, X, ChevronDown, MapPin, ShoppingCart, Wrench, User } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
+import logo from '@/assets/offrodgo-logo.png';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -75,11 +76,8 @@ const Navigation = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-14">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 font-display font-bold text-2xl tracking-wider">
-              <div className="w-10 h-10 bg-accent flex items-center justify-center">
-                <Mountain className="h-6 w-6 text-accent-foreground" />
-              </div>
-              <span className="hidden sm:block">OFFROADGO</span>
+            <Link to="/" className="flex items-center">
+              <img src={logo} alt="OffRoadGo" className="h-8 sm:h-10" />
             </Link>
 
             {/* Desktop Navigation */}
@@ -91,20 +89,25 @@ const Navigation = () => {
                   onMouseEnter={() => item.submenu && setActiveDropdown(item.label)}
                   onMouseLeave={() => setActiveDropdown(null)}
                 >
+                  {/* Separator line before menu item (except first) */}
+                  {index > 0 && (
+                    <div className="h-5 w-px bg-nav-border/50" />
+                  )}
+                  
                   <Link
                     to={item.href}
-                    className={`h-full flex items-center gap-1 px-4 text-sm font-medium tracking-wide transition-colors hover:bg-nav-hover ${
-                      isActiveRoute(item.href) ? 'border-b-2 border-accent' : ''
-                    }`}
+                    className={`group h-full flex items-center gap-1 px-4 text-sm font-medium tracking-wide transition-colors hover:bg-nav-hover relative`}
                   >
-                    {item.label}
+                    <span>{item.label}</span>
                     {item.submenu && <ChevronDown className="w-3 h-3" />}
+                    
+                    {/* Smooth underline animation */}
+                    <span 
+                      className={`absolute bottom-0 left-0 h-0.5 bg-accent transition-all duration-300 ease-out ${
+                        isActiveRoute(item.href) ? 'w-full' : 'w-0 group-hover:w-full'
+                      }`}
+                    />
                   </Link>
-
-                  {/* Separator line after each menu item */}
-                  {index < navItems.length - 1 && (
-                    <div className="h-5 w-px bg-nav-border" />
-                  )}
 
                   {/* Mega Menu Dropdown */}
                   <AnimatePresence>
