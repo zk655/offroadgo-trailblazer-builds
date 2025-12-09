@@ -1,187 +1,15 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { X, Play, FileText, Shield, ChevronLeft, ChevronRight, Car } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Car, DollarSign, Zap, ChevronDown, ChevronUp } from 'lucide-react';
 import VehicleSearchBar from './VehicleSearchBar';
-
-// Import truck images
-import fordBroncoImg from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
-import jeepWranglerImg from '@/assets/vehicles/jeep-wrangler-rubicon.jpg';
-import toyota4RunnerImg from '@/assets/vehicles/toyota-4runner-trd-pro.jpg';
-import chevyColoradoImg from '@/assets/vehicles/chevy-colorado-zr2.jpg';
-import ramTrxImg from '@/assets/vehicles/ram-1500-trx.jpg';
-import gmcSierraImg from '@/assets/vehicles/gmc-sierra-at4x.jpg';
-import nissanFrontierImg from '@/assets/vehicles/nissan-frontier-pro4x.jpg';
-import subaruOutbackImg from '@/assets/vehicles/subaru-outback-wilderness.jpg';
-
-interface TruckBrand {
-  id: string;
-  name: string;
-  shortName: string;
-  image: string;
-  models: {
-    name: string;
-    year: string;
-    price: string;
-    image: string;
-  }[];
-  blogs: {
-    title: string;
-    slug: string;
-  }[];
-  videos: {
-    title: string;
-    thumbnail: string;
-  }[];
-  insuranceInfo: string;
-}
-
-const truckBrands: TruckBrand[] = [
-  {
-    id: 'ford',
-    name: 'Ford',
-    shortName: 'FORD',
-    image: fordBroncoImg,
-    models: [
-      { name: 'Bronco Raptor', year: '2024', price: '$73,000', image: fordBroncoImg },
-      { name: 'F-150 Raptor', year: '2024', price: '$76,775', image: fordBroncoImg },
-      { name: 'Bronco Wildtrak', year: '2024', price: '$49,595', image: fordBroncoImg },
-    ],
-    blogs: [
-      { title: 'Ford Bronco Raptor: Ultimate Off-Road Beast', slug: 'ford-bronco-raptor' },
-      { title: 'F-150 Raptor vs Competition', slug: 'f150-raptor-comparison' },
-    ],
-    videos: [
-      { title: 'Bronco Raptor Desert Run', thumbnail: fordBroncoImg },
-    ],
-    insuranceInfo: 'Ford off-road vehicles typically cost $150-250/month to insure.',
-  },
-  {
-    id: 'jeep',
-    name: 'Jeep',
-    shortName: 'JEEP',
-    image: jeepWranglerImg,
-    models: [
-      { name: 'Wrangler Rubicon', year: '2024', price: '$52,000', image: jeepWranglerImg },
-      { name: 'Gladiator Mojave', year: '2024', price: '$56,000', image: jeepWranglerImg },
-    ],
-    blogs: [
-      { title: 'Jeep Wrangler Modifications Guide', slug: 'jeep-modifications' },
-      { title: 'Best Trails for Jeep Wrangler', slug: 'jeep-trails-guide' },
-    ],
-    videos: [
-      { title: 'Wrangler Rock Crawling', thumbnail: jeepWranglerImg },
-    ],
-    insuranceInfo: 'Jeep Wrangler insurance averages $130-200/month.',
-  },
-  {
-    id: 'toyota',
-    name: 'Toyota',
-    shortName: 'TOYOTA',
-    image: toyota4RunnerImg,
-    models: [
-      { name: '4Runner TRD Pro', year: '2024', price: '$58,000', image: toyota4RunnerImg },
-      { name: 'Tacoma TRD Pro', year: '2024', price: '$52,000', image: toyota4RunnerImg },
-      { name: 'Land Cruiser', year: '2024', price: '$78,000', image: toyota4RunnerImg },
-    ],
-    blogs: [
-      { title: 'Toyota 4Runner: Reliability King', slug: '4runner-reliability' },
-    ],
-    videos: [
-      { title: '4Runner TRD Pro Trail Test', thumbnail: toyota4RunnerImg },
-    ],
-    insuranceInfo: 'Toyota off-road models average $120-180/month insurance.',
-  },
-  {
-    id: 'chevy',
-    name: 'Chevrolet',
-    shortName: 'CHEVY',
-    image: chevyColoradoImg,
-    models: [
-      { name: 'Colorado ZR2', year: '2024', price: '$49,000', image: chevyColoradoImg },
-      { name: 'Silverado ZR2', year: '2024', price: '$68,000', image: chevyColoradoImg },
-    ],
-    blogs: [
-      { title: 'Colorado ZR2 Bison Edition Review', slug: 'colorado-zr2-bison' },
-    ],
-    videos: [
-      { title: 'ZR2 Desert Racing', thumbnail: chevyColoradoImg },
-    ],
-    insuranceInfo: 'Chevy trucks typically cost $140-220/month to insure.',
-  },
-  {
-    id: 'ram',
-    name: 'RAM',
-    shortName: 'RAM',
-    image: ramTrxImg,
-    models: [
-      { name: '1500 TRX', year: '2024', price: '$92,000', image: ramTrxImg },
-      { name: '2500 Power Wagon', year: '2024', price: '$75,000', image: ramTrxImg },
-    ],
-    blogs: [
-      { title: 'RAM TRX: The 702HP Monster Truck', slug: 'ram-trx-review' },
-    ],
-    videos: [
-      { title: 'TRX Hellcat Power', thumbnail: ramTrxImg },
-    ],
-    insuranceInfo: 'RAM TRX insurance is higher at $200-350/month due to power.',
-  },
-  {
-    id: 'gmc',
-    name: 'GMC',
-    shortName: 'GMC',
-    image: gmcSierraImg,
-    models: [
-      { name: 'Sierra AT4X', year: '2024', price: '$78,000', image: gmcSierraImg },
-      { name: 'Canyon AT4X', year: '2024', price: '$58,000', image: gmcSierraImg },
-    ],
-    blogs: [
-      { title: 'GMC AT4X vs AT4: What\'s the Difference?', slug: 'gmc-at4x-comparison' },
-    ],
-    videos: [
-      { title: 'Sierra AT4X Mountain Trail', thumbnail: gmcSierraImg },
-    ],
-    insuranceInfo: 'GMC premium trucks average $160-250/month insurance.',
-  },
-  {
-    id: 'nissan',
-    name: 'Nissan',
-    shortName: 'NISSAN',
-    image: nissanFrontierImg,
-    models: [
-      { name: 'Frontier PRO-4X', year: '2024', price: '$42,000', image: nissanFrontierImg },
-      { name: 'Titan PRO-4X', year: '2024', price: '$58,000', image: nissanFrontierImg },
-    ],
-    blogs: [
-      { title: 'Nissan Frontier: Budget-Friendly Off-Roader', slug: 'frontier-budget-offroad' },
-    ],
-    videos: [
-      { title: 'Frontier Desert Adventure', thumbnail: nissanFrontierImg },
-    ],
-    insuranceInfo: 'Nissan trucks are affordable at $100-160/month insurance.',
-  },
-  {
-    id: 'subaru',
-    name: 'Subaru',
-    shortName: 'SUBARU',
-    image: subaruOutbackImg,
-    models: [
-      { name: 'Outback Wilderness', year: '2024', price: '$42,000', image: subaruOutbackImg },
-      { name: 'Crosstrek Wilderness', year: '2024', price: '$35,000', image: subaruOutbackImg },
-    ],
-    blogs: [
-      { title: 'Subaru Wilderness: AWD Excellence', slug: 'subaru-wilderness-review' },
-    ],
-    videos: [
-      { title: 'Outback Wilderness Snow Run', thumbnail: subaruOutbackImg },
-    ],
-    insuranceInfo: 'Subaru models are economical at $90-140/month insurance.',
-  },
-];
+import { brandsData, BrandData, VehicleCategory } from '@/data/vehicleData';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const TruckBrandsCarousel = () => {
-  const [selectedBrand, setSelectedBrand] = useState<TruckBrand | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<BrandData | null>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   const scrollLeft = () => {
     setScrollPosition(Math.max(0, scrollPosition - 200));
@@ -189,6 +17,14 @@ const TruckBrandsCarousel = () => {
 
   const scrollRight = () => {
     setScrollPosition(scrollPosition + 200);
+  };
+
+  const toggleCategory = (categoryName: string) => {
+    setExpandedCategory(expandedCategory === categoryName ? null : categoryName);
+  };
+
+  const formatPrice = (price: string) => {
+    return price.replace('$', '').replace('*', '');
   };
 
   return (
@@ -232,10 +68,13 @@ const TruckBrandsCarousel = () => {
               animate={{ x: -scrollPosition }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             >
-              {truckBrands.map((brand) => (
+              {brandsData.map((brand) => (
                 <motion.button
                   key={brand.id}
-                  onClick={() => setSelectedBrand(selectedBrand?.id === brand.id ? null : brand)}
+                  onClick={() => {
+                    setSelectedBrand(selectedBrand?.id === brand.id ? null : brand);
+                    setExpandedCategory(null);
+                  }}
                   className={`flex-shrink-0 flex flex-col items-center gap-1.5 group transition-all ${
                     selectedBrand?.id === brand.id ? 'scale-105' : ''
                   }`}
@@ -276,18 +115,19 @@ const TruckBrandsCarousel = () => {
               transition={{ duration: 0.25 }}
               className="mt-4 overflow-hidden"
             >
-              <div className="bg-card/95 backdrop-blur-sm rounded-xl border border-border/50 p-5 relative shadow-xl">
+              <div className="bg-card/95 backdrop-blur-sm rounded-xl border border-border/50 p-4 md:p-6 relative shadow-xl">
                 {/* Close Button */}
                 <button
                   onClick={() => setSelectedBrand(null)}
-                  className="absolute top-3 right-3 p-1.5 hover:bg-muted rounded-full transition-colors"
+                  className="absolute top-3 right-3 p-1.5 hover:bg-muted rounded-full transition-colors z-10"
                   aria-label="Close panel"
                 >
                   <X className="w-4 h-4 text-muted-foreground" />
                 </button>
 
-                <div className="flex items-center gap-3 mb-5 pb-4 border-b border-border/30">
-                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-accent shadow-md">
+                {/* Brand Header */}
+                <div className="flex items-center gap-3 mb-4 pb-3 border-b border-border/30">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-accent shadow-md flex-shrink-0">
                     <img
                       src={selectedBrand.image}
                       alt={selectedBrand.name}
@@ -298,104 +138,95 @@ const TruckBrandsCarousel = () => {
                     <h3 className="font-display text-xl font-bold text-foreground">
                       {selectedBrand.name}
                     </h3>
-                    <p className="text-xs text-muted-foreground">Off-Road Vehicles & Resources</p>
+                    <p className="text-xs text-muted-foreground">
+                      {selectedBrand.categories.length} Vehicle Lines • {selectedBrand.categories.reduce((acc, cat) => acc + cat.models.length, 0)} Models
+                    </p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {/* Models Section */}
-                  <div>
-                    <h4 className="font-semibold text-sm text-foreground mb-2 flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center">
-                        <Car className="w-3 h-3 text-accent" />
-                      </span>
-                      Models
-                    </h4>
-                    <div className="space-y-1.5">
-                      {selectedBrand.models.map((model, idx) => (
-                        <Link
-                          key={idx}
-                          to="/vehicles"
-                          className="block p-2.5 bg-muted/40 rounded-lg hover:bg-muted/70 transition-colors"
-                        >
-                          <p className="font-medium text-sm text-foreground">{model.name}</p>
-                          <p className="text-[11px] text-muted-foreground">{model.year} • {model.price}</p>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Blogs Section */}
-                  <div>
-                    <h4 className="font-semibold text-sm text-foreground mb-2 flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center">
-                        <FileText className="w-3 h-3 text-accent" />
-                      </span>
-                      Blog Articles
-                    </h4>
-                    <div className="space-y-1.5">
-                      {selectedBrand.blogs.map((blog, idx) => (
-                        <Link
-                          key={idx}
-                          to={`/blog/${blog.slug}`}
-                          className="block p-2.5 bg-muted/40 rounded-lg hover:bg-muted/70 transition-colors"
-                        >
-                          <p className="text-sm text-foreground hover:text-accent transition-colors line-clamp-2">
-                            {blog.title}
-                          </p>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Videos Section */}
-                  <div>
-                    <h4 className="font-semibold text-sm text-foreground mb-2 flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center">
-                        <Play className="w-3 h-3 text-accent" />
-                      </span>
-                      Videos
-                    </h4>
-                    <div className="space-y-1.5">
-                      {selectedBrand.videos.map((video, idx) => (
-                        <Link
-                          key={idx}
-                          to="/videos"
-                          className="block p-2.5 bg-muted/40 rounded-lg hover:bg-muted/70 transition-colors"
+                {/* Vehicle Categories Grid */}
+                <ScrollArea className="max-h-[400px] pr-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {selectedBrand.categories.map((category) => (
+                      <div
+                        key={category.name}
+                        className="bg-muted/30 rounded-lg border border-border/30 overflow-hidden"
+                      >
+                        {/* Category Header */}
+                        <button
+                          onClick={() => toggleCategory(category.name)}
+                          className="w-full flex items-center justify-between p-3 hover:bg-muted/50 transition-colors"
                         >
                           <div className="flex items-center gap-2">
-                            <div className="w-10 h-7 rounded overflow-hidden flex-shrink-0">
-                              <img
-                                src={video.thumbnail}
-                                alt={video.title}
-                                className="w-full h-full object-cover"
-                              />
+                            <span className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
+                              <Car className="w-3.5 h-3.5 text-accent" />
+                            </span>
+                            <div className="text-left">
+                              <p className="font-semibold text-sm text-foreground">{category.name}</p>
+                              <p className="text-[10px] text-muted-foreground">{category.models.length} trims available</p>
                             </div>
-                            <p className="text-sm text-foreground line-clamp-1">{video.title}</p>
                           </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
+                          {expandedCategory === category.name ? (
+                            <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                          )}
+                        </button>
 
-                  {/* Insurance Section */}
-                  <div>
-                    <h4 className="font-semibold text-sm text-foreground mb-2 flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center">
-                        <Shield className="w-3 h-3 text-accent" />
-                      </span>
-                      Insurance Info
-                    </h4>
-                    <div className="p-2.5 bg-muted/40 rounded-lg">
-                      <p className="text-sm text-foreground mb-2">{selectedBrand.insuranceInfo}</p>
-                      <Link
-                        to="/insurance"
-                        className="text-sm text-accent hover:underline font-medium inline-flex items-center gap-1"
-                      >
-                        Get Quotes →
-                      </Link>
-                    </div>
+                        {/* Models List */}
+                        <AnimatePresence>
+                          {expandedCategory === category.name && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="border-t border-border/30"
+                            >
+                              <div className="max-h-48 overflow-y-auto">
+                                {category.models.map((model, idx) => (
+                                  <Link
+                                    key={idx}
+                                    to="/vehicles"
+                                    className="flex items-center justify-between p-2.5 hover:bg-muted/50 transition-colors border-b border-border/20 last:border-b-0"
+                                  >
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-xs font-medium text-foreground truncate">
+                                        {model.trim}
+                                      </p>
+                                      {model.engine && (
+                                        <p className="text-[10px] text-muted-foreground truncate flex items-center gap-1">
+                                          <Zap className="w-2.5 h-2.5" />
+                                          {model.engine}
+                                        </p>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center gap-1 text-accent font-semibold text-xs flex-shrink-0 ml-2">
+                                      <DollarSign className="w-3 h-3" />
+                                      {formatPrice(model.price)}
+                                    </div>
+                                  </Link>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    ))}
                   </div>
+                </ScrollArea>
+
+                {/* Insurance Info Footer */}
+                <div className="mt-4 pt-3 border-t border-border/30">
+                  <p className="text-xs text-muted-foreground mb-2">
+                    💡 {selectedBrand.insuranceInfo}
+                  </p>
+                  <Link
+                    to="/insurance"
+                    className="text-sm text-accent hover:underline font-medium inline-flex items-center gap-1"
+                  >
+                    Get Insurance Quotes →
+                  </Link>
                 </div>
               </div>
             </motion.div>
