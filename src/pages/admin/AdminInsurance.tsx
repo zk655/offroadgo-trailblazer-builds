@@ -7,10 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, Edit, Plus, Search, Shield, DollarSign } from "lucide-react";
+import { Trash2, Edit, Plus, Search, Shield, Star } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Navigate } from "react-router-dom";
@@ -19,10 +17,7 @@ import AdminHeader from "@/components/AdminHeader";
 
 interface ProviderFormData {
   name: string;
-  company_name: string;
   description: string;
-  specializes_in: string;
-  coverage_areas: string;
   rating: number | string;
   contact_phone: string;
   contact_email: string;
@@ -30,44 +25,18 @@ interface ProviderFormData {
   logo_url: string;
 }
 
-interface QuoteFormData {
-  provider_id: string;
-  vehicle_type: string;
-  coverage_type: string;
-  state_code: string;
-  monthly_premium: number | string;
-  annual_premium: number | string;
-  deductible: number | string;
-  coverage_limit: number | string;
-  min_age: number | string;
-  max_age: number | string;
-  min_experience_years: number | string;
-  features: string;
-  effective_date: string;
-  expiry_date: string;
-}
-
-const vehicleTypes = ["SUV", "Truck", "ATV", "UTV", "Motorcycle", "Jeep", "Other"];
-const coverageTypes = ["Liability", "Comprehensive", "Collision", "Full Coverage", "Off-Road Specific"];
-const specializations = ["Off-Road", "ATV/UTV", "Modified Vehicles", "Racing", "Commercial", "Classic Cars"];
-
 export default function AdminInsurance() {
   const { user, userRole, loading, roleLoading } = useAuth();
-  const [isProviderDialogOpen, setIsProviderDialogOpen] = useState(false);
-  const [isQuoteDialogOpen, setIsQuoteDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProvider, setEditingProvider] = useState<any>(null);
-  const [editingQuote, setEditingQuote] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  const providerForm = useForm<ProviderFormData>({
+  const form = useForm<ProviderFormData>({
     defaultValues: {
       name: "",
-      company_name: "",
       description: "",
-      specializes_in: "",
-      coverage_areas: "",
       rating: "",
       contact_phone: "",
       contact_email: "",
@@ -76,22 +45,86 @@ export default function AdminInsurance() {
     },
   });
 
-  const quoteForm = useForm<QuoteFormData>({
-    defaultValues: {
-      provider_id: "",
-      vehicle_type: "",
-      coverage_type: "",
-      state_code: "",
-      monthly_premium: "",
-      annual_premium: "",
-      deductible: "",
-      coverage_limit: "",
-      min_age: "",
-      max_age: "",
-      min_experience_years: "",
-      features: "",
-      effective_date: "",
-      expiry_date: "",
+  const { data: providers, isLoading } = useQuery({
+    queryKey: ["admin-insurance-providers", searchTerm],
+    queryFn: async () => {
+      let query = supabase.from("insurance_providers").select("*").order("created_at", { ascending: false });
+      
+      if (searchTerm) {
+        query = query.or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
+      }
+      
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user && (userRole === "admin" || userRole === "editor"),
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (data: ProviderFormData) => {
+      const processedData = {
+        name: data.name,
+        description: data.description || null,
+        rating: data.rating ? parseFloat(data.rating.toString()) : null,
+        contact_phone: data.contact_phone || null,
+        contact_email: data.contact_email || null,
+        website_url: data.website_url || null,
+        logo_url: data.logo_url || null,
+      };
+
+      const { error } = await supabase.from("insurance_providers").insert(processedData);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-insurance-providers"] });
+      toast({ title: "Insurance provider created successfully" });
+      setIsDialogOpen(false);
+      form.reset();
+    },
+    onError: (error: any) => {
+      toast({ title: "Error creating provider", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: ProviderFormData }) => {
+      const processedData = {
+        name: data.name,
+        description: data.description || null,
+        rating: data.rating ? parseFloat(data.rating.toString()) : null,
+        contact_phone: data.contact_phone || null,
+        contact_email: data.contact_email || null,
+        website_url: data.website_url || null,
+        logo_url: data.logo_url || null,
+      };
+
+      const { error } = await supabase.from("insurance_providers").update(processedData).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-insurance-providers"] });
+      toast({ title: "Insurance provider updated successfully" });
+      setIsDialogOpen(false);
+      setEditingProvider(null);
+      form.reset();
+    },
+    onError: (error: any) => {
+      toast({ title: "Error updating provider", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("insurance_providers").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-insurance-providers"] });
+      toast({ title: "Provider deleted successfully" });
+    },
+    onError: (error: any) => {
+      toast({ title: "Error deleting provider", description: error.message, variant: "destructive" });
     },
   });
 
@@ -122,236 +155,47 @@ export default function AdminInsurance() {
     );
   }
 
-  const { data: providers, isLoading: providersLoading } = useQuery({
-    queryKey: ["admin-insurance-providers", searchTerm],
-    queryFn: async () => {
-      let query = supabase.from("insurance_providers").select("*").order("created_at", { ascending: false });
-      
-      if (searchTerm) {
-        query = query.or(`name.ilike.%${searchTerm}%,company_name.ilike.%${searchTerm}%`);
-      }
-      
-      const { data, error } = await query;
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: quotes, isLoading: quotesLoading } = useQuery({
-    queryKey: ["admin-insurance-quotes"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("insurance_quotes")
-        .select(`
-          *,
-          insurance_providers (
-            name,
-            company_name
-          )
-        `)
-        .order("created_at", { ascending: false });
-      
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  // Provider mutations
-  const createProviderMutation = useMutation({
-    mutationFn: async (data: ProviderFormData) => {
-      const processedData = {
-        ...data,
-        specializes_in: data.specializes_in ? data.specializes_in.split(",").map(item => item.trim()) : [],
-        coverage_areas: data.coverage_areas ? data.coverage_areas.split(",").map(item => item.trim()) : [],
-        rating: data.rating ? parseFloat(data.rating.toString()) : null,
-      };
-
-      const { error } = await supabase.from("insurance_providers").insert(processedData);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-insurance-providers"] });
-      toast({ title: "Insurance provider created successfully" });
-      setIsProviderDialogOpen(false);
-      providerForm.reset();
-    },
-    onError: (error: any) => {
-      toast({ title: "Error creating provider", description: error.message, variant: "destructive" });
-    },
-  });
-
-  const updateProviderMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: ProviderFormData }) => {
-      const processedData = {
-        ...data,
-        specializes_in: data.specializes_in ? data.specializes_in.split(",").map(item => item.trim()) : [],
-        coverage_areas: data.coverage_areas ? data.coverage_areas.split(",").map(item => item.trim()) : [],
-        rating: data.rating ? parseFloat(data.rating.toString()) : null,
-      };
-
-      const { error } = await supabase.from("insurance_providers").update(processedData).eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-insurance-providers"] });
-      toast({ title: "Insurance provider updated successfully" });
-      setIsProviderDialogOpen(false);
-      setEditingProvider(null);
-      providerForm.reset();
-    },
-    onError: (error: any) => {
-      toast({ title: "Error updating provider", description: error.message, variant: "destructive" });
-    },
-  });
-
-  // Quote mutations
-  const createQuoteMutation = useMutation({
-    mutationFn: async (data: QuoteFormData) => {
-      const processedData = {
-        ...data,
-        monthly_premium: data.monthly_premium ? parseFloat(data.monthly_premium.toString()) : null,
-        annual_premium: data.annual_premium ? parseFloat(data.annual_premium.toString()) : null,
-        deductible: data.deductible ? parseFloat(data.deductible.toString()) : null,
-        coverage_limit: data.coverage_limit ? parseFloat(data.coverage_limit.toString()) : null,
-        min_age: data.min_age ? parseInt(data.min_age.toString()) : null,
-        max_age: data.max_age ? parseInt(data.max_age.toString()) : null,
-        min_experience_years: data.min_experience_years ? parseInt(data.min_experience_years.toString()) : null,
-        features: data.features ? data.features.split(",").map(item => item.trim()) : [],
-        effective_date: data.effective_date || null,
-        expiry_date: data.expiry_date || null,
-      };
-
-      const { error } = await supabase.from("insurance_quotes").insert(processedData);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-insurance-quotes"] });
-      toast({ title: "Insurance quote created successfully" });
-      setIsQuoteDialogOpen(false);
-      quoteForm.reset();
-    },
-    onError: (error: any) => {
-      toast({ title: "Error creating quote", description: error.message, variant: "destructive" });
-    },
-  });
-
-  const updateQuoteMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: QuoteFormData }) => {
-      const processedData = {
-        ...data,
-        monthly_premium: data.monthly_premium ? parseFloat(data.monthly_premium.toString()) : null,
-        annual_premium: data.annual_premium ? parseFloat(data.annual_premium.toString()) : null,
-        deductible: data.deductible ? parseFloat(data.deductible.toString()) : null,
-        coverage_limit: data.coverage_limit ? parseFloat(data.coverage_limit.toString()) : null,
-        min_age: data.min_age ? parseInt(data.min_age.toString()) : null,
-        max_age: data.max_age ? parseInt(data.max_age.toString()) : null,
-        min_experience_years: data.min_experience_years ? parseInt(data.min_experience_years.toString()) : null,
-        features: data.features ? data.features.split(",").map(item => item.trim()) : [],
-        effective_date: data.effective_date || null,
-        expiry_date: data.expiry_date || null,
-      };
-
-      const { error } = await supabase.from("insurance_quotes").update(processedData).eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-insurance-quotes"] });
-      toast({ title: "Insurance quote updated successfully" });
-      setIsQuoteDialogOpen(false);
-      setEditingQuote(null);
-      quoteForm.reset();
-    },
-    onError: (error: any) => {
-      toast({ title: "Error updating quote", description: error.message, variant: "destructive" });
-    },
-  });
-
-  const deleteProviderMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("insurance_providers").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-insurance-providers"] });
-      toast({ title: "Provider deleted successfully" });
-    },
-  });
-
-  const deleteQuoteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("insurance_quotes").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-insurance-quotes"] });
-      toast({ title: "Quote deleted successfully" });
-    },
-  });
-
-  const onProviderSubmit = (data: ProviderFormData) => {
+  const onSubmit = (data: ProviderFormData) => {
     if (editingProvider) {
-      updateProviderMutation.mutate({ id: editingProvider.id, data });
+      updateMutation.mutate({ id: editingProvider.id, data });
     } else {
-      createProviderMutation.mutate(data);
+      createMutation.mutate(data);
     }
   };
 
-  const onQuoteSubmit = (data: QuoteFormData) => {
-    if (editingQuote) {
-      updateQuoteMutation.mutate({ id: editingQuote.id, data });
-    } else {
-      createQuoteMutation.mutate(data);
-    }
-  };
-
-  const handleEditProvider = (provider: any) => {
+  const handleEdit = (provider: any) => {
     setEditingProvider(provider);
-    providerForm.reset({
+    form.reset({
       name: provider.name || "",
-      company_name: provider.company_name || "",
       description: provider.description || "",
-      specializes_in: provider.specializes_in?.join(", ") || "",
-      coverage_areas: provider.coverage_areas?.join(", ") || "",
-      rating: provider.rating || "",
+      rating: provider.rating?.toString() || "",
       contact_phone: provider.contact_phone || "",
       contact_email: provider.contact_email || "",
       website_url: provider.website_url || "",
       logo_url: provider.logo_url || "",
     });
-    setIsProviderDialogOpen(true);
+    setIsDialogOpen(true);
   };
 
-  const handleEditQuote = (quote: any) => {
-    setEditingQuote(quote);
-    quoteForm.reset({
-      provider_id: quote.provider_id || "",
-      vehicle_type: quote.vehicle_type || "",
-      coverage_type: quote.coverage_type || "",
-      state_code: quote.state_code || "",
-      monthly_premium: quote.monthly_premium || "",
-      annual_premium: quote.annual_premium || "",
-      deductible: quote.deductible || "",
-      coverage_limit: quote.coverage_limit || "",
-      min_age: quote.min_age || "",
-      max_age: quote.max_age || "",
-      min_experience_years: quote.min_experience_years || "",
-      features: quote.features?.join(", ") || "",
-      effective_date: quote.effective_date || "",
-      expiry_date: quote.expiry_date || "",
-    });
-    setIsQuoteDialogOpen(true);
-  };
-
-  const handleCloseProviderDialog = () => {
-    setIsProviderDialogOpen(false);
+  const handleCreate = () => {
     setEditingProvider(null);
-    providerForm.reset();
+    form.reset();
+    setIsDialogOpen(true);
   };
 
-  const handleCloseQuoteDialog = () => {
-    setIsQuoteDialogOpen(false);
-    setEditingQuote(null);
-    quoteForm.reset();
+  const renderStars = (rating: number | null) => {
+    if (!rating) return null;
+    return (
+      <div className="flex items-center gap-1">
+        {[...Array(5)].map((_, i) => (
+          <Star
+            key={i}
+            className={`h-4 w-4 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+          />
+        ))}
+        <span className="text-sm ml-1">{rating.toFixed(1)}</span>
+      </div>
+    );
   };
 
   return (
@@ -359,501 +203,226 @@ export default function AdminInsurance() {
       <div className="container mx-auto py-8">
         <AdminHeader
           title="Insurance Management"
-          description="Manage insurance providers and quotes"
-        />
+          description="Manage insurance providers"
+          action={
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={handleCreate}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Provider
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>
+                    {editingProvider ? "Edit Insurance Provider" : "Add New Insurance Provider"}
+                  </DialogTitle>
+                </DialogHeader>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Provider Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="GEICO Off-Road Insurance" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-        <Tabs defaultValue="providers" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="providers">Insurance Providers</TabsTrigger>
-            <TabsTrigger value="quotes">Insurance Quotes</TabsTrigger>
-          </TabsList>
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea {...field} placeholder="Provider description..." rows={3} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-          <TabsContent value="providers" className="space-y-6">
-            <div className="flex justify-between items-center">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search providers..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Dialog open={isProviderDialogOpen} onOpenChange={handleCloseProviderDialog}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Provider
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>
-                      {editingProvider ? "Edit Insurance Provider" : "Add New Insurance Provider"}
-                    </DialogTitle>
-                  </DialogHeader>
-                  <Form {...providerForm}>
-                    <form onSubmit={providerForm.handleSubmit(onProviderSubmit)} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={providerForm.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Provider Name</FormLabel>
-                              <FormControl>
-                                <Input {...field} placeholder="Geico Off-Road" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={providerForm.control}
-                          name="company_name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Company Name</FormLabel>
-                              <FormControl>
-                                <Input {...field} placeholder="GEICO" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
+                    <FormField
+                      control={form.control}
+                      name="rating"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Rating (1-5)</FormLabel>
+                          <FormControl>
+                            <Input {...field} type="number" min="1" max="5" step="0.1" placeholder="4.5" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
+                    <div className="grid grid-cols-2 gap-4">
                       <FormField
-                        control={providerForm.control}
-                        name="description"
+                        control={form.control}
+                        name="contact_phone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Description</FormLabel>
+                            <FormLabel>Contact Phone</FormLabel>
                             <FormControl>
-                              <Textarea {...field} placeholder="Provider description..." rows={3} />
+                              <Input {...field} placeholder="1-800-555-0123" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={providerForm.control}
-                          name="specializes_in"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Specializes In (comma-separated)</FormLabel>
-                              <FormControl>
-                                <Input {...field} placeholder="Off-Road, ATV/UTV, Modified Vehicles" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={providerForm.control}
-                          name="coverage_areas"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Coverage Areas (comma-separated)</FormLabel>
-                              <FormControl>
-                                <Input {...field} placeholder="CA, TX, FL, NY" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-4">
-                        <FormField
-                          control={providerForm.control}
-                          name="rating"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Rating (1-5)</FormLabel>
-                              <FormControl>
-                                <Input {...field} type="number" min="1" max="5" step="0.1" placeholder="4.5" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={providerForm.control}
-                          name="contact_phone"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Phone</FormLabel>
-                              <FormControl>
-                                <Input {...field} placeholder="1-800-123-4567" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={providerForm.control}
-                          name="contact_email"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Email</FormLabel>
-                              <FormControl>
-                                <Input {...field} type="email" placeholder="contact@provider.com" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={providerForm.control}
-                          name="website_url"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Website URL</FormLabel>
-                              <FormControl>
-                                <Input {...field} placeholder="https://www.provider.com" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={providerForm.control}
-                          name="logo_url"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Logo URL</FormLabel>
-                              <FormControl>
-                                <Input {...field} placeholder="https://www.provider.com/logo.png" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <DialogFooter>
-                        <Button type="submit" disabled={createProviderMutation.isPending || updateProviderMutation.isPending}>
-                          {editingProvider ? "Update Provider" : "Create Provider"}
-                        </Button>
-                      </DialogFooter>
-                    </form>
-                  </Form>
-                </DialogContent>
-              </Dialog>
-            </div>
-
-            {providersLoading ? (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {[...Array(6)].map((_, i) => (
-                  <Card key={i} className="animate-pulse">
-                    <CardHeader>
-                      <div className="h-4 bg-muted rounded w-3/4"></div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="h-20 bg-muted rounded"></div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {providers?.map((provider) => (
-                  <Card key={provider.id} className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Shield className="h-5 w-5" />
-                        {provider.name}
-                      </CardTitle>
-                      <p className="text-sm text-muted-foreground">{provider.company_name}</p>
-                    </CardHeader>
-                    <CardContent>
-                      {provider.logo_url && (
-                        <img
-                          src={provider.logo_url}
-                          alt={provider.name}
-                          className="w-full h-16 object-contain mb-4"
-                        />
-                      )}
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                        {provider.description}
-                      </p>
-                      <div className="space-y-2 mb-4">
-                        {provider.rating && (
-                          <div className="flex justify-between text-sm">
-                            <span>Rating:</span>
-                            <span>{provider.rating}/5 ⭐</span>
-                          </div>
-                        )}
-                        {provider.specializes_in && provider.specializes_in.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            {provider.specializes_in.slice(0, 2).map((spec: string, index: number) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
-                                {spec}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex justify-end space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEditProvider(provider)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => deleteProviderMutation.mutate(provider.id)}
-                          disabled={deleteProviderMutation.isPending}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="quotes" className="space-y-6">
-            <div className="flex justify-end">
-              <Dialog open={isQuoteDialogOpen} onOpenChange={handleCloseQuoteDialog}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Quote
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>
-                      {editingQuote ? "Edit Insurance Quote" : "Add New Insurance Quote"}
-                    </DialogTitle>
-                  </DialogHeader>
-                  <Form {...quoteForm}>
-                    <form onSubmit={quoteForm.handleSubmit(onQuoteSubmit)} className="space-y-4">
                       <FormField
-                        control={quoteForm.control}
-                        name="provider_id"
+                        control={form.control}
+                        name="contact_email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Insurance Provider</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select provider" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {providers?.map((provider) => (
-                                  <SelectItem key={provider.id} value={provider.id}>
-                                    {provider.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                            <FormLabel>Contact Email</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="email" placeholder="contact@provider.com" />
+                            </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
+                    </div>
 
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={quoteForm.control}
-                          name="vehicle_type"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Vehicle Type</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select vehicle type" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {vehicleTypes.map((type) => (
-                                    <SelectItem key={type} value={type}>
-                                      {type}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={quoteForm.control}
-                          name="coverage_type"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Coverage Type</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select coverage" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {coverageTypes.map((type) => (
-                                    <SelectItem key={type} value={type}>
-                                      {type}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                    <FormField
+                      control={form.control}
+                      name="website_url"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Website URL</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="https://www.provider.com" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="logo_url"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Logo URL</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="https://example.com/logo.png" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <DialogFooter>
+                      <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                        {editingProvider ? "Update" : "Create"} Provider
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
+          }
+        />
+
+        <div className="mb-6">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search providers..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
+
+        {isLoading ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <Card key={i} className="animate-pulse">
+                <CardHeader>
+                  <div className="h-4 bg-muted rounded w-3/4"></div>
+                  <div className="h-3 bg-muted rounded w-1/2"></div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="h-20 bg-muted rounded"></div>
+                    <div className="h-3 bg-muted rounded"></div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {providers?.map((provider) => (
+              <Card key={provider.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 line-clamp-1">
+                    <Shield className="h-5 w-5" />
+                    {provider.name}
+                  </CardTitle>
+                  {renderStars(provider.rating)}
+                </CardHeader>
+                <CardContent>
+                  {provider.logo_url && (
+                    <img
+                      src={provider.logo_url}
+                      alt={provider.name}
+                      className="w-full h-20 object-contain rounded mb-4 bg-white p-2"
+                    />
+                  )}
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                    {provider.description || "No description available"}
+                  </p>
+                  <div className="space-y-1 mb-4 text-sm">
+                    {provider.contact_phone && (
+                      <div className="flex justify-between">
+                        <span>Phone:</span>
+                        <span>{provider.contact_phone}</span>
                       </div>
-
-                      <div className="grid grid-cols-3 gap-4">
-                        <FormField
-                          control={quoteForm.control}
-                          name="monthly_premium"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Monthly Premium ($)</FormLabel>
-                              <FormControl>
-                                <Input {...field} type="number" step="0.01" placeholder="150.00" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={quoteForm.control}
-                          name="annual_premium"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Annual Premium ($)</FormLabel>
-                              <FormControl>
-                                <Input {...field} type="number" step="0.01" placeholder="1800.00" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={quoteForm.control}
-                          name="deductible"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Deductible ($)</FormLabel>
-                              <FormControl>
-                                <Input {...field} type="number" placeholder="500" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                    )}
+                    {provider.contact_email && (
+                      <div className="flex justify-between">
+                        <span>Email:</span>
+                        <span className="truncate ml-2">{provider.contact_email}</span>
                       </div>
-
-                      <DialogFooter>
-                        <Button type="submit" disabled={createQuoteMutation.isPending || updateQuoteMutation.isPending}>
-                          {editingQuote ? "Update Quote" : "Create Quote"}
-                        </Button>
-                      </DialogFooter>
-                    </form>
-                  </Form>
-                </DialogContent>
-              </Dialog>
-            </div>
-
-            {quotesLoading ? (
-              <div className="space-y-4">
-                {[...Array(5)].map((_, i) => (
-                  <Card key={i} className="animate-pulse">
-                    <CardContent className="p-6">
-                      <div className="h-4 bg-muted rounded w-1/4 mb-2"></div>
-                      <div className="h-3 bg-muted rounded w-1/2"></div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {quotes?.map((quote) => (
-                  <Card key={quote.id} className="hover:shadow-lg transition-shadow">
-                    <CardContent className="p-6">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h3 className="font-semibold flex items-center gap-2">
-                            <DollarSign className="h-4 w-4" />
-                            {(quote as any).insurance_providers?.name || "Unknown Provider"}
-                          </h3>
-                          <p className="text-sm text-muted-foreground">
-                            {quote.vehicle_type} - {quote.coverage_type}
-                          </p>
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEditQuote(quote)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => deleteQuoteMutation.mutate(quote.id)}
-                            disabled={deleteQuoteMutation.isPending}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        {quote.monthly_premium && (
-                          <div>
-                            <span className="text-muted-foreground">Monthly:</span>
-                            <p className="font-semibold">${quote.monthly_premium}</p>
-                          </div>
-                        )}
-                        {quote.annual_premium && (
-                          <div>
-                            <span className="text-muted-foreground">Annual:</span>
-                            <p className="font-semibold">${quote.annual_premium}</p>
-                          </div>
-                        )}
-                        {quote.deductible && (
-                          <div>
-                            <span className="text-muted-foreground">Deductible:</span>
-                            <p>${quote.deductible}</p>
-                          </div>
-                        )}
-                        {quote.state_code && (
-                          <div>
-                            <span className="text-muted-foreground">State:</span>
-                            <p>{quote.state_code}</p>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-
-        {((providers && providers.length === 0) || (quotes && quotes.length === 0)) && (
-          <Card className="p-8 text-center">
-            <CardContent>
-              <p className="text-muted-foreground">No insurance data found.</p>
-            </CardContent>
-          </Card>
+                    )}
+                  </div>
+                  <div className="flex gap-2 pt-2 border-t justify-end">
+                    {provider.website_url && (
+                      <Button variant="outline" size="sm" asChild>
+                        <a href={provider.website_url} target="_blank" rel="noopener noreferrer">
+                          Visit Site
+                        </a>
+                      </Button>
+                    )}
+                    <Button variant="ghost" size="sm" onClick={() => handleEdit(provider)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        if (confirm("Are you sure you want to delete this provider?")) {
+                          deleteMutation.mutate(provider.id);
+                        }
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         )}
       </div>
     </div>

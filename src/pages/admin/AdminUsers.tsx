@@ -473,17 +473,14 @@ function AdminUsersContent() {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <User className="h-5 w-5" />
-                        {profile.full_name || profile.username || "Unknown User"}
+                        {profile.display_name || "Unknown User"}
                       </CardTitle>
-                      {profile.username && profile.full_name && (
-                        <p className="text-sm text-muted-foreground">@{profile.username}</p>
-                      )}
                     </CardHeader>
                     <CardContent>
                       {profile.avatar_url && (
                         <img
                           src={profile.avatar_url}
-                          alt={profile.full_name || profile.username}
+                          alt={profile.display_name || "User avatar"}
                           className="w-16 h-16 rounded-full mb-4 mx-auto"
                         />
                       )}
@@ -575,8 +572,8 @@ function AdminUsersContent() {
                               </FormControl>
                               <SelectContent>
                                 {profiles?.map((profile) => (
-                                  <SelectItem key={profile.id} value={profile.id}>
-                                    {profile.full_name || profile.username || `User ${profile.id.slice(0, 8)}`}
+                                  <SelectItem key={profile.id} value={profile.user_id}>
+                                    {profile.display_name || `User ${profile.id.slice(0, 8)}`}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
