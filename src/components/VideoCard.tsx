@@ -11,21 +11,16 @@ import { motion } from 'framer-motion';
 interface Video {
   id: string;
   title: string;
-  description: string;
-  slug: string;
-  thumbnail_url: string;
-  video_url: string;
-  duration: number;
-  tags: string[];
-  category: string;
+  description: string | null;
+  thumbnail_url: string | null;
+  video_url: string | null;
+  duration: number | null;
+  tags: string[] | null;
+  category: string | null;
   view_count: number;
   like_count: number;
   share_count: number;
   save_count: number;
-  is_featured: boolean;
-  is_trending: boolean;
-  created_at: string;
-  published_at: string;
 }
 
 interface VideoCardProps {
@@ -58,6 +53,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
     e.stopPropagation();
     onPlay();
   };
+
   return (
     <motion.div 
       className="group relative bg-card rounded-lg overflow-hidden shadow-card hover:shadow-primary transition-all duration-300 cursor-pointer border border-border/50"
@@ -92,15 +88,6 @@ const VideoCard: React.FC<VideoCardProps> = ({
         <div className="absolute bottom-3 right-3 bg-black/80 text-white text-xs px-2 py-1 rounded-md font-medium">
           {video.duration && video.duration > 0 ? formatDuration(video.duration) : '0:00'}
         </div>
-
-        {/* Featured/Trending Badge */}
-        {(video.is_featured || video.is_trending) && (
-          <div className="absolute top-3 left-3">
-            <Badge variant={video.is_featured ? "default" : "secondary"}>
-              {video.is_featured ? 'Featured' : 'Trending'}
-            </Badge>
-          </div>
-        )}
 
         {/* Play Button Overlay */}
         <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-300 ${
@@ -168,22 +155,24 @@ const VideoCard: React.FC<VideoCardProps> = ({
 
         {/* Category */}
         <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium">
-          {video.category}
+          {video.category || 'General'}
         </p>
 
         {/* Tags */}
-        <div className="flex flex-wrap gap-1 mb-3">
-          {video.tags.slice(0, 2).map(tag => (
-            <Badge key={tag} variant="outline" className="text-xs px-2 py-0.5">
-              #{tag}
-            </Badge>
-          ))}
-          {video.tags.length > 2 && (
-            <Badge variant="outline" className="text-xs px-2 py-0.5">
-              +{video.tags.length - 2}
-            </Badge>
-          )}
-        </div>
+        {video.tags && video.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-3">
+            {video.tags.slice(0, 2).map(tag => (
+              <Badge key={tag} variant="outline" className="text-xs px-2 py-0.5">
+                #{tag}
+              </Badge>
+            ))}
+            {video.tags.length > 2 && (
+              <Badge variant="outline" className="text-xs px-2 py-0.5">
+                +{video.tags.length - 2}
+              </Badge>
+            )}
+          </div>
+        )}
 
         {/* Stats */}
         <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -212,8 +201,8 @@ const VideoCard: React.FC<VideoCardProps> = ({
           <SocialShare
             title={video.title}
             excerpt={video.description || ''}
-            url={`/videos/${video.slug}`}
-            image={video.thumbnail_url}
+            url={`/videos/${video.id}`}
+            image={video.thumbnail_url || ''}
             variant="icon"
           />
         </div>
