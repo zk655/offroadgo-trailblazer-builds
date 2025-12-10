@@ -18,15 +18,21 @@ import BlogPostCard from '@/components/BlogPostCard';
 interface BlogPost {
   id: string;
   title: string;
-  slug: string;
-  content: string;
-  excerpt: string;
-  cover_image: string;
-  author: string;
-  published_at: string;
-  tags: string[];
-  external_url: string;
+  content: string | null;
+  excerpt: string | null;
+  image_url: string | null;
+  thumbnail_url?: string | null;
+  author: string | null;
+  published: boolean | null;
+  tags: string[] | null;
+  created_at: string | null;
+  updated_at?: string | null;
+  seo_title?: string | null;
+  seo_description?: string | null;
   category?: string;
+  // For compatibility with external content
+  cover_image?: string;
+  external_url?: string;
 }
 
 const Blog = () => {
@@ -54,14 +60,14 @@ const Blog = () => {
       const { data, error } = await supabase
         .from('blogs')
         .select('*')
-        .not('published_at', 'is', null)
-        .order('published_at', { ascending: false });
+        .eq('published', true)
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 
       // Combine live and local content, ensuring local content comes first
       const allPosts = [...(data || []), ...liveContent];
-      setPosts(allPosts);
+      setPosts(allPosts as BlogPost[]);
     } catch (error) {
       console.error('Error fetching posts:', error);
     } finally {
