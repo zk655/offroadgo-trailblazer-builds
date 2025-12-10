@@ -14,16 +14,598 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          id: string
+          new_values: Json | null
+          old_values: Json | null
+          record_id: string | null
+          table_name: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      blogs: {
+        Row: {
+          author: string | null
+          content: string | null
+          created_at: string | null
+          excerpt: string | null
+          id: string
+          image_url: string | null
+          published: boolean | null
+          seo_description: string | null
+          seo_title: string | null
+          tags: string[] | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          author?: string | null
+          content?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          published?: boolean | null
+          seo_description?: string | null
+          seo_title?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          author?: string | null
+          content?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          published?: boolean | null
+          seo_description?: string | null
+          seo_title?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      builds: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          mod_ids: string[] | null
+          name: string
+          total_cost: number | null
+          updated_at: string | null
+          user_id: string | null
+          vehicle_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          mod_ids?: string[] | null
+          name: string
+          total_cost?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          vehicle_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          mod_ids?: string[] | null
+          name?: string
+          total_cost?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "builds_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      clubs: {
+        Row: {
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          location: string | null
+          member_count: number | null
+          name: string
+          type: string | null
+          updated_at: string | null
+          website_url: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          member_count?: number | null
+          name: string
+          type?: string | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          member_count?: number | null
+          name?: string
+          type?: string | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          difficulty: string | null
+          end_date: string | null
+          entry_fee: number | null
+          id: string
+          image_url: string | null
+          location: string | null
+          registration_url: string | null
+          start_date: string | null
+          title: string
+          updated_at: string | null
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          difficulty?: string | null
+          end_date?: string | null
+          entry_fee?: number | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          registration_url?: string | null
+          start_date?: string | null
+          title: string
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          difficulty?: string | null
+          end_date?: string | null
+          entry_fee?: number | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          registration_url?: string | null
+          start_date?: string | null
+          title?: string
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      insurance_providers: {
+        Row: {
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          rating: number | null
+          updated_at: string | null
+          website_url: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          rating?: number | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          rating?: number | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      mods: {
+        Row: {
+          affiliate_link: string | null
+          brand: string | null
+          category: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          price: number | null
+          rating: number | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          affiliate_link?: string | null
+          brand?: string | null
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          price?: number | null
+          rating?: number | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          affiliate_link?: string | null
+          brand?: string | null
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          price?: number | null
+          rating?: number | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          display_name: string | null
+          id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      trails: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          difficulty: string | null
+          elevation_gain: number | null
+          id: string
+          image_url: string | null
+          latitude: number | null
+          length: number | null
+          location: string | null
+          longitude: number | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          difficulty?: string | null
+          elevation_gain?: number | null
+          id?: string
+          image_url?: string | null
+          latitude?: number | null
+          length?: number | null
+          location?: string | null
+          longitude?: number | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          difficulty?: string | null
+          elevation_gain?: number | null
+          id?: string
+          image_url?: string | null
+          latitude?: number | null
+          length?: number | null
+          location?: string | null
+          longitude?: number | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vehicles: {
+        Row: {
+          approach_angle: number | null
+          brand: string
+          breakover_angle: number | null
+          created_at: string | null
+          departure_angle: number | null
+          description: string | null
+          drivetrain: string | null
+          engine: string | null
+          fuel_economy: string | null
+          ground_clearance: number | null
+          horsepower: number | null
+          id: string
+          image_url: string | null
+          name: string
+          payload_capacity: number | null
+          price: number | null
+          torque: number | null
+          towing_capacity: number | null
+          transmission: string | null
+          updated_at: string | null
+          year: number | null
+        }
+        Insert: {
+          approach_angle?: number | null
+          brand: string
+          breakover_angle?: number | null
+          created_at?: string | null
+          departure_angle?: number | null
+          description?: string | null
+          drivetrain?: string | null
+          engine?: string | null
+          fuel_economy?: string | null
+          ground_clearance?: number | null
+          horsepower?: number | null
+          id?: string
+          image_url?: string | null
+          name: string
+          payload_capacity?: number | null
+          price?: number | null
+          torque?: number | null
+          towing_capacity?: number | null
+          transmission?: string | null
+          updated_at?: string | null
+          year?: number | null
+        }
+        Update: {
+          approach_angle?: number | null
+          brand?: string
+          breakover_angle?: number | null
+          created_at?: string | null
+          departure_angle?: number | null
+          description?: string | null
+          drivetrain?: string | null
+          engine?: string | null
+          fuel_economy?: string | null
+          ground_clearance?: number | null
+          horsepower?: number | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          payload_capacity?: number | null
+          price?: number | null
+          torque?: number | null
+          towing_capacity?: number | null
+          transmission?: string | null
+          updated_at?: string | null
+          year?: number | null
+        }
+        Relationships: []
+      }
+      videos: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          duration: number | null
+          id: string
+          likes: number | null
+          seo_description: string | null
+          seo_title: string | null
+          status: string | null
+          tags: string[] | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string | null
+          video_url: string | null
+          views: number | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          duration?: number | null
+          id?: string
+          likes?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
+          status?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string | null
+          video_url?: string | null
+          views?: number | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          duration?: number | null
+          id?: string
+          likes?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
+          status?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string | null
+          video_url?: string | null
+          views?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      insurance_providers_public: {
+        Row: {
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          logo_url: string | null
+          name: string | null
+          rating: number | null
+          updated_at: string | null
+          website_url: string | null
+        }
+        Insert: {
+          contact_email?: never
+          contact_phone?: never
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          logo_url?: string | null
+          name?: string | null
+          rating?: number | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          contact_email?: never
+          contact_phone?: never
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          logo_url?: string | null
+          name?: string | null
+          rating?: number | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "editor" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +732,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "editor", "user"],
+    },
   },
 } as const
