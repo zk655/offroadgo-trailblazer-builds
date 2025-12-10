@@ -19,29 +19,22 @@ import { useAuth } from "@/hooks/useAuth";
 interface VehicleFormData {
   name: string;
   brand: string;
-  type: string;
   year: number | string;
   engine: string;
   transmission: string;
   drivetrain: string;
-  fuel_type: string;
   horsepower: number | string;
   torque: number | string;
   price: number | string;
-  starting_price: number | string;
-  mpg: number | string;
+  fuel_economy: string;
   towing_capacity: number | string;
+  payload_capacity: number | string;
   ground_clearance: number | string;
-  approach_angle_degrees: number | string;
-  departure_angle_degrees: number | string;
+  approach_angle: number | string;
+  departure_angle: number | string;
   breakover_angle: number | string;
-  wading_depth: number | string;
-  cargo_capacity: number | string;
-  seating_capacity: number | string;
-  tire_size: string;
   image_url: string;
-  safety_rating: number | string;
-  warranty: string;
+  description: string;
 }
 
 export default function AdminVehicles() {
@@ -56,29 +49,22 @@ export default function AdminVehicles() {
     defaultValues: {
       name: "",
       brand: "",
-      type: "",
       year: "",
       engine: "",
       transmission: "",
       drivetrain: "4WD",
-      fuel_type: "Gasoline",
       horsepower: "",
       torque: "",
       price: "",
-      starting_price: "",
-      mpg: "",
+      fuel_economy: "",
       towing_capacity: "",
+      payload_capacity: "",
       ground_clearance: "",
-      approach_angle_degrees: "",
-      departure_angle_degrees: "",
+      approach_angle: "",
+      departure_angle: "",
       breakover_angle: "",
-      wading_depth: "",
-      cargo_capacity: "",
-      seating_capacity: "5",
-      tire_size: "",
       image_url: "",
-      safety_rating: "",
-      warranty: "",
+      description: "",
     },
   });
 
@@ -88,7 +74,7 @@ export default function AdminVehicles() {
       let query = supabase.from("vehicles").select("*").order("created_at", { ascending: false });
       
       if (searchTerm) {
-        query = query.or(`name.ilike.%${searchTerm}%,brand.ilike.%${searchTerm}%,type.ilike.%${searchTerm}%`);
+        query = query.or(`name.ilike.%${searchTerm}%,brand.ilike.%${searchTerm}%`);
       }
       
       const { data, error } = await query;
@@ -100,22 +86,24 @@ export default function AdminVehicles() {
   const createMutation = useMutation({
     mutationFn: async (data: VehicleFormData) => {
       const processedData = {
-        ...data,
+        name: data.name,
+        brand: data.brand,
         year: data.year ? parseInt(data.year.toString()) : null,
+        engine: data.engine || null,
+        transmission: data.transmission || null,
+        drivetrain: data.drivetrain || null,
         horsepower: data.horsepower ? parseInt(data.horsepower.toString()) : null,
         torque: data.torque ? parseInt(data.torque.toString()) : null,
         price: data.price ? parseFloat(data.price.toString()) : null,
-        starting_price: data.starting_price ? parseFloat(data.starting_price.toString()) : null,
-        mpg: data.mpg ? parseFloat(data.mpg.toString()) : null,
+        fuel_economy: data.fuel_economy || null,
         towing_capacity: data.towing_capacity ? parseInt(data.towing_capacity.toString()) : null,
+        payload_capacity: data.payload_capacity ? parseInt(data.payload_capacity.toString()) : null,
         ground_clearance: data.ground_clearance ? parseFloat(data.ground_clearance.toString()) : null,
-        approach_angle_degrees: data.approach_angle_degrees ? parseInt(data.approach_angle_degrees.toString()) : null,
-        departure_angle_degrees: data.departure_angle_degrees ? parseInt(data.departure_angle_degrees.toString()) : null,
-        breakover_angle: data.breakover_angle ? parseInt(data.breakover_angle.toString()) : null,
-        wading_depth: data.wading_depth ? parseFloat(data.wading_depth.toString()) : null,
-        cargo_capacity: data.cargo_capacity ? parseFloat(data.cargo_capacity.toString()) : null,
-        seating_capacity: data.seating_capacity ? parseInt(data.seating_capacity.toString()) : 5,
-        safety_rating: data.safety_rating ? parseFloat(data.safety_rating.toString()) : null,
+        approach_angle: data.approach_angle ? parseFloat(data.approach_angle.toString()) : null,
+        departure_angle: data.departure_angle ? parseFloat(data.departure_angle.toString()) : null,
+        breakover_angle: data.breakover_angle ? parseFloat(data.breakover_angle.toString()) : null,
+        image_url: data.image_url || null,
+        description: data.description || null,
       };
 
       const { error } = await supabase.from("vehicles").insert(processedData);
@@ -135,22 +123,24 @@ export default function AdminVehicles() {
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: VehicleFormData }) => {
       const processedData = {
-        ...data,
+        name: data.name,
+        brand: data.brand,
         year: data.year ? parseInt(data.year.toString()) : null,
+        engine: data.engine || null,
+        transmission: data.transmission || null,
+        drivetrain: data.drivetrain || null,
         horsepower: data.horsepower ? parseInt(data.horsepower.toString()) : null,
         torque: data.torque ? parseInt(data.torque.toString()) : null,
         price: data.price ? parseFloat(data.price.toString()) : null,
-        starting_price: data.starting_price ? parseFloat(data.starting_price.toString()) : null,
-        mpg: data.mpg ? parseFloat(data.mpg.toString()) : null,
+        fuel_economy: data.fuel_economy || null,
         towing_capacity: data.towing_capacity ? parseInt(data.towing_capacity.toString()) : null,
+        payload_capacity: data.payload_capacity ? parseInt(data.payload_capacity.toString()) : null,
         ground_clearance: data.ground_clearance ? parseFloat(data.ground_clearance.toString()) : null,
-        approach_angle_degrees: data.approach_angle_degrees ? parseInt(data.approach_angle_degrees.toString()) : null,
-        departure_angle_degrees: data.departure_angle_degrees ? parseInt(data.departure_angle_degrees.toString()) : null,
-        breakover_angle: data.breakover_angle ? parseInt(data.breakover_angle.toString()) : null,
-        wading_depth: data.wading_depth ? parseFloat(data.wading_depth.toString()) : null,
-        cargo_capacity: data.cargo_capacity ? parseFloat(data.cargo_capacity.toString()) : null,
-        seating_capacity: data.seating_capacity ? parseInt(data.seating_capacity.toString()) : 5,
-        safety_rating: data.safety_rating ? parseFloat(data.safety_rating.toString()) : null,
+        approach_angle: data.approach_angle ? parseFloat(data.approach_angle.toString()) : null,
+        departure_angle: data.departure_angle ? parseFloat(data.departure_angle.toString()) : null,
+        breakover_angle: data.breakover_angle ? parseFloat(data.breakover_angle.toString()) : null,
+        image_url: data.image_url || null,
+        description: data.description || null,
       };
 
       const { error } = await supabase.from("vehicles").update(processedData).eq("id", id);
@@ -222,29 +212,22 @@ export default function AdminVehicles() {
     form.reset({
       name: vehicle.name || "",
       brand: vehicle.brand || "",
-      type: vehicle.type || "",
       year: vehicle.year?.toString() || "",
       engine: vehicle.engine || "",
       transmission: vehicle.transmission || "",
       drivetrain: vehicle.drivetrain || "4WD",
-      fuel_type: vehicle.fuel_type || "Gasoline",
       horsepower: vehicle.horsepower?.toString() || "",
       torque: vehicle.torque?.toString() || "",
       price: vehicle.price?.toString() || "",
-      starting_price: vehicle.starting_price?.toString() || "",
-      mpg: vehicle.mpg?.toString() || "",
+      fuel_economy: vehicle.fuel_economy || "",
       towing_capacity: vehicle.towing_capacity?.toString() || "",
+      payload_capacity: vehicle.payload_capacity?.toString() || "",
       ground_clearance: vehicle.ground_clearance?.toString() || "",
-      approach_angle_degrees: vehicle.approach_angle_degrees?.toString() || "",
-      departure_angle_degrees: vehicle.departure_angle_degrees?.toString() || "",
+      approach_angle: vehicle.approach_angle?.toString() || "",
+      departure_angle: vehicle.departure_angle?.toString() || "",
       breakover_angle: vehicle.breakover_angle?.toString() || "",
-      wading_depth: vehicle.wading_depth?.toString() || "",
-      cargo_capacity: vehicle.cargo_capacity?.toString() || "",
-      seating_capacity: vehicle.seating_capacity?.toString() || "5",
-      tire_size: vehicle.tire_size || "",
       image_url: vehicle.image_url || "",
-      safety_rating: vehicle.safety_rating?.toString() || "",
-      warranty: vehicle.warranty || "",
+      description: vehicle.description || "",
     });
     setIsDialogOpen(true);
   };
@@ -306,30 +289,7 @@ export default function AdminVehicles() {
                     />
                   </div>
                   
-                  <div className="grid grid-cols-3 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="type"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Type</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select type" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="SUV">SUV</SelectItem>
-                              <SelectItem value="Truck">Truck</SelectItem>
-                              <SelectItem value="Crossover">Crossover</SelectItem>
-                              <SelectItem value="Off-Road">Off-Road</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="year"
@@ -345,12 +305,12 @@ export default function AdminVehicles() {
                     />
                     <FormField
                       control={form.control}
-                      name="seating_capacity"
+                      name="price"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Seating</FormLabel>
+                          <FormLabel>Price ($)</FormLabel>
                           <FormControl>
-                            <Input {...field} type="number" placeholder="5" />
+                            <Input {...field} type="number" placeholder="55000" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -414,30 +374,20 @@ export default function AdminVehicles() {
                     />
                     <FormField
                       control={form.control}
-                      name="fuel_type"
+                      name="fuel_economy"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Fuel Type</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="Gasoline">Gasoline</SelectItem>
-                              <SelectItem value="Diesel">Diesel</SelectItem>
-                              <SelectItem value="Hybrid">Hybrid</SelectItem>
-                              <SelectItem value="Electric">Electric</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <FormLabel>Fuel Economy</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="17/23 mpg city/hwy" />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   </div>
 
-                  <div className="grid grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="horsepower"
@@ -456,7 +406,7 @@ export default function AdminVehicles() {
                       name="torque"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Torque</FormLabel>
+                          <FormLabel>Torque (lb-ft)</FormLabel>
                           <FormControl>
                             <Input {...field} type="number" placeholder="260" />
                           </FormControl>
@@ -464,14 +414,17 @@ export default function AdminVehicles() {
                         </FormItem>
                       )}
                     />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="mpg"
+                      name="towing_capacity"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>MPG</FormLabel>
+                          <FormLabel>Towing Capacity (lbs)</FormLabel>
                           <FormControl>
-                            <Input {...field} type="number" step="0.1" placeholder="22.5" />
+                            <Input {...field} type="number" placeholder="3500" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -479,12 +432,12 @@ export default function AdminVehicles() {
                     />
                     <FormField
                       control={form.control}
-                      name="towing_capacity"
+                      name="payload_capacity"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Towing (lbs)</FormLabel>
+                          <FormLabel>Payload Capacity (lbs)</FormLabel>
                           <FormControl>
-                            <Input {...field} type="number" placeholder="3500" />
+                            <Input {...field} type="number" placeholder="1000" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -498,7 +451,7 @@ export default function AdminVehicles() {
                       name="ground_clearance"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Ground Clearance</FormLabel>
+                          <FormLabel>Ground Clearance (in)</FormLabel>
                           <FormControl>
                             <Input {...field} type="number" step="0.1" placeholder="10.8" />
                           </FormControl>
@@ -508,12 +461,12 @@ export default function AdminVehicles() {
                     />
                     <FormField
                       control={form.control}
-                      name="approach_angle_degrees"
+                      name="approach_angle"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Approach Angle</FormLabel>
+                          <FormLabel>Approach (°)</FormLabel>
                           <FormControl>
-                            <Input {...field} type="number" placeholder="44" />
+                            <Input {...field} type="number" step="0.1" placeholder="44" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -521,12 +474,12 @@ export default function AdminVehicles() {
                     />
                     <FormField
                       control={form.control}
-                      name="departure_angle_degrees"
+                      name="departure_angle"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Departure Angle</FormLabel>
+                          <FormLabel>Departure (°)</FormLabel>
                           <FormControl>
-                            <Input {...field} type="number" placeholder="37" />
+                            <Input {...field} type="number" step="0.1" placeholder="37" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -537,80 +490,9 @@ export default function AdminVehicles() {
                       name="breakover_angle"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Breakover Angle</FormLabel>
+                          <FormLabel>Breakover (°)</FormLabel>
                           <FormControl>
-                            <Input {...field} type="number" placeholder="27.8" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="price"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Price</FormLabel>
-                          <FormControl>
-                            <Input {...field} type="number" placeholder="45000" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="starting_price"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Starting Price</FormLabel>
-                          <FormControl>
-                            <Input {...field} type="number" placeholder="35000" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="safety_rating"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Safety Rating</FormLabel>
-                          <FormControl>
-                            <Input {...field} type="number" step="0.1" placeholder="4.5" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="tire_size"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Tire Size</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="285/70R17" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="warranty"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Warranty</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="3 years/36,000 miles" />
+                            <Input {...field} type="number" step="0.1" placeholder="27.8" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -626,6 +508,20 @@ export default function AdminVehicles() {
                         <FormLabel>Image URL</FormLabel>
                         <FormControl>
                           <Input {...field} placeholder="https://example.com/vehicle-image.jpg" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} placeholder="Vehicle description..." rows={3} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -648,7 +544,7 @@ export default function AdminVehicles() {
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search vehicles by name, brand, or type..."
+              placeholder="Search vehicles by name or brand..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -680,11 +576,13 @@ export default function AdminVehicles() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Car className="h-5 w-5" />
-                    {vehicle.name}
+                    {vehicle.year} {vehicle.brand} {vehicle.name}
                   </CardTitle>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>{vehicle.brand}</span>
-                    <span>{vehicle.year}</span>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary">{vehicle.drivetrain}</Badge>
+                    {vehicle.price && (
+                      <Badge variant="outline">${vehicle.price.toLocaleString()}</Badge>
+                    )}
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -695,41 +593,39 @@ export default function AdminVehicles() {
                       className="w-full h-32 object-cover rounded mb-4"
                     />
                   )}
-                  <div className="space-y-2 mb-4">
+                  <div className="grid grid-cols-2 gap-2 text-sm mb-4">
                     {vehicle.horsepower && (
-                      <div className="flex justify-between text-sm">
-                        <span>Power:</span>
-                        <span>{vehicle.horsepower} HP</span>
+                      <div>
+                        <span className="text-muted-foreground">HP:</span> {vehicle.horsepower}
                       </div>
                     )}
-                    {vehicle.price && (
-                      <div className="flex justify-between text-sm">
-                        <span>Price:</span>
-                        <span>${vehicle.price.toLocaleString()}</span>
+                    {vehicle.torque && (
+                      <div>
+                        <span className="text-muted-foreground">Torque:</span> {vehicle.torque} lb-ft
+                      </div>
+                    )}
+                    {vehicle.ground_clearance && (
+                      <div>
+                        <span className="text-muted-foreground">Clearance:</span> {vehicle.ground_clearance}"
+                      </div>
+                    )}
+                    {vehicle.towing_capacity && (
+                      <div>
+                        <span className="text-muted-foreground">Towing:</span> {vehicle.towing_capacity.toLocaleString()} lbs
                       </div>
                     )}
                   </div>
-                  <div className="flex justify-between items-center">
-                    <Badge variant={vehicle.drivetrain === "4WD" ? "default" : "outline"}>
-                      {vehicle.drivetrain}
-                    </Badge>
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(vehicle)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => deleteMutation.mutate(vehicle.id)}
-                        disabled={deleteMutation.isPending}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => handleEdit(vehicle)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      onClick={() => deleteMutation.mutate(vehicle.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -737,10 +633,20 @@ export default function AdminVehicles() {
           </div>
         )}
 
-        {vehicles && vehicles.length === 0 && (
-          <Card className="p-8 text-center">
+        {vehicles?.length === 0 && !isLoading && (
+          <Card className="text-center py-12">
             <CardContent>
-              <p className="text-muted-foreground">No vehicles found.</p>
+              <Car className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No vehicles found</h3>
+              <p className="text-muted-foreground mb-4">
+                {searchTerm
+                  ? "Try adjusting your search criteria"
+                  : "Get started by adding your first vehicle"}
+              </p>
+              <Button onClick={handleCreate}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Vehicle
+              </Button>
             </CardContent>
           </Card>
         )}

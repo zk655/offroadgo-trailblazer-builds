@@ -24,7 +24,7 @@ interface ModFormData {
   price: number | string;
   rating: number | string;
   image_url: string;
-  amazon_link: string;
+  affiliate_link: string;
 }
 
 interface CategoryFormData {
@@ -32,7 +32,6 @@ interface CategoryFormData {
 }
 
 export default function AdminParts() {
-  // All hooks must be at the very top before any conditionals or early returns
   const { user, userRole, loading, roleLoading } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -52,7 +51,7 @@ export default function AdminParts() {
       price: "",
       rating: "",
       image_url: "",
-      amazon_link: "",
+      affiliate_link: "",
     },
   });
 
@@ -97,9 +96,14 @@ export default function AdminParts() {
   const createMutation = useMutation({
     mutationFn: async (data: ModFormData) => {
       const processedData = {
-        ...data,
+        title: data.title,
+        category: data.category || null,
+        brand: data.brand || null,
+        description: data.description || null,
         price: data.price ? parseFloat(data.price.toString()) : null,
-        rating: data.rating ? parseFloat(data.rating.toString()) : 0,
+        rating: data.rating ? parseFloat(data.rating.toString()) : null,
+        image_url: data.image_url || null,
+        affiliate_link: data.affiliate_link || null,
       };
 
       const { error } = await supabase.from("mods").insert(processedData);
@@ -119,9 +123,14 @@ export default function AdminParts() {
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: ModFormData }) => {
       const processedData = {
-        ...data,
+        title: data.title,
+        category: data.category || null,
+        brand: data.brand || null,
+        description: data.description || null,
         price: data.price ? parseFloat(data.price.toString()) : null,
-        rating: data.rating ? parseFloat(data.rating.toString()) : 0,
+        rating: data.rating ? parseFloat(data.rating.toString()) : null,
+        image_url: data.image_url || null,
+        affiliate_link: data.affiliate_link || null,
       };
 
       const { error } = await supabase.from("mods").update(processedData).eq("id", id);
@@ -214,7 +223,7 @@ export default function AdminParts() {
       price: mod.price?.toString() || "",
       rating: mod.rating?.toString() || "",
       image_url: mod.image_url || "",
-      amazon_link: mod.amazon_link || "",
+      affiliate_link: mod.affiliate_link || "",
     });
     setIsDialogOpen(true);
   };
@@ -360,10 +369,10 @@ export default function AdminParts() {
 
                   <FormField
                     control={form.control}
-                    name="amazon_link"
+                    name="affiliate_link"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Amazon/Store Link</FormLabel>
+                        <FormLabel>Affiliate/Store Link</FormLabel>
                         <FormControl>
                           <Input {...field} placeholder="https://amazon.com/product-link" />
                         </FormControl>
@@ -484,51 +493,34 @@ export default function AdminParts() {
                     />
                   )}
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                    {mod.description || "No description available"}
+                    {mod.description}
                   </p>
-                  <div className="space-y-2 mb-4">
-                    {mod.price && (
-                      <div className="flex justify-between text-sm">
-                        <span>Price:</span>
-                        <span className="font-semibold">${mod.price}</span>
-                      </div>
-                    )}
-                    {mod.rating > 0 && (
-                      <div className="flex justify-between text-sm">
-                        <span>Rating:</span>
-                        <span>{mod.rating}/5 ⭐</span>
-                      </div>
-                    )}
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="font-bold text-lg">${mod.price?.toFixed(2)}</span>
+                    <span className="text-sm">⭐ {mod.rating?.toFixed(1)}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      {mod.affiliate_link && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => window.open(mod.affiliate_link, '_blank')}
-                        >
-                          <ExternalLink className="h-3 w-3" />
-                        </Button>
-                      )}
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(mod)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => deleteMutation.mutate(mod.id)}
-                        disabled={deleteMutation.isPending}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                  {mod.affiliate_link && (
+                    <a
+                      href={mod.affiliate_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-sm text-primary hover:underline mb-4"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      View Product
+                    </a>
+                  )}
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => handleEdit(mod)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      onClick={() => deleteMutation.mutate(mod.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -536,10 +528,20 @@ export default function AdminParts() {
           </div>
         )}
 
-        {mods && mods.length === 0 && (
-          <Card className="p-8 text-center">
+        {mods?.length === 0 && !isLoading && (
+          <Card className="text-center py-12">
             <CardContent>
-              <p className="text-muted-foreground">No parts found.</p>
+              <Wrench className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No parts found</h3>
+              <p className="text-muted-foreground mb-4">
+                {searchTerm || selectedCategory
+                  ? "Try adjusting your search or filter criteria"
+                  : "Get started by adding your first part or product"}
+              </p>
+              <Button onClick={handleCreate}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Part
+              </Button>
             </CardContent>
           </Card>
         )}
