@@ -654,18 +654,13 @@ export default function AdminVideos() {
                     )}
                     <div className="flex items-center gap-1">
                       <Eye className="h-3 w-3" />
-                      {video.view_count || 0}
+                      {video.views || 0}
                     </div>
                     <div className="flex items-center gap-1">
                       <Heart className="h-3 w-3" />
-                      {video.like_count || 0}
+                      {video.likes || 0}
                     </div>
                   </div>
-                  {video.resolution && (
-                    <Badge variant="outline" className="text-xs">
-                      {video.resolution}
-                    </Badge>
-                  )}
                 </div>
 
                 {video.tags && video.tags.length > 0 && (
@@ -683,13 +678,12 @@ export default function AdminVideos() {
                   </div>
                 )}
 
-                {/* Processing Status */}
-                {video.processing_status && video.processing_status !== 'completed' && (
+                {/* Status */}
+                {video.status && video.status !== 'ready' && (
                   <div className="mt-2">
                     <Badge variant="outline" className="text-xs">
-                      {video.processing_status === 'pending' && '⏳ Processing...'}
-                      {video.processing_status === 'processing' && '🔄 Processing...'}
-                      {video.processing_status === 'failed' && '❌ Failed'}
+                      {video.status === 'processing' && '🔄 Processing...'}
+                      {video.status === 'failed' && '❌ Failed'}
                     </Badge>
                   </div>
                 )}

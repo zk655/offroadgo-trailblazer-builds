@@ -19,12 +19,11 @@ import AdminHeader from "@/components/AdminHeader";
 interface ClubFormData {
   name: string;
   description: string;
-  club_type: string;
+  type: string;
   location: string;
-  country: string;
-  founded_year: number | string;
   member_count: number | string;
   contact_email: string;
+  contact_phone: string;
   website_url: string;
   image_url: string;
 }
@@ -44,43 +43,15 @@ export default function AdminClubs() {
     defaultValues: {
       name: "",
       description: "",
-      club_type: "rally",
+      type: "rally",
       location: "",
-      country: "",
-      founded_year: "",
       member_count: "",
       contact_email: "",
+      contact_phone: "",
       website_url: "",
       image_url: "",
     },
   });
-
-  if (loading || roleLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  if (userRole !== "admin" && userRole !== "editor") {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="w-96">
-          <CardHeader>
-            <CardTitle className="text-destructive">Access Denied</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>You don't have permission to access this page.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const { data: clubs, isLoading } = useQuery({
     queryKey: ["admin-clubs", searchTerm, selectedType],
@@ -88,25 +59,32 @@ export default function AdminClubs() {
       let query = supabase.from("clubs").select("*").order("created_at", { ascending: false });
       
       if (searchTerm) {
-        query = query.or(`name.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%,club_type.ilike.%${searchTerm}%`);
+        query = query.or(`name.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%,type.ilike.%${searchTerm}%`);
       }
       
       if (selectedType) {
-        query = query.eq("club_type", selectedType);
+        query = query.eq("type", selectedType);
       }
       
       const { data, error } = await query;
       if (error) throw error;
       return data;
     },
+    enabled: !!user && (userRole === "admin" || userRole === "editor"),
   });
 
   const createMutation = useMutation({
     mutationFn: async (data: ClubFormData) => {
       const processedData = {
-        ...data,
-        founded_year: data.founded_year ? parseInt(data.founded_year.toString()) : null,
+        name: data.name,
+        description: data.description || null,
+        type: data.type || null,
+        location: data.location || null,
         member_count: data.member_count ? parseInt(data.member_count.toString()) : null,
+        contact_email: data.contact_email || null,
+        contact_phone: data.contact_phone || null,
+        website_url: data.website_url || null,
+        image_url: data.image_url || null,
       };
 
       const { error } = await supabase.from("clubs").insert(processedData);
@@ -126,9 +104,15 @@ export default function AdminClubs() {
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: ClubFormData }) => {
       const processedData = {
-        ...data,
-        founded_year: data.founded_year ? parseInt(data.founded_year.toString()) : null,
+        name: data.name,
+        description: data.description || null,
+        type: data.type || null,
+        location: data.location || null,
         member_count: data.member_count ? parseInt(data.member_count.toString()) : null,
+        contact_email: data.contact_email || null,
+        contact_phone: data.contact_phone || null,
+        website_url: data.website_url || null,
+        image_url: data.image_url || null,
       };
 
       const { error } = await supabase.from("clubs").update(processedData).eq("id", id);
@@ -160,6 +144,33 @@ export default function AdminClubs() {
     },
   });
 
+  if (loading || roleLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  if (userRole !== "admin" && userRole !== "editor") {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="w-96">
+          <CardHeader>
+            <CardTitle className="text-destructive">Access Denied</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>You don't have permission to access this page.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const onSubmit = (data: ClubFormData) => {
     if (editingClub) {
       updateMutation.mutate({ id: editingClub.id, data });
@@ -173,12 +184,11 @@ export default function AdminClubs() {
     form.reset({
       name: club.name || "",
       description: club.description || "",
-      club_type: club.club_type || "rally",
+      type: club.type || "rally",
       location: club.location || "",
-      country: club.country || "",
-      founded_year: club.founded_year?.toString() || "",
       member_count: club.member_count?.toString() || "",
       contact_email: club.contact_email || "",
+      contact_phone: club.contact_phone || "",
       website_url: club.website_url || "",
       image_url: club.image_url || "",
     });
@@ -215,139 +225,125 @@ export default function AdminClubs() {
                   Add Club
                 </Button>
               </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingClub ? "Edit Club" : "Add New Club"}
-                </DialogTitle>
-              </DialogHeader>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Club Name</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="Desert Riders Off-Road Club" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <Textarea {...field} placeholder="Club description..." rows={4} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-2 gap-4">
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>
+                    {editingClub ? "Edit Club" : "Add New Club"}
+                  </DialogTitle>
+                </DialogHeader>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                     <FormField
                       control={form.control}
-                      name="club_type"
+                      name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Club Type</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormLabel>Club Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="Desert Riders Off-Road Club" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea {...field} placeholder="Club description..." rows={4} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="type"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Club Type</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {clubTypes.map((type) => (
+                                  <SelectItem key={type} value={type.toLowerCase()}>
+                                    {type}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="location"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Location</FormLabel>
                             <FormControl>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
+                              <Input {...field} placeholder="Phoenix, Arizona" />
                             </FormControl>
-                            <SelectContent>
-                              {clubTypes.map((type) => (
-                                <SelectItem key={type} value={type.toLowerCase()}>
-                                  {type}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="founded_year"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Founded Year</FormLabel>
-                          <FormControl>
-                            <Input {...field} type="number" placeholder="2010" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
-                  <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="location"
+                      name="member_count"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Location</FormLabel>
+                          <FormLabel>Member Count</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Phoenix, Arizona" />
+                            <Input {...field} type="number" placeholder="150" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="country"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Country</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="USA" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name="member_count"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Member Count</FormLabel>
-                        <FormControl>
-                          <Input {...field} type="number" placeholder="150" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="contact_email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Contact Email</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="email" placeholder="info@desertridersclub.com" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="contact_phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Contact Phone</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="(555) 123-4567" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="contact_email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Contact Email</FormLabel>
-                          <FormControl>
-                            <Input {...field} type="email" placeholder="info@desertridersclub.com" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
                     <FormField
                       control={form.control}
                       name="website_url"
@@ -361,30 +357,29 @@ export default function AdminClubs() {
                         </FormItem>
                       )}
                     />
-                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name="image_url"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Club Logo/Image URL</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="https://example.com/club-logo.jpg" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <FormField
+                      control={form.control}
+                      name="image_url"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Club Logo/Image URL</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="https://example.com/club-logo.jpg" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  <DialogFooter>
-                    <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
-                      {editingClub ? "Update" : "Create"} Club
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </Form>
-            </DialogContent>
+                    <DialogFooter>
+                      <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                        {editingClub ? "Update" : "Create"} Club
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </Form>
+              </DialogContent>
             </Dialog>
           }
         />
@@ -441,14 +436,9 @@ export default function AdminClubs() {
                     {club.name}
                   </CardTitle>
                   <div className="flex items-center justify-between">
-                    <Badge className={`${getClubTypeColor(club.club_type)} text-white`}>
-                      {club.club_type}
+                    <Badge className={`${getClubTypeColor(club.type)} text-white`}>
+                      {club.type || "Unknown"}
                     </Badge>
-                    {club.founded_year && (
-                      <span className="text-sm text-muted-foreground">
-                        Est. {club.founded_year}
-                      </span>
-                    )}
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -475,64 +465,42 @@ export default function AdminClubs() {
                         <span>{club.member_count}</span>
                       </div>
                     )}
-                    {club.contact_email && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Mail className="h-4 w-4" />
-                        <span className="line-clamp-1">{club.contact_email}</span>
-                      </div>
-                    )}
-                    {club.website_url && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Globe className="h-4 w-4" />
-                        <a 
-                          href={club.website_url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-primary hover:underline line-clamp-1"
-                        >
-                          Website
-                        </a>
-                      </div>
-                    )}
                   </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      {club.country && (
-                        <Badge variant="outline" className="text-xs">
-                          {club.country}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(club)}
-                      >
-                        <Edit className="h-4 w-4" />
+                  <div className="flex gap-2 pt-2 border-t">
+                    {club.website_url && (
+                      <Button variant="ghost" size="sm" asChild>
+                        <a href={club.website_url} target="_blank" rel="noopener noreferrer">
+                          <Globe className="h-4 w-4" />
+                        </a>
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => deleteMutation.mutate(club.id)}
-                        disabled={deleteMutation.isPending}
-                      >
-                        <Trash2 className="h-4 w-4" />
+                    )}
+                    {club.contact_email && (
+                      <Button variant="ghost" size="sm" asChild>
+                        <a href={`mailto:${club.contact_email}`}>
+                          <Mail className="h-4 w-4" />
+                        </a>
                       </Button>
-                    </div>
+                    )}
+                    <div className="flex-1" />
+                    <Button variant="ghost" size="sm" onClick={() => handleEdit(club)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        if (confirm("Are you sure you want to delete this club?")) {
+                          deleteMutation.mutate(club.id);
+                        }
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
-        )}
-
-        {clubs && clubs.length === 0 && (
-          <Card className="p-8 text-center">
-            <CardContent>
-              <p className="text-muted-foreground">No clubs found.</p>
-            </CardContent>
-          </Card>
         )}
       </div>
     </div>

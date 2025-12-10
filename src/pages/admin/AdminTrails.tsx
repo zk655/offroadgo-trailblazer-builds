@@ -496,16 +496,10 @@ export default function AdminTrails() {
                         {trail.difficulty}
                       </Badge>
                     </div>
-                    {trail.terrain && (
+                    {trail.length && (
                       <div className="flex justify-between text-sm">
-                        <span>Terrain:</span>
-                        <Badge variant="secondary">{trail.terrain}</Badge>
-                      </div>
-                    )}
-                    {trail.distance && (
-                      <div className="flex justify-between text-sm">
-                        <span>Distance:</span>
-                        <span>{trail.distance} miles</span>
+                        <span>Length:</span>
+                        <span>{trail.length} miles</span>
                       </div>
                     )}
                     {trail.elevation_gain && (
@@ -517,9 +511,6 @@ export default function AdminTrails() {
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                      {trail.gpx_url && (
-                        <Badge variant="outline" className="text-xs">GPX</Badge>
-                      )}
                       {trail.latitude && trail.longitude && (
                         <Badge variant="outline" className="text-xs">GPS</Badge>
                       )}

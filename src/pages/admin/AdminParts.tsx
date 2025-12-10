@@ -502,11 +502,11 @@ export default function AdminParts() {
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                      {mod.amazon_link && (
+                      {mod.affiliate_link && (
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => window.open(mod.amazon_link, '_blank')}
+                          onClick={() => window.open(mod.affiliate_link, '_blank')}
                         >
                           <ExternalLink className="h-3 w-3" />
                         </Button>

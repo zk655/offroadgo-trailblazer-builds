@@ -696,20 +696,16 @@ export default function AdminVehicles() {
                     />
                   )}
                   <div className="space-y-2 mb-4">
-                    <div className="flex justify-between text-sm">
-                      <span>Type:</span>
-                      <Badge variant="secondary">{vehicle.type}</Badge>
-                    </div>
                     {vehicle.horsepower && (
                       <div className="flex justify-between text-sm">
                         <span>Power:</span>
                         <span>{vehicle.horsepower} HP</span>
                       </div>
                     )}
-                    {vehicle.starting_price && (
+                    {vehicle.price && (
                       <div className="flex justify-between text-sm">
-                        <span>Starting Price:</span>
-                        <span>${vehicle.starting_price.toLocaleString()}</span>
+                        <span>Price:</span>
+                        <span>${vehicle.price.toLocaleString()}</span>
                       </div>
                     )}
                   </div>

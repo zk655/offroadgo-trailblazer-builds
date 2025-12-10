@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Edit, Plus, Search, Calendar, MapPin, Users } from "lucide-react";
+import { Trash2, Edit, Plus, Search, Calendar, MapPin } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Navigate } from "react-router-dom";
@@ -19,27 +19,19 @@ import AdminHeader from "@/components/AdminHeader";
 interface EventFormData {
   title: string;
   description: string;
-  event_type: string;
   location: string;
-  country: string;
-  venue: string;
   start_date: string;
   end_date: string;
   entry_fee: number | string;
-  max_participants: number | string;
-  terrain_type: string;
-  difficulty_level: string;
+  difficulty: string;
   image_url: string;
-  external_url: string;
-  club_id: string;
+  website_url: string;
+  registration_url: string;
 }
 
-const eventTypes = ["Rally", "Race", "Trail Ride", "Training", "Social", "Competition", "Exhibition"];
 const difficultyLevels = ["Beginner", "Intermediate", "Advanced", "Expert"];
-const terrainTypes = ["Desert", "Mountain", "Forest", "Sand", "Rock", "Mud", "Mixed"];
 
 export default function AdminEvents() {
-  // All hooks must be at the very top before any conditionals or early returns
   const { user, userRole, loading, roleLoading } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -47,77 +39,59 @@ export default function AdminEvents() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState("");
   
   const form = useForm<EventFormData>({
     defaultValues: {
       title: "",
       description: "",
-      event_type: "rally",
       location: "",
-      country: "",
-      venue: "",
       start_date: "",
       end_date: "",
       entry_fee: "",
-      max_participants: "",
-      terrain_type: "",
-      difficulty_level: "",
+      difficulty: "",
       image_url: "",
-      external_url: "",
-      club_id: "",
+      website_url: "",
+      registration_url: "",
     },
   });
 
   const { data: events, isLoading } = useQuery({
-    queryKey: ["admin-events", searchTerm, selectedType],
+    queryKey: ["admin-events", searchTerm, selectedDifficulty],
     queryFn: async () => {
       let query = supabase
         .from("events")
-        .select(`
-          *,
-          clubs (
-            name
-          )
-        `)
+        .select("*")
         .order("start_date", { ascending: false });
       
       if (searchTerm) {
-        query = query.or(`title.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%,event_type.ilike.%${searchTerm}%`);
+        query = query.or(`title.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%`);
       }
       
-      if (selectedType && selectedType !== "all") {
-        query = query.eq("event_type", selectedType);
+      if (selectedDifficulty && selectedDifficulty !== "all") {
+        query = query.eq("difficulty", selectedDifficulty);
       }
       
       const { data, error } = await query;
       if (error) throw error;
       return data;
     },
-  });
-
-  const { data: clubs } = useQuery({
-    queryKey: ["admin-clubs"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("clubs")
-        .select("id, name")
-        .order("name");
-      
-      if (error) throw error;
-      return data;
-    },
+    enabled: !!user && (userRole === "admin" || userRole === "editor"),
   });
 
   const createMutation = useMutation({
     mutationFn: async (data: EventFormData) => {
       const processedData = {
-        ...data,
-        entry_fee: data.entry_fee ? parseFloat(data.entry_fee.toString()) : null,
-        max_participants: data.max_participants ? parseInt(data.max_participants.toString()) : null,
+        title: data.title,
+        description: data.description || null,
+        location: data.location || null,
         start_date: data.start_date || null,
         end_date: data.end_date || null,
-        club_id: data.club_id && data.club_id !== "none" ? data.club_id : null,
+        entry_fee: data.entry_fee ? parseFloat(data.entry_fee.toString()) : null,
+        difficulty: data.difficulty || null,
+        image_url: data.image_url || null,
+        website_url: data.website_url || null,
+        registration_url: data.registration_url || null,
       };
 
       const { error } = await supabase.from("events").insert(processedData);
@@ -137,12 +111,16 @@ export default function AdminEvents() {
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: EventFormData }) => {
       const processedData = {
-        ...data,
-        entry_fee: data.entry_fee ? parseFloat(data.entry_fee.toString()) : null,
-        max_participants: data.max_participants ? parseInt(data.max_participants.toString()) : null,
+        title: data.title,
+        description: data.description || null,
+        location: data.location || null,
         start_date: data.start_date || null,
         end_date: data.end_date || null,
-        club_id: data.club_id && data.club_id !== "none" ? data.club_id : null,
+        entry_fee: data.entry_fee ? parseFloat(data.entry_fee.toString()) : null,
+        difficulty: data.difficulty || null,
+        image_url: data.image_url || null,
+        website_url: data.website_url || null,
+        registration_url: data.registration_url || null,
       };
 
       const { error } = await supabase.from("events").update(processedData).eq("id", id);
@@ -201,7 +179,6 @@ export default function AdminEvents() {
     );
   }
 
-
   const onSubmit = (data: EventFormData) => {
     if (editingEvent) {
       updateMutation.mutate({ id: editingEvent.id, data });
@@ -215,19 +192,14 @@ export default function AdminEvents() {
     form.reset({
       title: event.title || "",
       description: event.description || "",
-      event_type: event.event_type || "rally",
       location: event.location || "",
-      country: event.country || "",
-      venue: event.venue || "",
       start_date: event.start_date ? new Date(event.start_date).toISOString().slice(0, 16) : "",
       end_date: event.end_date ? new Date(event.end_date).toISOString().slice(0, 16) : "",
       entry_fee: event.entry_fee?.toString() || "",
-      max_participants: event.max_participants?.toString() || "",
-      terrain_type: event.terrain_type || "",
-      difficulty_level: event.difficulty_level || "",
+      difficulty: event.difficulty || "",
       image_url: event.image_url || "",
-      external_url: event.external_url || "",
-      club_id: event.club_id || "",
+      website_url: event.website_url || "",
+      registration_url: event.registration_url || "",
     });
     setIsDialogOpen(true);
   };
@@ -238,12 +210,12 @@ export default function AdminEvents() {
     setIsDialogOpen(true);
   };
 
-  const getEventTypeColor = (type: string) => {
-    switch (type?.toLowerCase()) {
-      case "rally": return "bg-blue-500";
-      case "race": return "bg-red-500";
-      case "training": return "bg-green-500";
-      case "social": return "bg-purple-500";
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty?.toLowerCase()) {
+      case "beginner": return "bg-green-500";
+      case "intermediate": return "bg-yellow-500";
+      case "advanced": return "bg-orange-500";
+      case "expert": return "bg-red-500";
       default: return "bg-gray-500";
     }
   };
@@ -262,166 +234,111 @@ export default function AdminEvents() {
                   Create Event
                 </Button>
               </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingEvent ? "Edit Event" : "Create New Event"}
-                </DialogTitle>
-              </DialogHeader>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Event Title</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="King of Hammers 2024" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <Textarea {...field} placeholder="Event description..." rows={4} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-2 gap-4">
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>
+                    {editingEvent ? "Edit Event" : "Create New Event"}
+                  </DialogTitle>
+                </DialogHeader>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                     <FormField
                       control={form.control}
-                      name="event_type"
+                      name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Event Type</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormLabel>Event Title</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="King of Hammers 2024" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea {...field} placeholder="Event description..." rows={4} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="location"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Location</FormLabel>
                             <FormControl>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
+                              <Input {...field} placeholder="Johnson Valley, CA" />
                             </FormControl>
-                            <SelectContent>
-                              {eventTypes.map((type) => (
-                                <SelectItem key={type} value={type.toLowerCase()}>
-                                  {type}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="club_id"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Organizing Club (Optional)</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="difficulty"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Difficulty</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select difficulty" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {difficultyLevels.map((level) => (
+                                  <SelectItem key={level} value={level.toLowerCase()}>
+                                    {level}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="start_date"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Start Date & Time</FormLabel>
                             <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select club" />
-                              </SelectTrigger>
+                              <Input {...field} type="datetime-local" />
                             </FormControl>
-                            <SelectContent>
-                              <SelectItem value="none">No Club</SelectItem>
-                              {clubs?.map((club) => (
-                                <SelectItem key={club.id} value={club.id}>
-                                  {club.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="end_date"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>End Date & Time</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="datetime-local" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
-                  <div className="grid grid-cols-3 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="location"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Location</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="Johnson Valley" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="country"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Country</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="USA" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="venue"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Venue</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="Specific venue name" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="start_date"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Start Date & Time</FormLabel>
-                          <FormControl>
-                            <Input {...field} type="datetime-local" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="end_date"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>End Date & Time</FormLabel>
-                          <FormControl>
-                            <Input {...field} type="datetime-local" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="entry_fee"
@@ -435,108 +352,58 @@ export default function AdminEvents() {
                         </FormItem>
                       )}
                     />
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="website_url"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Website URL</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="https://example.com" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="registration_url"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Registration URL</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="https://example.com/register" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
                     <FormField
                       control={form.control}
-                      name="max_participants"
+                      name="image_url"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Max Participants</FormLabel>
+                          <FormLabel>Event Image URL</FormLabel>
                           <FormControl>
-                            <Input {...field} type="number" placeholder="150" />
+                            <Input {...field} placeholder="https://example.com/event-image.jpg" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="terrain_type"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Terrain Type</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select terrain" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {terrainTypes.map((terrain) => (
-                                <SelectItem key={terrain} value={terrain}>
-                                  {terrain}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="difficulty_level"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Difficulty Level</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select difficulty" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {difficultyLevels.map((level) => (
-                                <SelectItem key={level} value={level}>
-                                  {level}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="image_url"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Event Image URL</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="https://example.com/event-image.jpg" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="external_url"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>External Registration URL</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="https://registration-site.com" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <DialogFooter>
-                    <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
-                      {editingEvent ? "Update" : "Create"} Event
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </Form>
-            </DialogContent>
+                    <DialogFooter>
+                      <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                        {editingEvent ? "Update" : "Create"} Event
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </Form>
+              </DialogContent>
             </Dialog>
           }
         />
@@ -545,21 +412,21 @@ export default function AdminEvents() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search events by title, location, or type..."
+              placeholder="Search events by title or location..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
-          <Select value={selectedType} onValueChange={setSelectedType}>
+          <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
             <SelectTrigger className="w-48">
-              <SelectValue placeholder="Filter by type" />
+              <SelectValue placeholder="Filter by difficulty" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              {eventTypes.map((type) => (
-                <SelectItem key={type} value={type.toLowerCase()}>
-                  {type}
+              <SelectItem value="all">All Difficulties</SelectItem>
+              {difficultyLevels.map((level) => (
+                <SelectItem key={level} value={level.toLowerCase()}>
+                  {level}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -593,13 +460,13 @@ export default function AdminEvents() {
                     {event.title}
                   </CardTitle>
                   <div className="flex items-center justify-between">
-                    <Badge className={`${getEventTypeColor(event.event_type)} text-white`}>
-                      {event.event_type}
-                    </Badge>
-                    {event.start_date && (
-                      <span className="text-sm text-muted-foreground">
-                        {new Date(event.start_date).toLocaleDateString()}
-                      </span>
+                    {event.difficulty && (
+                      <Badge className={`${getDifficultyColor(event.difficulty)} text-white`}>
+                        {event.difficulty}
+                      </Badge>
+                    )}
+                    {event.entry_fee && (
+                      <span className="text-sm font-medium">${event.entry_fee}</span>
                     )}
                   </div>
                 </CardHeader>
@@ -621,63 +488,33 @@ export default function AdminEvents() {
                         <span className="line-clamp-1">{event.location}</span>
                       </div>
                     )}
-                    {event.max_participants && (
+                    {event.start_date && (
                       <div className="flex items-center gap-2 text-sm">
-                        <Users className="h-4 w-4" />
-                        <span>Max: {event.max_participants} participants</span>
-                      </div>
-                    )}
-                    {event.entry_fee && (
-                      <div className="flex justify-between text-sm">
-                        <span>Entry Fee:</span>
-                        <span className="font-semibold">${event.entry_fee}</span>
-                      </div>
-                    )}
-                    {event.difficulty_level && (
-                      <div className="flex justify-between text-sm">
-                        <span>Difficulty:</span>
-                        <Badge variant="secondary">{event.difficulty_level}</Badge>
+                        <Calendar className="h-4 w-4" />
+                        <span>{new Date(event.start_date).toLocaleDateString()}</span>
                       </div>
                     )}
                   </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      {(event as any).clubs?.name && (
-                        <Badge variant="outline" className="text-xs">
-                          {(event as any).clubs.name}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(event)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => deleteMutation.mutate(event.id)}
-                        disabled={deleteMutation.isPending}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                  <div className="flex gap-2 pt-2 border-t justify-end">
+                    <Button variant="ghost" size="sm" onClick={() => handleEdit(event)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        if (confirm("Are you sure you want to delete this event?")) {
+                          deleteMutation.mutate(event.id);
+                        }
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
-        )}
-
-        {events && events.length === 0 && (
-          <Card className="p-8 text-center">
-            <CardContent>
-              <p className="text-muted-foreground">No events found.</p>
-            </CardContent>
-          </Card>
         )}
       </div>
     </div>
