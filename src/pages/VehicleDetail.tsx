@@ -11,81 +11,35 @@ import AdPlacement from '@/components/AdPlacement';
 import SEOHead from '@/components/SEOHead';
 import { supabase } from '@/integrations/supabase/client';
 
-// Import vehicle images
-import fordBroncoRaptor from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
-import fordF150Raptor from '@/assets/vehicles/ford-bronco-wildtrak.jpg';
-import ramTrx from '@/assets/vehicles/ram-1500-trx.jpg';
-import jeepWrangler from '@/assets/vehicles/jeep-wrangler-rubicon.jpg';
-import toyota4Runner from '@/assets/vehicles/toyota-4runner-trd-pro.jpg';
-import chevyColorado from '@/assets/vehicles/chevy-colorado-zr2.jpg';
-import gmcSierra from '@/assets/vehicles/gmc-sierra-at4x.jpg';
-import nissanFrontier from '@/assets/vehicles/nissan-frontier-pro4x.jpg';
-import subaruOutback from '@/assets/vehicles/subaru-outback-wilderness.jpg';
-
 interface Vehicle {
   id: string;
-  slug: string;
   name: string;
   brand: string;
-  type: string;
-  engine: string;
-  clearance?: number;
-  tire_size: string;
-  image_url: string;
-  year: number;
-  price: number;
-  mpg: number;
-  towing_capacity: number;
-  ground_clearance: number;
+  engine: string | null;
+  image_url: string | null;
+  year: number | null;
+  price: number | null;
+  fuel_economy: string | null;
+  towing_capacity: number | null;
+  ground_clearance: number | null;
+  drivetrain: string | null;
+  description: string | null;
 }
 
-// Image mapping for vehicles
-const vehicleImages: Record<string, string> = {
-  'ford-bronco-raptor': fordBroncoRaptor,
-  'ford-f-150-raptor': fordF150Raptor,  
-  'ram-1500-trx': ramTrx,
-  'jeep-wrangler-rubicon': jeepWrangler,
-  'toyota-4runner-trd-pro': toyota4Runner,
-  'chevrolet-colorado-zr2': chevyColorado,
-  'gmc-sierra-at4x': gmcSierra,
-  'nissan-frontier-pro-4x': nissanFrontier,
-  'subaru-outback-wilderness': subaruOutback,
-};
-
-// Color mapping for different brands
-const brandColors: Record<string, string> = {
-  'Ford': '#0066cc',
-  'Ram': '#cc0000',
-  'Jeep': '#2d5016',
-  'Toyota': '#cc0000',
-  'Chevrolet': '#ffcc00',
-  'GMC': '#cc0000',
-  'Nissan': '#003da5',
-  'Subaru': '#0057b8'
-};
-
-// Helper function to get vehicle image
-const getVehicleImage = (brand: string, name: string, image_url?: string) => {
-  if (image_url) return image_url;
-  
-  const key = `${brand.toLowerCase()}-${name.toLowerCase().replace(/\s+/g, '-')}`;
-  return vehicleImages[key] || fordBroncoRaptor; // Default fallback
-};
-
 const VehicleDetail = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const { id } = useParams<{ id: string }>();
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchVehicle = async () => {
-      if (!slug) return;
+      if (!id) return;
       
       try {
         const { data, error } = await supabase
           .from('vehicles')
           .select('*')
-          .eq('slug', slug)
+          .eq('id', id)
           .single();
           
         if (error) {
@@ -103,7 +57,7 @@ const VehicleDetail = () => {
     };
 
     fetchVehicle();
-  }, [slug]);
+  }, [id]);
 
   if (loading) {
     return (
@@ -144,16 +98,15 @@ const VehicleDetail = () => {
     );
   }
 
-  const carColor = brandColors[vehicle.brand] || '#ff4444';
-  const vehicleImageUrl = getVehicleImage(vehicle.brand, vehicle.name, vehicle.image_url);
+  const vehicleImageUrl = vehicle.image_url || '/placeholder.svg';
 
   return (
     <div className="min-h-screen bg-background">
       <SEOHead 
         title={`${vehicle.year} ${vehicle.brand} ${vehicle.name} - Detailed Review`}
-        description={`Complete review of the ${vehicle.year} ${vehicle.brand} ${vehicle.name}. Engine: ${vehicle.engine}, Ground clearance: ${vehicle.ground_clearance}", Towing: ${vehicle.towing_capacity.toLocaleString()} lbs.`}
-        keywords={`${vehicle.brand}, ${vehicle.name}, ${vehicle.year}, ${vehicle.type}, 4x4 vehicle, off-road, review, specs`}
-        url={`/vehicles/${vehicle.slug}`}
+        description={`Complete review of the ${vehicle.year} ${vehicle.brand} ${vehicle.name}. Engine: ${vehicle.engine}, Ground clearance: ${vehicle.ground_clearance}", Towing: ${vehicle.towing_capacity?.toLocaleString()} lbs.`}
+        keywords={`${vehicle.brand}, ${vehicle.name}, ${vehicle.year}, 4x4 vehicle, off-road, review, specs`}
+        url={`/vehicle/${vehicle.id}`}
         type="article"
         image={vehicleImageUrl}
       />
@@ -182,32 +135,32 @@ const VehicleDetail = () => {
                   {vehicle.name}
                 </h1>
                 <p className="text-xl text-muted-foreground mb-6">
-                  Starting at <span className="font-bold text-2xl text-foreground">${vehicle.price.toLocaleString()}</span>
+                  Starting at <span className="font-bold text-2xl text-foreground">${vehicle.price?.toLocaleString()}</span>
                 </p>
               </div>
 
               {/* Key Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-4 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors">
-                  <TrendingUp className="w-6 h-6 mx-auto mb-2 text-primary" />
-                  <p className="text-sm font-medium text-muted-foreground">MPG</p>
-                  <p className="text-lg font-bold">{vehicle.mpg}</p>
+                  <Fuel className="w-6 h-6 mx-auto mb-2 text-primary" />
+                  <p className="text-sm font-medium text-muted-foreground">Economy</p>
+                  <p className="text-lg font-bold">{vehicle.fuel_economy || 'N/A'}</p>
                 </div>
-                  <div className="text-center p-4 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors">
-                    <Mountain className="w-6 h-6 mx-auto mb-2 text-primary" />
-                    <p className="text-sm font-medium text-muted-foreground">Clearance</p>
-                    <p className="text-lg font-bold">{vehicle.ground_clearance}"</p>
-                  </div>
-                  <div className="text-center p-4 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors">
-                    <Wrench className="w-6 h-6 mx-auto mb-2 text-primary" />
-                    <p className="text-sm font-medium text-muted-foreground">Towing</p>
-                    <p className="text-lg font-bold">{vehicle.towing_capacity.toLocaleString()}</p>
-                  </div>
-                  <div className="text-center p-4 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors">
-                    <Users className="w-6 h-6 mx-auto mb-2 text-primary" />
-                    <p className="text-sm font-medium text-muted-foreground">Type</p>
-                    <p className="text-lg font-bold">{vehicle.type}</p>
-                  </div>
+                <div className="text-center p-4 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors">
+                  <Mountain className="w-6 h-6 mx-auto mb-2 text-primary" />
+                  <p className="text-sm font-medium text-muted-foreground">Clearance</p>
+                  <p className="text-lg font-bold">{vehicle.ground_clearance}"</p>
+                </div>
+                <div className="text-center p-4 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors">
+                  <Wrench className="w-6 h-6 mx-auto mb-2 text-primary" />
+                  <p className="text-sm font-medium text-muted-foreground">Towing</p>
+                  <p className="text-lg font-bold">{vehicle.towing_capacity?.toLocaleString()}</p>
+                </div>
+                <div className="text-center p-4 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors">
+                  <Cog className="w-6 h-6 mx-auto mb-2 text-primary" />
+                  <p className="text-sm font-medium text-muted-foreground">Drivetrain</p>
+                  <p className="text-lg font-bold">{vehicle.drivetrain || 'N/A'}</p>
+                </div>
               </div>
 
               {/* Action Buttons */}
@@ -254,9 +207,6 @@ const VehicleDetail = () => {
                             <Car className="w-3 h-3 mr-1" />
                             {vehicle.year}
                           </Badge>
-                          <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 border-green-200">
-                            HD Image
-                          </Badge>
                         </div>
                       </div>
                     </div>
@@ -271,7 +221,7 @@ const VehicleDetail = () => {
       {/* Detailed Information */}
       <div className="container mx-auto px-4 py-16">
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-3 mb-8">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Info className="w-4 h-4" />
               Overview
@@ -279,10 +229,6 @@ const VehicleDetail = () => {
             <TabsTrigger value="performance" className="flex items-center gap-2">
               <Zap className="w-4 h-4" />
               Performance
-            </TabsTrigger>
-            <TabsTrigger value="features" className="flex items-center gap-2">
-              <Cog className="w-4 h-4" />
-              Features
             </TabsTrigger>
             <TabsTrigger value="safety" className="flex items-center gap-2">
               <Shield className="w-4 h-4" />
@@ -305,12 +251,8 @@ const VehicleDetail = () => {
                     <span className="font-semibold">{vehicle.engine}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Type</span>
-                    <span className="font-semibold">{vehicle.type}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tire Size</span>
-                    <span className="font-semibold">{vehicle.tire_size}</span>
+                    <span className="text-muted-foreground">Drivetrain</span>
+                    <span className="font-semibold">{vehicle.drivetrain || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Year</span>
@@ -329,7 +271,7 @@ const VehicleDetail = () => {
                 <CardContent className="space-y-4">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Fuel Economy</span>
-                    <span className="font-semibold">{vehicle.mpg} MPG</span>
+                    <span className="font-semibold">{vehicle.fuel_economy || 'N/A'}</span>
                   </div>
                   {vehicle.engine && (
                     <div className="flex justify-between">
@@ -337,10 +279,6 @@ const VehicleDetail = () => {
                       <span className="font-semibold">{vehicle.engine}</span>
                     </div>
                   )}
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Type</span>
-                    <span className="font-semibold">{vehicle.type}</span>
-                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -362,15 +300,15 @@ const VehicleDetail = () => {
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
-                      <span className="text-lg font-bold text-primary">{vehicle.towing_capacity.toLocaleString()}</span>
+                      <span className="text-lg font-bold text-primary">{vehicle.towing_capacity?.toLocaleString()}</span>
                     </div>
                     <p className="text-sm font-medium text-muted-foreground">Towing (lbs)</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
-                      <span className="text-lg font-bold text-primary">{vehicle.type}</span>
+                      <span className="text-lg font-bold text-primary">{vehicle.drivetrain || 'N/A'}</span>
                     </div>
-                    <p className="text-sm font-medium text-muted-foreground">Vehicle Type</p>
+                    <p className="text-sm font-medium text-muted-foreground">Drivetrain</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
@@ -400,7 +338,7 @@ const VehicleDetail = () => {
                   <CardTitle>Fuel Economy</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-primary mb-2">{vehicle.mpg} MPG</div>
+                  <div className="text-3xl font-bold text-primary mb-2">{vehicle.fuel_economy || 'N/A'}</div>
                   <p className="text-muted-foreground">Combined city/highway fuel efficiency rating</p>
                 </CardContent>
               </Card>
@@ -410,47 +348,11 @@ const VehicleDetail = () => {
                   <CardTitle>Towing Capacity</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-primary mb-2">{vehicle.towing_capacity.toLocaleString()} lbs</div>
+                  <div className="text-3xl font-bold text-primary mb-2">{vehicle.towing_capacity?.toLocaleString()} lbs</div>
                   <p className="text-muted-foreground">Maximum towing capacity when properly equipped</p>
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
-
-          <TabsContent value="features" className="space-y-6">
-            <Card className="border-border/50">
-              <CardHeader>
-                <CardTitle>Standard Features</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                    <div className="w-2 h-2 rounded-full bg-primary"></div>
-                    <span>Advanced 4WD System</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                    <div className="w-2 h-2 rounded-full bg-primary"></div>
-                    <span>Terrain Management System</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                    <div className="w-2 h-2 rounded-full bg-primary"></div>
-                    <span>Hill Descent Control</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                    <div className="w-2 h-2 rounded-full bg-primary"></div>
-                    <span>Skid Plates Protection</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                    <div className="w-2 h-2 rounded-full bg-primary"></div>
-                    <span>All-Terrain Tires</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                    <div className="w-2 h-2 rounded-full bg-primary"></div>
-                    <span>Rock Crawl Mode</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
 
           <TabsContent value="safety" className="space-y-6">
@@ -462,22 +364,22 @@ const VehicleDetail = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                    <Shield className="w-4 h-4 text-primary" />
-                    <span>Advanced Driver Assistance Systems</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                    <Star className="w-5 h-5 text-primary" />
+                    <span>Advanced airbag system</span>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                    <Shield className="w-4 h-4 text-primary" />
-                    <span>Multiple Airbag System</span>
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                    <Star className="w-5 h-5 text-primary" />
+                    <span>Anti-lock braking system</span>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                    <Shield className="w-4 h-4 text-primary" />
-                    <span>Electronic Stability Control</span>
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                    <Star className="w-5 h-5 text-primary" />
+                    <span>Electronic stability control</span>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                    <Shield className="w-4 h-4 text-primary" />
-                    <span>Anti-lock Braking System</span>
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                    <Star className="w-5 h-5 text-primary" />
+                    <span>Traction control system</span>
                   </div>
                 </div>
               </CardContent>
@@ -485,14 +387,11 @@ const VehicleDetail = () => {
 
             <Card className="border-border/50">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Award className="w-5 h-5 text-primary" />
-                  Vehicle Information
-                </CardTitle>
+                <CardTitle>Vehicle Summary</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-primary mb-4">{vehicle.brand} {vehicle.name}</div>
-                <p className="text-muted-foreground">High-quality {vehicle.type.toLowerCase()} built for adventure and reliability</p>
+                <p className="text-muted-foreground">{vehicle.description || 'High-quality vehicle built for adventure and reliability'}</p>
               </CardContent>
             </Card>
           </TabsContent>

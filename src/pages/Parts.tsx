@@ -18,15 +18,14 @@ import AdPlacement from '@/components/AdPlacement';
 
 interface Product {
   id: string;
-  slug: string;
   title: string;
-  category: string;
-  price: number;
-  brand: string;
-  rating: number;
-  image_url: string;
-  amazon_link: string;
-  description: string;
+  category: string | null;
+  price: number | null;
+  brand: string | null;
+  rating: number | null;
+  image_url: string | null;
+  affiliate_link: string | null;
+  description: string | null;
 }
 
 const Parts = () => {
@@ -363,7 +362,7 @@ const Parts = () => {
                     {/* Category Products Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                       {categoryProducts.map((product) => (
-                        <Link key={product.id} to={`/product/${product.slug}`}>
+                        <Link key={product.id} to={`/product/${product.id}`}>
                           <Card className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer">
                             {/* Product Image */}
                             <div className="relative overflow-hidden aspect-square bg-muted/10 p-4">
@@ -479,7 +478,7 @@ const Parts = () => {
               {/* Products Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredProducts.map((product) => (
-                  <Link key={product.id} to={`/product/${product.slug}`}>
+                  <Link key={product.id} to={`/product/${product.id}`}>
                     <Card className="group bg-background border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer">
                       {/* Product Image */}
                       <div className="relative overflow-hidden aspect-square bg-muted/10 p-4">

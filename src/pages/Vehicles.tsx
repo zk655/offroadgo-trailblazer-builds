@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Car, Search, Filter, Star, Fuel, Gauge, TrendingUp, Zap, Shield, Users, Calendar, Award, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Car, Search, Filter, Fuel, Gauge, TrendingUp, Shield, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import PageHero from '@/components/PageHero';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,37 +13,30 @@ import SEOHead from '@/components/SEOHead';
 import Footer from '@/components/Footer';
 import AdSenseAd from '@/components/AdSenseAd';
 import OptimizedImage from '@/components/OptimizedImage';
-
 import { resolveImageUrl } from '@/utils/imageResolver';
 import AdPlacement from '@/components/AdPlacement';
 
 interface Vehicle {
   id: string;
-  slug: string;
   name: string;
   brand: string;
-  type: string;
-  engine: string;
-  clearance?: number;
-  tire_size: string;
-  image_url: string;
-  year: number;
-  price: number;
-  mpg: number;
-  towing_capacity: number;
-  ground_clearance: number;
+  engine: string | null;
+  image_url: string | null;
+  year: number | null;
+  price: number | null;
+  fuel_economy: string | null;
+  towing_capacity: number | null;
+  ground_clearance: number | null;
+  drivetrain: string | null;
+  description: string | null;
 }
 
-// Helper function to get vehicle image
-const getVehicleImage = (brand: string, name: string, image_url?: string) => {
+const getVehicleImage = (brand: string, name: string, image_url?: string | null) => {
   if (image_url) {
     return resolveImageUrl(image_url);
   }
-  
   return '/placeholder.svg';
 };
-
-// Remove the hardcoded vehicle data - now using database
 
 const Vehicles = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -51,7 +44,6 @@ const Vehicles = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [brandFilter, setBrandFilter] = useState('all');
-  const [typeFilter, setTypeFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const vehiclesPerPage = 8;
 
@@ -83,7 +75,7 @@ const Vehicles = () => {
 
   useEffect(() => {
     filterVehicles();
-  }, [vehicles, searchTerm, brandFilter, typeFilter]);
+  }, [vehicles, searchTerm, brandFilter]);
 
   const filterVehicles = () => {
     let filtered = vehicles;
@@ -99,14 +91,11 @@ const Vehicles = () => {
       filtered = filtered.filter(vehicle => vehicle.brand === brandFilter);
     }
 
-    if (typeFilter !== 'all') {
-      filtered = filtered.filter(vehicle => vehicle.type === typeFilter);
-    }
-
     setFilteredVehicles(filtered);
   };
 
-  const formatPrice = (price: number) => {
+  const formatPrice = (price: number | null) => {
+    if (!price) return 'N/A';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
@@ -114,14 +103,14 @@ const Vehicles = () => {
     }).format(price);
   };
 
-  const getDifficultyColor = (clearance: number) => {
+  const getDifficultyColor = (clearance: number | null) => {
+    if (!clearance) return 'bg-gray-500';
     if (clearance >= 11) return 'bg-red-500';
     if (clearance >= 9) return 'bg-orange-500';
     return 'bg-green-500';
   };
 
   const uniqueBrands = [...new Set(vehicles.map(v => v.brand))];
-  const uniqueTypes = [...new Set(vehicles.map(v => v.type))];
 
   // Pagination logic
   const totalPages = Math.ceil(filteredVehicles.length / vehiclesPerPage);
@@ -137,7 +126,7 @@ const Vehicles = () => {
   // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, brandFilter, typeFilter]);
+  }, [searchTerm, brandFilter]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -189,18 +178,6 @@ const Vehicles = () => {
               <SelectItem value="all">All Brands</SelectItem>
               {uniqueBrands.map(brand => (
                 <SelectItem key={brand} value={brand}>{brand}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              {uniqueTypes.map(type => (
-                <SelectItem key={type} value={type}>{type}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -300,7 +277,7 @@ const Vehicles = () => {
                       <div className="flex items-center gap-3 text-sm text-muted-foreground mt-2">
                         <span className="flex items-center gap-1">
                           <Car className="w-3 h-3" />
-                          {vehicle.type}
+                          {vehicle.drivetrain || 'N/A'}
                         </span>
                         <span>•</span>
                         <span>{vehicle.year}</span>
@@ -321,8 +298,8 @@ const Vehicles = () => {
                           <span className="font-bold">{vehicle.engine}</span>
                         </div>
                         <div className="flex justify-between items-center p-2 rounded-lg bg-card/50">
-                          <span className="text-muted-foreground font-medium">Type:</span>
-                          <span className="font-bold">{vehicle.type}</span>
+                          <span className="text-muted-foreground font-medium">Drivetrain:</span>
+                          <span className="font-bold">{vehicle.drivetrain || 'N/A'}</span>
                         </div>
                       </div>
                     </div>
@@ -334,8 +311,8 @@ const Vehicles = () => {
                           <Fuel className="h-3.5 w-3.5 text-primary" />
                         </div>
                         <div>
-                          <p className="text-muted-foreground font-medium">MPG</p>
-                          <p className="font-bold text-foreground">{vehicle.mpg}</p>
+                          <p className="text-muted-foreground font-medium">Economy</p>
+                          <p className="font-bold text-foreground">{vehicle.fuel_economy || 'N/A'}</p>
                         </div>
                       </div>
                       
@@ -345,7 +322,7 @@ const Vehicles = () => {
                         </div>
                         <div>
                           <p className="text-muted-foreground font-medium">Towing</p>
-                          <p className="font-bold text-foreground">{(vehicle.towing_capacity / 1000).toFixed(1)}K lbs</p>
+                          <p className="font-bold text-foreground">{vehicle.towing_capacity ? `${(vehicle.towing_capacity / 1000).toFixed(1)}K lbs` : 'N/A'}</p>
                         </div>
                       </div>
                       
@@ -361,11 +338,11 @@ const Vehicles = () => {
 
                       <div className="flex items-center gap-2 p-3 rounded-xl bg-gradient-to-br from-muted/60 to-muted/40 hover:from-muted/80 hover:to-muted/60 transition-all duration-300 border border-border/50">
                         <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center">
-                          <Zap className="h-3.5 w-3.5 text-primary" />
+                          <Car className="h-3.5 w-3.5 text-primary" />
                         </div>
                         <div>
-                          <p className="text-muted-foreground font-medium">Tires</p>
-                          <p className="font-bold text-foreground text-xs">{vehicle.tire_size}</p>
+                          <p className="text-muted-foreground font-medium">Brand</p>
+                          <p className="font-bold text-foreground text-xs">{vehicle.brand}</p>
                         </div>
                       </div>
                     </div>
@@ -373,12 +350,12 @@ const Vehicles = () => {
                     {/* Enhanced Action Buttons */}
                     <div className="flex gap-3">
                       <Button asChild variant="outline" size="sm" className="flex-1 group-hover:border-primary/60 group-hover:bg-primary/5 text-xs h-10 rounded-xl font-semibold transition-all duration-300">
-                        <Link to={`/vehicle/${vehicle.slug}`}>
+                        <Link to={`/vehicle/${vehicle.id}`}>
                           View Details
                         </Link>
                       </Button>
                       <Button asChild size="sm" className="flex-1 text-xs h-10 rounded-xl font-semibold bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 transition-all duration-300">
-                        <Link to={`/compare?vehicles=${vehicle.slug}`}>
+                        <Link to={`/compare?vehicles=${vehicle.id}`}>
                           Compare
                         </Link>
                       </Button>
@@ -395,63 +372,47 @@ const Vehicles = () => {
           <div className="flex justify-center items-center gap-2 mt-8">
             <Button
               variant="outline"
+              size="sm"
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              size="sm"
             >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Previous
+              <ChevronLeft className="h-4 w-4" />
             </Button>
             
-            <div className="flex gap-1">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <Button
-                  key={page}
-                  variant={currentPage === page ? "default" : "outline"}
-                  onClick={() => handlePageChange(page)}
-                  size="sm"
-                  className={`min-w-10 ${currentPage === page ? 'bg-primary text-primary-foreground' : ''}`}
-                >
-                  {page}
-                </Button>
-              ))}
-            </div>
-
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Button
+                key={page}
+                variant={currentPage === page ? "default" : "outline"}
+                size="sm"
+                onClick={() => handlePageChange(page)}
+              >
+                {page}
+              </Button>
+            ))}
+            
             <Button
               variant="outline"
+              size="sm"
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              size="sm"
             >
-              Next
-              <ChevronRight className="h-4 w-4 ml-1" />
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         )}
 
-        {filteredVehicles.length === 0 && (
-          <div className="text-center py-12">
-            <Car className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No vehicles found</h3>
-            <p className="text-muted-foreground">
-              Try adjusting your search or filter criteria.
-            </p>
-          </div>
-        )}
-
-        {/* Ad Section 3 - After Vehicle Grid */}
-        <section className="py-4 md:py-6 bg-muted/5 mb-8">
+        {/* Ad Section 3 - After Grid */}
+        <section className="py-4 md:py-6 bg-muted/5">
           <div className="container mx-auto px-4">
-            <div className="flex justify-center">
-              <AdSenseAd 
-                slot="8773228071"
-                layout="in-article"
-                className="w-full max-w-4xl"
-              />
-            </div>
+            <AdSenseAd 
+              slot="8773228071"
+              layout="in-article"
+              className="w-full"
+            />
           </div>
         </section>
       </div>
+      
       <Footer />
     </div>
   );

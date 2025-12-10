@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, MapPin, Clock, Users, Star, Navigation as NavigationIcon, Mountain, Gauge } from 'lucide-react';
+import { ArrowLeft, MapPin, Star, Navigation as NavigationIcon, Mountain, Gauge } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -11,37 +11,35 @@ import SocialShare from '@/components/SocialShare';
 
 interface Trail {
   id: string;
-  slug: string;
   name: string;
-  location: string;
-  difficulty: string;
-  distance: number;
-  elevation_gain: number;
-  terrain: string;
-  description: string;
-  image_url: string;
-  latitude: number;
-  longitude: number;
+  location: string | null;
+  difficulty: string | null;
+  length: number | null;
+  elevation_gain: number | null;
+  description: string | null;
+  image_url: string | null;
+  latitude: number | null;
+  longitude: number | null;
 }
 
 const TrailDetail = () => {
-  const { slug } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   const [trail, setTrail] = useState<Trail | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (slug) {
-      fetchTrail(slug);
+    if (id) {
+      fetchTrail(id);
     }
-  }, [slug]);
+  }, [id]);
 
-  const fetchTrail = async (trailSlug: string) => {
+  const fetchTrail = async (trailId: string) => {
     try {
       const { data, error } = await supabase
         .from('trails')
         .select('*')
-        .eq('slug', trailSlug)
+        .eq('id', trailId)
         .single();
 
       if (error) throw error;
@@ -54,53 +52,31 @@ const TrailDetail = () => {
   };
 
   const getImageUrl = (trail: Trail) => {
-    // Use placeholder images based on terrain type
-    const placeholderImages = {
-      'Mountain': 'photo-1469474968028-56623f02e42e',
-      'Alpine': 'photo-1470071459604-3b5ec3a7fe05',
-      'Sandstone': 'photo-1426604966848-d7adac402bff',
-      'Rock': 'photo-1513836279014-a89f7a76ae86',
-      'Desert': 'photo-1472396961693-142e6e269027',
-      'Forest': 'photo-1509316975850-ff9c5deb0cd9',
-      'Canyon': 'photo-1482938289607-e9573fc25ebb',
-      'Coastal': 'photo-1500375592092-40eb2168fd21',
-      'Water': 'photo-1506744038136-46273834b3fb',
-      'Hoodoos': 'photo-1426604966848-d7adac402bff',
-      'Slot Canyon': 'photo-1482938289607-e9573fc25ebb',
-      'Geothermal': 'photo-1469474968028-56623f02e42e',
-      'Volcanic Rock': 'photo-1513836279014-a89f7a76ae86',
-      'Red Rock': 'photo-1426604966848-d7adac402bff',
-      'Glacier': 'photo-1470071459604-3b5ec3a7fe05'
-    };
-    
-    const terrainKey = Object.keys(placeholderImages).find(key => 
-      trail.terrain?.toLowerCase().includes(key.toLowerCase())
-    );
-    
-    const fallbackImage = placeholderImages[terrainKey as keyof typeof placeholderImages] || 'photo-1469474968028-56623f02e42e';
-    
-    return `https://images.unsplash.com/${fallbackImage}?w=1200&h=800&fit=crop`;
+    if (trail.image_url) return trail.image_url;
+    return `https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1200&h=800&fit=crop`;
   };
 
-  const getDifficultyColor = (difficulty: string) => {
+  const getDifficultyColor = (difficulty: string | null) => {
     switch (difficulty?.toLowerCase()) {
       case 'easy':
+      case 'beginner':
         return 'bg-green-500 text-white';
       case 'moderate':
+      case 'intermediate':
         return 'bg-orange-500 text-white';
       case 'difficult':
-        return 'bg-red-500 text-white';
       case 'expert':
-        return 'bg-purple-500 text-white';
+        return 'bg-red-500 text-white';
       default:
         return 'bg-gray-500 text-white';
     }
   };
 
-  const getEstimatedDuration = (distance: number, difficulty: string) => {
+  const getEstimatedDuration = (length: number | null, difficulty: string | null) => {
+    if (!length) return 'Unknown';
     const baseSpeed = difficulty?.toLowerCase() === 'difficult' || difficulty?.toLowerCase() === 'expert' ? 2 : 
-                     difficulty?.toLowerCase() === 'moderate' ? 3 : 4; // mph
-    const hours = Math.round(distance / baseSpeed);
+                     difficulty?.toLowerCase() === 'moderate' ? 3 : 4;
+    const hours = Math.round(length / baseSpeed);
     return hours <= 1 ? '1-2 hours' : `${Math.max(2, hours-1)}-${hours+1} hours`;
   };
 
@@ -172,7 +148,7 @@ const TrailDetail = () => {
                   {trail.location}
                 </div>
                 <Badge className={getDifficultyColor(trail.difficulty)}>
-                  {trail.difficulty}
+                  {trail.difficulty || 'Unknown'}
                 </Badge>
               </div>
             </div>
@@ -205,12 +181,8 @@ const TrailDetail = () => {
                         </h3>
                         <ul className="space-y-2 text-sm">
                           <li className="flex items-center gap-2">
-                            <Mountain className="w-4 h-4 text-muted-foreground" />
-                            {trail.terrain} terrain
-                          </li>
-                          <li className="flex items-center gap-2">
                             <NavigationIcon className="w-4 h-4 text-muted-foreground" />
-                            {trail.distance} miles total distance
+                            {trail.length} miles total length
                           </li>
                           <li className="flex items-center gap-2">
                             <Gauge className="w-4 h-4 text-muted-foreground" />
@@ -264,10 +236,6 @@ const TrailDetail = () => {
                         <p className="text-sm text-muted-foreground mb-2">Full Location</p>
                         <p>{trail.location}</p>
                       </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-2">Terrain Type</p>
-                        <Badge variant="outline">{trail.terrain}</Badge>
-                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -281,8 +249,8 @@ const TrailDetail = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Distance</span>
-                      <span className="font-semibold">{trail.distance} miles</span>
+                      <span className="text-muted-foreground">Length</span>
+                      <span className="font-semibold">{trail.length} miles</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Elevation Gain</span>
@@ -290,16 +258,12 @@ const TrailDetail = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Estimated Duration</span>
-                      <span className="font-semibold">{getEstimatedDuration(trail.distance, trail.difficulty)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Terrain</span>
-                      <span className="font-semibold">{trail.terrain}</span>
+                      <span className="font-semibold">{getEstimatedDuration(trail.length, trail.difficulty)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Difficulty</span>
                       <Badge className={getDifficultyColor(trail.difficulty)} variant="secondary">
-                        {trail.difficulty}
+                        {trail.difficulty || 'Unknown'}
                       </Badge>
                     </div>
                   </CardContent>
@@ -322,8 +286,8 @@ const TrailDetail = () => {
                       <div className="flex justify-center pt-2">
                         <SocialShare
                           title={trail.name}
-                          excerpt={`Check out the ${trail.name} trail in ${trail.location}. ${trail.difficulty} difficulty, ${trail.distance} miles of adventure!`}
-                          url={`/trail/${trail.slug}`}
+                          excerpt={`Check out the ${trail.name} trail in ${trail.location}. ${trail.difficulty} difficulty, ${trail.length} miles of adventure!`}
+                          url={`/trail/${trail.id}`}
                           image={getImageUrl(trail)}
                           variant="button"
                           size="sm"
