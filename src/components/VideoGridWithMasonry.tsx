@@ -11,21 +11,16 @@ import { AlertCircle, Loader2 } from 'lucide-react';
 interface Video {
   id: string;
   title: string;
-  description: string;
-  slug: string;
-  thumbnail_url: string;
-  video_url: string;
-  duration: number;
-  tags: string[];
-  category: string;
-  view_count: number;
-  like_count: number;
-  share_count: number;
-  save_count: number;
-  is_featured: boolean;
-  is_trending: boolean;
-  created_at: string;
-  published_at: string;
+  description: string | null;
+  thumbnail_url: string | null;
+  video_url: string | null;
+  duration: number | null;
+  tags: string[] | null;
+  category: string | null;
+  views: number | null;
+  likes: number | null;
+  status: string | null;
+  created_at: string | null;
 }
 
 interface VideoGridWithMasonryProps {
@@ -55,7 +50,7 @@ const VideoGridWithMasonry: React.FC<VideoGridWithMasonryProps> = ({
 
     // Apply search filter
     if (searchQuery) {
-      query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,tags.cs.{${searchQuery}}`);
+      query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
     }
 
     // Apply category filter
@@ -65,17 +60,14 @@ const VideoGridWithMasonry: React.FC<VideoGridWithMasonryProps> = ({
 
     // Apply tag filters
     if (selectedTags.length > 0) {
-      const tagFilters = selectedTags.map(tag => `tags.cs.{${tag}}`).join(',');
-      query = query.or(tagFilters);
+      query = query.overlaps('tags', selectedTags);
     }
 
     // Apply sorting
     switch (sortBy) {
       case 'trending':
-        query = query.order('view_count', { ascending: false });
-        break;
       case 'most_viewed':
-        query = query.order('view_count', { ascending: false });
+        query = query.order('views', { ascending: false });
         break;
       case 'newest':
       default:
@@ -141,27 +133,22 @@ const VideoGridWithMasonry: React.FC<VideoGridWithMasonryProps> = ({
   };
 
   // Handle video interactions
-  const handleVideoInteraction = async (videoId: string, type: 'like' | 'save' | 'share') => {
+  const handleVideoInteraction = async (videoId: string, type: 'like' | 'view') => {
     try {
-      // Get current count and increment
-      const { data: currentVideo } = await supabase
-        .from('videos')
-        .select(`${type}_count`)
-        .eq('id', videoId)
-        .single();
-
+      const allVideos = data?.pages.flatMap(page => page) || [];
+      const currentVideo = allVideos.find(v => v.id === videoId);
+      
       if (currentVideo) {
+        const field = type === 'like' ? 'likes' : 'views';
         const { error } = await supabase
           .from('videos')
           .update({ 
-            [`${type}_count`]: (currentVideo[`${type}_count`] || 0) + 1
+            [field]: (currentVideo[field] || 0) + 1
           })
           .eq('id', videoId);
 
         if (error) throw error;
       }
-
-      if (error) throw error;
     } catch (error) {
       console.error(`Error updating ${type} count:`, error);
     }
@@ -198,17 +185,24 @@ const VideoGridWithMasonry: React.FC<VideoGridWithMasonryProps> = ({
     );
   }
 
-  // Flatten all pages of videos
+  // Flatten all pages of videos and map to expected format
   const allVideos = data?.pages.flatMap(page => page) || [];
+  const mappedVideos = allVideos.map(video => ({
+    ...video,
+    view_count: video.views || 0,
+    like_count: video.likes || 0,
+    share_count: 0,
+    save_count: 0,
+  }));
 
   return (
     <>
       <VideoGridMasonry
-        videos={allVideos}
-        onPlay={handleVideoPlay}
+        videos={mappedVideos}
+        onPlay={(video) => handleVideoPlay(video as unknown as Video)}
         onLike={(videoId) => handleVideoInteraction(videoId, 'like')}
-        onSave={(videoId) => handleVideoInteraction(videoId, 'save')}
-        onShare={(videoId) => handleVideoInteraction(videoId, 'share')}
+        onSave={() => {}}
+        onShare={() => {}}
         loading={isLoading}
       />
 
@@ -230,20 +224,11 @@ const VideoGridWithMasonry: React.FC<VideoGridWithMasonryProps> = ({
               <div className="flex-1 bg-black">
                 <VideoPlayerAdvanced
                   videoId={selectedVideo.id}
-                  videoUrl={selectedVideo.video_url}
-                  thumbnailUrl={selectedVideo.thumbnail_url}
+                  videoUrl={selectedVideo.video_url || ''}
+                  thumbnailUrl={selectedVideo.thumbnail_url || ''}
                   title={selectedVideo.title}
                   onViewTracked={() => {
-                    // Update view count locally
-                    if (data) {
-                      const updatedPages = data.pages.map(page =>
-                        page.map(video =>
-                          video.id === selectedVideo.id
-                            ? { ...video, view_count: video.view_count + 1 }
-                            : video
-                        )
-                      );
-                    }
+                    handleVideoInteraction(selectedVideo.id, 'view');
                   }}
                 />
               </div>
@@ -254,8 +239,8 @@ const VideoGridWithMasonry: React.FC<VideoGridWithMasonryProps> = ({
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span>Views: {selectedVideo.view_count?.toLocaleString() || 0}</span>
-                    <span>Likes: {selectedVideo.like_count?.toLocaleString() || 0}</span>
+                    <span>Views: {(selectedVideo.views || 0).toLocaleString()}</span>
+                    <span>Likes: {(selectedVideo.likes || 0).toLocaleString()}</span>
                   </div>
                   
                   <div className="flex flex-wrap gap-2">

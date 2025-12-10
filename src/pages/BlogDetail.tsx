@@ -20,14 +20,16 @@ import '../styles/blog.css';
 interface BlogPost {
   id: string;
   title: string;
-  slug: string;
-  content: string;
-  excerpt: string;
-  cover_image: string;
-  author: string;
-  published_at: string;
-  tags: string[];
-  external_url: string;
+  content: string | null;
+  excerpt: string | null;
+  image_url: string | null;
+  thumbnail_url: string | null;
+  author: string | null;
+  created_at: string | null;
+  tags: string[] | null;
+  published: boolean | null;
+  seo_title: string | null;
+  seo_description: string | null;
 }
 
 const BlogDetail = () => {
@@ -45,32 +47,36 @@ const BlogDetail = () => {
 
   const fetchPost = async () => {
     try {
+      // Try to find by ID first (slug might be an ID)
       const { data: localPost, error: localError } = await supabase
         .from('blogs')
         .select('*')
-        .eq('slug', slug)
+        .eq('id', slug)
         .single();
 
       if (localPost && !localError) {
         setPost(localPost);
-        calculateReadingTime(localPost.content);
-        fetchRelatedPosts(localPost.tags);
+        calculateReadingTime(localPost.content || '');
+        fetchRelatedPosts(localPost.tags || []);
       } else {
+        // Fallback to sample post
         const samplePost: BlogPost = {
           id: '1',
           title: getPostTitle(slug),
-          slug: slug || '',
           content: generateDetailedContent(slug),
           excerpt: getPostExcerpt(slug),
-          cover_image: getPostImage(slug),
+          image_url: getPostImage(slug),
+          thumbnail_url: null,
           author: 'Off-Road Expert',
-          published_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
           tags: getPostTags(slug),
-          external_url: ''
+          published: true,
+          seo_title: null,
+          seo_description: null,
         };
         setPost(samplePost);
-        calculateReadingTime(samplePost.content);
-        fetchRelatedPosts(samplePost.tags);
+        calculateReadingTime(samplePost.content || '');
+        fetchRelatedPosts(samplePost.tags || []);
       }
     } catch (error) {
       console.error('Error fetching post:', error);
@@ -79,7 +85,8 @@ const BlogDetail = () => {
     }
   };
 
-  const getPostImage = (slug: string) => {
+  const getPostImage = (slug: string | undefined) => {
+    if (!slug) return '/src/assets/blog/ford-bronco-raptor.jpg';
     const imageMap: Record<string, string> = {
       'ford-bronco-raptor-2024-review': '/src/assets/blog/ford-bronco-raptor.jpg',
       'jeep-wrangler-modifications-guide': '/src/assets/blog/jeep-modifications.jpg',
@@ -94,7 +101,8 @@ const BlogDetail = () => {
     return imageMap[slug] || '/src/assets/blog/ford-bronco-raptor.jpg';
   };
 
-  const getPostTitle = (slug: string) => {
+  const getPostTitle = (slug: string | undefined) => {
+    if (!slug) return 'The Ultimate Guide to Off-Road Adventures';
     const titleMap: Record<string, string> = {
       'ford-bronco-raptor-2024-review': 'New 2024 Ford Bronco Raptor: Ultimate Off-Road Beast',
       'jeep-wrangler-modifications-guide': 'Top 10 Must-Have Modifications for Your Jeep Wrangler',
@@ -109,7 +117,8 @@ const BlogDetail = () => {
     return titleMap[slug] || 'The Ultimate Guide to Off-Road Adventures';
   };
 
-  const getPostExcerpt = (slug: string) => {
+  const getPostExcerpt = (slug: string | undefined) => {
+    if (!slug) return 'Discover everything you need to know about off-road adventures.';
     const excerptMap: Record<string, string> = {
       'ford-bronco-raptor-2024-review': 'Comprehensive review of the 2024 Ford Bronco Raptor, featuring enhanced suspension, powerful engine, and advanced off-road technology.',
       'jeep-wrangler-modifications-guide': 'Transform your Jeep Wrangler with these essential modifications that enhance performance, capability, and style.',
@@ -120,7 +129,8 @@ const BlogDetail = () => {
     return excerptMap[slug] || 'Discover everything you need to know about off-road adventures, from choosing the right vehicle to mastering challenging terrains.';
   };
 
-  const getPostTags = (slug: string) => {
+  const getPostTags = (slug: string | undefined) => {
+    if (!slug) return ['adventure', 'off-road', 'guide', '4x4'];
     const tagsMap: Record<string, string[]> = {
       'ford-bronco-raptor-2024-review': ['vehicles', 'ford', 'bronco', 'review'],
       'jeep-wrangler-modifications-guide': ['modifications', 'jeep', 'wrangler', 'upgrade'],
@@ -131,80 +141,8 @@ const BlogDetail = () => {
     return tagsMap[slug] || ['adventure', 'off-road', 'guide', '4x4'];
   };
 
-  const generateDetailedContent = (slug: string) => {
-    const contentMap: Record<string, string> = {
-      'best-tires-rock-crawling-2024': `
-        <div className="space-y-8">
-          <div className="text-center mb-8">
-            <img src="https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800&h=400&fit=crop&crop=center" alt="Rock crawling tires" className="w-full h-64 object-cover rounded-lg shadow-lg mb-4" />
-            <p className="text-sm text-muted-foreground">The right tires make all the difference in rock crawling performance</p>
-          </div>
-
-          <h2 className="text-3xl font-bold text-foreground mb-6">Best Tires for Rock Crawling in 2024</h2>
-          <p className="text-lg leading-relaxed mb-8 text-foreground">Rock crawling demands specific tire characteristics that differ from other forms of off-roading. This comprehensive guide covers the top tire choices for 2024, focusing on grip, durability, and performance on technical terrain.</p>
-
-          <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 rounded-lg mb-8 border">
-            <h3 className="text-2xl font-bold mb-4 text-foreground">Top Rock Crawling Tires</h3>
-            <div className="grid gap-6">
-              <div className="bg-card p-4 rounded-lg border">
-                <h4 className="text-xl font-semibold mb-3 text-foreground">BFGoodrich Krawler T/A KX</h4>
-                <p className="text-muted-foreground mb-2">The gold standard for rock crawling with sticky compound and aggressive tread pattern.</p>
-                <ul className="list-disc ml-6 space-y-1 text-muted-foreground">
-                  <li>Available sizes: 35" to 43"</li>
-                  <li>DOT approved for street use</li>
-                  <li>Price range: $400-800 per tire</li>
-                  <li>Best for: Serious rock crawling and competition</li>
-                </ul>
-              </div>
-              
-              <div className="bg-card p-4 rounded-lg border">
-                <h4 className="text-xl font-semibold mb-3 text-foreground">Maxxis Creepy Crawler</h4>
-                <p className="text-muted-foreground mb-2">Competition-grade tire with maximum grip for extreme terrain.</p>
-                <ul className="list-disc ml-6 space-y-1 text-muted-foreground">
-                  <li>Super soft compound for maximum grip</li>
-                  <li>Bias-ply construction for flexibility</li>
-                  <li>Competition use only (not street legal)</li>
-                  <li>Price range: $500-900 per tire</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-muted p-6 rounded-lg border-l-4 border-primary">
-            <h2 className="text-2xl font-bold mb-4 text-foreground">Selection Tips</h2>
-            <ul className="list-disc ml-6 space-y-2 text-muted-foreground">
-              <li>Prioritize compound softness over tread pattern</li>
-              <li>Consider bias-ply for maximum conformability</li>
-              <li>Match tire size to your vehicle's capabilities</li>
-              <li>Budget for frequent replacement due to wear</li>
-            </ul>
-          </div>
-        </div>
-      `,
-      'jeep-wrangler-modifications-guide': `
-        <div className="space-y-8">
-          <h2 className="text-3xl font-bold text-foreground mb-6">Ultimate Jeep Wrangler Modification Guide</h2>
-          <p className="text-lg leading-relaxed mb-8 text-foreground">Transform your Wrangler with these essential modifications for enhanced performance and capability.</p>
-          
-          <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 rounded-lg mb-8 border">
-            <h3 className="text-2xl font-bold mb-4 text-foreground">1. Lift Kit - Foundation Upgrade</h3>
-            <p className="text-base leading-relaxed mb-4 text-foreground">A quality lift kit provides increased ground clearance and allows for larger tires. Options range from budget 2-3 inch lifts to extreme 6+ inch systems.</p>
-          </div>
-          
-          <div className="bg-gradient-to-r from-accent/10 to-primary/10 p-6 rounded-lg mb-8 border">
-            <h3 className="text-2xl font-bold mb-4 text-foreground">2. Larger Tires - Maximum Traction</h3>
-            <p className="text-base leading-relaxed mb-4 text-foreground">Upgrade to 33", 35", or 37" tires for improved traction. Each size requires different modifications.</p>
-          </div>
-          
-          <div className="bg-muted p-6 rounded-lg border-l-4 border-primary">
-            <h4 className="text-xl font-bold mb-3 text-foreground">Professional Installation Recommended</h4>
-            <p className="text-foreground">Complex modifications should be installed by professionals to ensure safety and proper function.</p>
-          </div>
-        </div>
-      `
-    };
-
-    return contentMap[slug] || `
+  const generateDetailedContent = (slug: string | undefined) => {
+    return `
       <div className="space-y-6">
         <h2 className="text-2xl font-bold mb-4 text-foreground">Comprehensive Off-Road Guide</h2>
         <p className="text-base leading-relaxed mb-6 text-foreground">This detailed guide covers everything you need to know about off-road adventures, providing expert insights and practical advice for enthusiasts of all skill levels.</p>
@@ -234,7 +172,8 @@ const BlogDetail = () => {
       const { data, error } = await supabase
         .from('blogs')
         .select('*')
-        .neq('slug', slug)
+        .neq('id', slug)
+        .eq('published', true)
         .limit(3);
 
       if (!error && data) {
@@ -245,7 +184,8 @@ const BlogDetail = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -258,7 +198,7 @@ const BlogDetail = () => {
       try {
         await navigator.share({
           title: post.title,
-          text: post.excerpt,
+          text: post.excerpt || '',
           url: window.location.href,
         });
       } catch (error) {
@@ -310,18 +250,18 @@ const BlogDetail = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead 
-        title={post.title}
-        description={post.excerpt}
-        keywords={post.tags?.join(', ')}
-        url={`/blog/${post.slug}`}
-        image={post.cover_image}
+        title={post.seo_title || post.title}
+        description={post.seo_description || post.excerpt || ''}
+        keywords={post.tags?.join(', ') || ''}
+        url={`/blog/${post.id}`}
+        image={post.image_url || ''}
         type="article"
         article={{
-          author: post.author,
-          publishedTime: post.published_at,
-          modifiedTime: post.published_at,
+          author: post.author || 'Off-Road Expert',
+          publishedTime: post.created_at || '',
+          modifiedTime: post.created_at || '',
           section: "Off-Road",
-          tags: post.tags
+          tags: post.tags || []
         }}
       />
       
@@ -329,14 +269,14 @@ const BlogDetail = () => {
         type="Article"
         data={{
           headline: post.title,
-          description: post.excerpt,
-          image: post.cover_image,
-          author: post.author,
-          datePublished: post.published_at,
-          dateModified: post.published_at,
-          url: `https://offroadgo.com/blog/${post.slug}`,
+          description: post.excerpt || '',
+          image: post.image_url || '',
+          author: post.author || 'Off-Road Expert',
+          datePublished: post.created_at || '',
+          dateModified: post.created_at || '',
+          url: `https://offroadgo.com/blog/${post.id}`,
           category: "Off-Road",
-          keywords: post.tags?.join(', ')
+          keywords: post.tags?.join(', ') || ''
         }}
       />
       
@@ -355,7 +295,7 @@ const BlogDetail = () => {
             <Breadcrumb 
               items={[
                 { name: 'Blog', href: '/blog' },
-                { name: post.title, href: `/blog/${post.slug}` }
+                { name: post.title, href: `/blog/${post.id}` }
               ]}
             />
           </nav>
@@ -376,11 +316,11 @@ const BlogDetail = () => {
             <div className="flex items-center gap-6 text-muted-foreground mb-6">
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4" />
-                <span>{post.author}</span>
+                <span>{post.author || 'Off-Road Expert'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                <span>{formatDate(post.published_at)}</span>
+                <span>{formatDate(post.created_at)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
@@ -388,10 +328,10 @@ const BlogDetail = () => {
               </div>
             </div>
 
-            {post.cover_image && (
+            {post.image_url && (
               <div className="mb-8">
                 <img 
-                  src={post.cover_image} 
+                  src={post.image_url} 
                   alt={post.title}
                   className="w-full h-64 md:h-96 object-cover rounded-lg"
                 />
@@ -410,64 +350,48 @@ const BlogDetail = () => {
 
           <div className="prose prose-lg max-w-none mb-12">
             <div 
-              className="blog-content" 
-              dangerouslySetInnerHTML={{ 
-                __html: sanitizeHtml(post.content 
-                  ? post.content.replace(/<pre class="ql-syntax"[^>]*>/g, '<div>').replace(/<\/pre>/g, '</div>')
-                  : generateDetailedContent(post.slug))
-              }}
+              className="blog-content"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content || '') }}
             />
           </div>
 
-          {/* Ad Section - After Content */}
-          <div className="py-4 mb-8">
-            <AdSenseAd 
-              slot="2268201929"
-              layout="in-article"
-              className="w-full max-w-4xl"
-            />
-          </div>
+          <Separator className="my-8" />
 
-          <div className="flex items-center gap-4 py-6 border-t border-b mb-8">
-            <span className="text-sm font-medium">Share this article:</span>
-            <SocialShare
+          {/* Social Share */}
+          <div className="flex items-center justify-between mb-12">
+            <div className="flex items-center gap-2">
+              <Heart className="h-5 w-5 text-red-500" />
+              <span className="text-sm text-muted-foreground">Share this article</span>
+            </div>
+            <SocialShare 
               title={post.title}
-              excerpt={post.excerpt}
-              url={`/blog/${post.slug}`}
-              image={post.cover_image}
+              excerpt={post.excerpt || ''}
+              url={`/blog/${post.id}`}
+              image={post.image_url || ''}
             />
           </div>
 
+          {/* Related Posts */}
           {relatedPosts.length > 0 && (
             <section className="mb-12">
               <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
-              <div className="grid md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {relatedPosts.map((relatedPost) => (
-                  <Card key={relatedPost.id} className="hover:shadow-lg transition-shadow">
-                    <CardHeader className="p-0">
-                      {relatedPost.cover_image && (
+                  <Link key={relatedPost.id} to={`/blog/${relatedPost.id}`}>
+                    <Card className="hover:shadow-lg transition-shadow">
+                      {relatedPost.image_url && (
                         <img 
-                          src={relatedPost.cover_image} 
+                          src={relatedPost.image_url}
                           alt={relatedPost.title}
-                          className="w-full h-48 object-cover rounded-t-lg"
+                          className="w-full h-32 object-cover rounded-t-lg"
                         />
                       )}
-                    </CardHeader>
-                    <CardContent className="p-6">
-                      <h3 className="font-semibold mb-2 line-clamp-2">
-                        {relatedPost.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                        {relatedPost.excerpt}
-                      </p>
-                      <Button asChild variant="outline" size="sm">
-                        <Link to={`/blog/${relatedPost.slug}`}>
-                          Read More
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </CardContent>
-                  </Card>
+                      <CardContent className="p-4">
+                        <h3 className="font-semibold line-clamp-2 mb-2">{relatedPost.title}</h3>
+                        <p className="text-sm text-muted-foreground line-clamp-2">{relatedPost.excerpt}</p>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             </section>

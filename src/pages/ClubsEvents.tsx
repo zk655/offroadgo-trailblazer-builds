@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
@@ -16,34 +16,28 @@ import AdPlacement from '@/components/AdPlacement';
 interface Club {
   id: string;
   name: string;
-  location: string;
-  country: string;
-  description: string;
-  website_url: string;
-  contact_email: string;
-  club_type: string;
-  founded_year: number;
-  member_count: number;
-  image_url: string;
+  location: string | null;
+  description: string | null;
+  website_url: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+  type: string | null;
+  member_count: number | null;
+  image_url: string | null;
 }
 
 interface Event {
   id: string;
   title: string;
-  description: string;
-  event_type: string;
-  start_date: string;
-  end_date: string;
-  location: string;
-  country: string;
-  venue: string;
-  entry_fee: number;
-  max_participants: number;
-  current_participants: number;
-  external_url: string;
-  image_url: string;
-  difficulty_level: string;
-  terrain_type: string;
+  description: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  location: string | null;
+  difficulty: string | null;
+  entry_fee: number | null;
+  image_url: string | null;
+  registration_url: string | null;
+  website_url: string | null;
 }
 
 const ClubsEvents = () => {
@@ -54,21 +48,7 @@ const ClubsEvents = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('clubs')
-        .select(`
-          id,
-          name,
-          location,
-          country,
-          description,
-          website_url,
-          club_type,
-          image_url,
-          founded_year,
-          member_count,
-          created_at,
-          updated_at,
-          contact_email
-        `)
+        .select('*')
         .order('name');
       
       if (error) throw error;
@@ -90,7 +70,7 @@ const ClubsEvents = () => {
     },
   });
 
-  const getDifficultyColor = (level: string) => {
+  const getDifficultyColor = (level: string | null) => {
     switch (level?.toLowerCase()) {
       case 'beginner': return 'bg-gradient-to-r from-green-500 to-green-600';
       case 'intermediate': return 'bg-gradient-to-r from-yellow-500 to-orange-500';
@@ -98,10 +78,6 @@ const ClubsEvents = () => {
       case 'professional': return 'bg-gradient-to-r from-red-500 to-purple-600';
       default: return 'bg-gradient-to-r from-blue-500 to-blue-600';
     }
-  };
-
-  const getTerrainIcon = (terrain: string) => {
-    return '🏔️'; // Default terrain icon
   };
 
   return (
@@ -198,23 +174,17 @@ const ClubsEvents = () => {
                             height={192}
                           />
                           <div className="absolute top-4 left-4">
-                            <Badge className={`${getDifficultyColor(event.difficulty_level)} text-white border-0 shadow-lg`}>
-                              {event.difficulty_level || 'Open'}
+                            <Badge className={`${getDifficultyColor(event.difficulty)} text-white border-0 shadow-lg`}>
+                              {event.difficulty || 'Open'}
                             </Badge>
                           </div>
                         </div>
                       )}
                       
                       <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                            {event.title}
-                          </CardTitle>
-                          <Badge variant="outline" className="ml-2">
-                            <Trophy className="w-3 h-3 mr-1" />
-                            {event.event_type}
-                          </Badge>
-                        </div>
+                        <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                          {event.title}
+                        </CardTitle>
                         <CardDescription className="text-sm line-clamp-2">
                           {event.description}
                         </CardDescription>
@@ -229,15 +199,8 @@ const ClubsEvents = () => {
                           
                           <div className="flex items-center text-sm text-muted-foreground">
                             <MapPin className="w-4 h-4 mr-2" />
-                            {event.location}, {event.country}
+                            {event.location || 'TBA'}
                           </div>
-
-                          {event.terrain_type && (
-                            <div className="flex items-center text-sm text-muted-foreground">
-                              <span className="mr-2">{getTerrainIcon(event.terrain_type)}</span>
-                              {event.terrain_type}
-                            </div>
-                          )}
 
                           {event.entry_fee && (
                             <div className="flex items-center text-sm text-muted-foreground">
@@ -247,33 +210,25 @@ const ClubsEvents = () => {
                           )}
 
                           <div className="space-y-3 pt-4">
-                            <div className="flex items-center justify-between">
-                              <div className="text-sm text-muted-foreground">
-                                {event.current_participants}/{event.max_participants} participants
-                              </div>
-                              
-                              {event.external_url && (
-                                <Button variant="outline" size="sm" asChild>
-                                  <a href={event.external_url} target="_blank" rel="noopener noreferrer">
-                                    <ExternalLink className="w-4 h-4 mr-2" />
-                                    Register
-                                  </a>
-                                </Button>
-                              )}
-                            </div>
+                            {(event.registration_url || event.website_url) && (
+                              <Button variant="outline" size="sm" asChild>
+                                <a href={event.registration_url || event.website_url || ''} target="_blank" rel="noopener noreferrer">
+                                  <ExternalLink className="w-4 h-4 mr-2" />
+                                  Register
+                                </a>
+                              </Button>
+                            )}
                             
-                            {/* Social Share - Aligned in same row with register button */}
-                            <div className="flex items-center justify-between">
-                              <div className="flex justify-center flex-1">
-                                <SocialShare
-                                  title={event.title}
-                                  excerpt={event.description || `Join the ${event.title} rally event in ${event.location}, ${event.country}`}
-                                  url={`/event/${event.id}`}
-                                  image={event.image_url}
-                                  variant="icon"
-                                  size="sm"
-                                />
-                              </div>
+                            {/* Social Share */}
+                            <div className="flex justify-center">
+                              <SocialShare
+                                title={event.title}
+                                excerpt={event.description || `Join the ${event.title} rally event`}
+                                url={`/event/${event.id}`}
+                                image={event.image_url || ''}
+                                variant="icon"
+                                size="sm"
+                              />
                             </div>
                           </div>
                         </div>
@@ -339,15 +294,8 @@ const ClubsEvents = () => {
                         <div className="space-y-3">
                           <div className="flex items-center text-sm text-muted-foreground">
                             <MapPin className="w-4 h-4 mr-2" />
-                            {club.location}, {club.country}
+                            {club.location || 'Location TBA'}
                           </div>
-                          
-                          {club.founded_year && (
-                            <div className="flex items-center text-sm text-muted-foreground">
-                              <Clock className="w-4 h-4 mr-2" />
-                              Founded {club.founded_year}
-                            </div>
-                          )}
 
                           {club.member_count && (
                             <div className="flex items-center text-sm text-muted-foreground">
@@ -357,9 +305,11 @@ const ClubsEvents = () => {
                           )}
 
                           <div className="pt-4">
-                            <Badge variant="secondary" className="mb-3">
-                              {club.club_type}
-                            </Badge>
+                            {club.type && (
+                              <Badge variant="secondary" className="mb-3">
+                                {club.type}
+                              </Badge>
+                            )}
                             
                             <div className="space-y-2">
                               <div className="flex gap-2">
@@ -385,9 +335,9 @@ const ClubsEvents = () => {
                               <div className="flex justify-center">
                                 <SocialShare
                                   title={club.name}
-                                  excerpt={club.description || `Join ${club.name}, a rally club based in ${club.location}, ${club.country}`}
+                                  excerpt={club.description || `Join ${club.name} rally club`}
                                   url={`/clubs-events#club-${club.id}`}
-                                  image={club.image_url}
+                                  image={club.image_url || ''}
                                   variant="icon"
                                   size="sm"
                                 />
@@ -403,7 +353,7 @@ const ClubsEvents = () => {
                 <div className="text-center py-12">
                   <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-xl font-semibold mb-2">No clubs found</h3>
-                  <p className="text-muted-foreground">Check back soon for new rally clubs in your area.</p>
+                  <p className="text-muted-foreground">Check back soon for new rally clubs.</p>
                 </div>
               )}
             </div>

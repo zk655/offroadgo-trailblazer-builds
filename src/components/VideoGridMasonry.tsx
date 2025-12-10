@@ -9,21 +9,17 @@ import { motion } from 'framer-motion';
 interface Video {
   id: string;
   title: string;
-  description: string;
-  slug: string;
-  thumbnail_url: string;
-  video_url: string;
-  duration: number;
-  tags: string[];
-  category: string;
+  description: string | null;
+  thumbnail_url: string | null;
+  video_url: string | null;
+  duration: number | null;
+  tags: string[] | null;
+  category: string | null;
   view_count: number;
   like_count: number;
   share_count: number;
   save_count: number;
-  is_featured: boolean;
-  is_trending: boolean;
-  created_at: string;
-  published_at: string;
+  created_at?: string | null;
 }
 
 interface VideoGridMasonryProps {
@@ -67,10 +63,10 @@ const VideoGridMasonry: React.FC<VideoGridMasonryProps> = ({
 
   // Calculate card height based on content
   const getCardHeight = (video: Video) => {
-    const baseHeight = 200; // thumbnail aspect ratio height
-    const titleLines = Math.ceil(video.title.length / 40); // rough estimate
-    const tagsHeight = Math.ceil(video.tags.length / 3) * 24; // tag rows
-    return baseHeight + (titleLines * 20) + tagsHeight + 120; // padding and stats
+    const baseHeight = 200;
+    const titleLines = Math.ceil(video.title.length / 40);
+    const tagsHeight = video.tags ? Math.ceil(video.tags.length / 3) * 24 : 0;
+    return baseHeight + (titleLines * 20) + tagsHeight + 120;
   };
 
   // Distribute videos into columns
@@ -156,18 +152,6 @@ const VideoGridMasonry: React.FC<VideoGridMasonryProps> = ({
                     {video.duration && video.duration > 0 ? formatDuration(video.duration) : '0:00'}
                   </div>
 
-                  {/* Featured/Trending Badge */}
-                  {(video.is_featured || video.is_trending) && (
-                    <div className="absolute top-2 left-2">
-                      <Badge 
-                        variant={video.is_featured ? "default" : "secondary"}
-                        className="text-xs font-semibold"
-                      >
-                        {video.is_featured ? '⭐ Featured' : '🔥 Trending'}
-                      </Badge>
-                    </div>
-                  )}
-
                   {/* Play Button Overlay */}
                   <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-300 ${
                     hoveredId === video.id ? 'opacity-100' : 'opacity-0'
@@ -237,39 +221,41 @@ const VideoGridMasonry: React.FC<VideoGridMasonryProps> = ({
 
                   {/* Category */}
                   <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide font-medium">
-                    {video.category}
+                    {video.category || 'General'}
                   </p>
 
                   {/* Tags */}
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {video.tags.slice(0, 2).map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs px-2 py-0.5">
-                        #{tag}
-                      </Badge>
-                    ))}
-                    {video.tags.length > 2 && (
-                      <Badge variant="outline" className="text-xs px-2 py-0.5">
-                        +{video.tags.length - 2}
-                      </Badge>
-                    )}
-                  </div>
+                  {video.tags && video.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {video.tags.slice(0, 2).map((tag) => (
+                        <Badge key={tag} variant="outline" className="text-xs px-2 py-0.5">
+                          #{tag}
+                        </Badge>
+                      ))}
+                      {video.tags.length > 2 && (
+                        <Badge variant="outline" className="text-xs px-2 py-0.5">
+                          +{video.tags.length - 2}
+                        </Badge>
+                      )}
+                    </div>
+                  )}
 
                   {/* Stats */}
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Eye className="h-3 w-3" />
-                      <span>{formatNumber(video.view_count)}</span>
+                      <span>{formatNumber(video.view_count || 0)}</span>
                     </div>
                     
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1">
                         <Heart className="h-3 w-3" />
-                        <span>{formatNumber(video.like_count)}</span>
+                        <span>{formatNumber(video.like_count || 0)}</span>
                       </div>
                       
                       <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        <span>{formatDate(video.published_at)}</span>
+                        <span>{video.created_at ? formatDate(video.created_at) : 'N/A'}</span>
                       </div>
                     </div>
                   </div>

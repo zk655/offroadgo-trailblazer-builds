@@ -11,21 +11,16 @@ import { formatDuration } from '@/utils/videoHelpers';
 interface Video {
   id: string;
   title: string;
-  description: string;
-  slug: string;
-  thumbnail_url: string;
-  video_url: string;
-  duration: number;
-  tags: string[];
-  category: string;
-  view_count: number;
-  like_count: number;
-  share_count: number;
-  save_count: number;
-  is_featured: boolean;
-  is_trending: boolean;
-  created_at: string;
-  published_at: string;
+  description: string | null;
+  thumbnail_url: string | null;
+  video_url: string | null;
+  duration: number | null;
+  tags: string[] | null;
+  category: string | null;
+  views: number | null;
+  likes: number | null;
+  status: string | null;
+  created_at: string | null;
 }
 
 interface VideoGridProps {
@@ -73,14 +68,12 @@ const VideoGrid: React.FC<VideoGridProps> = ({
     // Apply sorting
     switch (sortBy) {
       case 'trending':
-        query = query.eq('is_trending', true).order('view_count', { ascending: false });
-        break;
       case 'most_viewed':
-        query = query.order('view_count', { ascending: false });
+        query = query.order('views', { ascending: false });
         break;
       case 'newest':
       default:
-        query = query.order('published_at', { ascending: false });
+        query = query.order('created_at', { ascending: false });
         break;
     }
 
@@ -144,26 +137,15 @@ const VideoGrid: React.FC<VideoGridProps> = ({
     setIsPlayerOpen(true);
   };
 
-  const handleVideoInteraction = async (videoId: string, type: 'like' | 'save' | 'share') => {
+  const handleVideoInteraction = async (videoId: string, type: 'like' | 'view') => {
     try {
-      // Update local state optimistically
-      const updatedVideos = videos.map(video => {
-        if (video.id === videoId) {
-          return {
-            ...video,
-            [`${type}_count`]: (video[`${type}_count` as keyof Video] as number) + 1
-          };
-        }
-        return video;
-      });
-
-      // Update database
       const currentVideo = videos.find(v => v.id === videoId);
       if (currentVideo) {
-        const currentCount = currentVideo[`${type}_count` as keyof Video] as number || 0;
+        const field = type === 'like' ? 'likes' : 'views';
+        const currentCount = currentVideo[field] || 0;
         await supabase
           .from('videos')
-          .update({ [`${type}_count`]: currentCount + 1 })
+          .update({ [field]: currentCount + 1 })
           .eq('id', videoId);
       }
     } catch (error) {
@@ -203,12 +185,18 @@ const VideoGrid: React.FC<VideoGridProps> = ({
         {videos.map((video, index) => (
           <VideoCard
             key={video.id}
-            video={video}
+            video={{
+              ...video,
+              view_count: video.views || 0,
+              like_count: video.likes || 0,
+              share_count: 0,
+              save_count: 0,
+            }}
             onPlay={() => handleVideoPlay(video)}
             onLike={() => handleVideoInteraction(video.id, 'like')}
-            onSave={() => handleVideoInteraction(video.id, 'save')}
-            onShare={() => handleVideoInteraction(video.id, 'share')}
-            priority={index < 4} // Prioritize first 4 videos
+            onSave={() => {}}
+            onShare={() => {}}
+            priority={index < 4}
           />
         ))}
       </div>
@@ -232,16 +220,15 @@ const VideoGrid: React.FC<VideoGridProps> = ({
               <div className="flex-1 bg-black min-h-0">
                 <VideoPlayerAdvanced
                   videoId={selectedVideo.id}
-                  videoUrl={selectedVideo.video_url}
-                  thumbnailUrl={selectedVideo.thumbnail_url}
+                  videoUrl={selectedVideo.video_url || ''}
+                  thumbnailUrl={selectedVideo.thumbnail_url || ''}
                   title={selectedVideo.title}
                   autoPlay={true}
                   className="w-full h-full"
                   onViewTracked={() => {
-                    // Update local state
                     setSelectedVideo(prev => prev ? {
                       ...prev,
-                      view_count: prev.view_count + 1
+                      views: (prev.views || 0) + 1
                     } : null);
                   }}
                 />
@@ -261,24 +248,18 @@ const VideoGrid: React.FC<VideoGridProps> = ({
                     </div>
 
                     {/* Stats */}
-                    <div className="grid grid-cols-3 gap-2 md:gap-4 text-center">
+                    <div className="grid grid-cols-2 gap-2 md:gap-4 text-center">
                       <div>
                         <div className="text-lg md:text-2xl font-bold text-primary">
-                          {(selectedVideo.view_count || 0).toLocaleString()}
+                          {(selectedVideo.views || 0).toLocaleString()}
                         </div>
                         <div className="text-xs text-muted-foreground">Views</div>
                       </div>
                       <div>
                         <div className="text-lg md:text-2xl font-bold text-primary">
-                          {(selectedVideo.like_count || 0).toLocaleString()}
+                          {(selectedVideo.likes || 0).toLocaleString()}
                         </div>
                         <div className="text-xs text-muted-foreground">Likes</div>
-                      </div>
-                      <div>
-                        <div className="text-lg md:text-2xl font-bold text-primary">
-                          {(selectedVideo.save_count || 0).toLocaleString()}
-                        </div>
-                        <div className="text-xs text-muted-foreground">Saves</div>
                       </div>
                     </div>
 
@@ -303,15 +284,15 @@ const VideoGrid: React.FC<VideoGridProps> = ({
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Duration:</span>
-                        <span>{formatDuration(selectedVideo.duration)}</span>
+                        <span>{formatDuration(selectedVideo.duration || 0)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Category:</span>
-                        <span className="capitalize">{selectedVideo.category}</span>
+                        <span className="capitalize">{selectedVideo.category || 'General'}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Published:</span>
-                        <span>{new Date(selectedVideo.published_at).toLocaleDateString()}</span>
+                        <span>{selectedVideo.created_at ? new Date(selectedVideo.created_at).toLocaleDateString() : 'N/A'}</span>
                       </div>
                     </div>
                   </div>

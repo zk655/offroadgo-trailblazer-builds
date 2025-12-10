@@ -19,16 +19,15 @@ import rallyEvent6 from '@/assets/rally-event-6.jpg';
 interface Event {
   id: string;
   title: string;
-  description: string;
-  event_type: string;
-  start_date: string;
-  location: string;
-  country: string;
-  difficulty_level: string;
-  image_url: string;
-  venue: string;
-  current_participants: number;
-  max_participants: number;
+  description: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  location: string | null;
+  difficulty: string | null;
+  image_url: string | null;
+  entry_fee: number | null;
+  registration_url: string | null;
+  website_url: string | null;
 }
 
 const ClubsEventsSection = () => {
@@ -42,7 +41,6 @@ const ClubsEventsSection = () => {
         .from('events')
         .select('*')
         .gte('start_date', new Date().toISOString())
-        .or('terrain_type.ilike.%gravel%,terrain_type.ilike.%snow%,terrain_type.ilike.%4x4%,event_type.ilike.%rally%,event_type.ilike.%4x4%,title.ilike.%rally%,title.ilike.%4x4%,description.ilike.%4x4%,description.ilike.%off-road%')
         .order('start_date')
         .limit(4);
       
@@ -51,7 +49,7 @@ const ClubsEventsSection = () => {
     },
   });
 
-  const getDifficultyColor = (level: string) => {
+  const getDifficultyColor = (level: string | null) => {
     switch (level?.toLowerCase()) {
       case 'beginner': return 'bg-green-500';
       case 'intermediate': return 'bg-yellow-500';
@@ -109,15 +107,10 @@ const ClubsEventsSection = () => {
                   
                   {/* Difficulty Badge */}
                   <Badge 
-                    className={`absolute top-2 left-2 ${getDifficultyColor(event.difficulty_level)} text-white border-0 text-xs font-medium`}
+                    className={`absolute top-2 left-2 ${getDifficultyColor(event.difficulty)} text-white border-0 text-xs font-medium`}
                   >
-                    {event.difficulty_level || 'Open'}
+                    {event.difficulty || 'Open'}
                   </Badge>
-
-                  {/* Event Type */}
-                  <div className="absolute top-2 right-2 bg-background/90 backdrop-blur-sm rounded-md px-2 py-1">
-                    <span className="text-xs font-semibold text-primary">{event.event_type}</span>
-                  </div>
                 </div>
 
                 <CardContent className="p-4">
@@ -141,13 +134,13 @@ const ClubsEventsSection = () => {
                     </div>
                     <div className="flex items-center gap-1">
                       <MapPin className="h-3 w-3 text-primary" />
-                      <span className="font-medium">{event.location}, {event.country}</span>
+                      <span className="font-medium">{event.location || 'TBA'}</span>
                     </div>
-                    {event.current_participants && event.max_participants && (
+                    {event.entry_fee && (
                       <div className="flex items-center gap-1">
                         <Trophy className="h-3 w-3 text-primary" />
                         <span className="font-medium">
-                          {event.current_participants}/{event.max_participants} participants
+                          ${event.entry_fee} entry fee
                         </span>
                       </div>
                     )}
