@@ -26,22 +26,9 @@ const Videos = () => {
   const [sortBy, setSortBy] = useState<'newest' | 'trending' | 'most_viewed'>('newest');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const queryClient = useQueryClient();
 
-  // Fetch video tags
-  const { data: videoTags = [] } = useQuery({
-    queryKey: ['video-tags'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('video_tags')
-        .select('*')
-        .order('usage_count', { ascending: false });
-      
-      if (error) throw error;
-      return data as VideoTag[];
-    },
-    staleTime: 10 * 60 * 1000, // 10 minutes cache
-  });
+  // Video tags - empty since table doesn't exist
+  const videoTags: VideoTag[] = [];
 
   // Fetch video categories
   const { data: categories = [] } = useQuery({

@@ -26,17 +26,15 @@ import SocialShare from '@/components/SocialShare';
 
 interface Trail {
   id: string;
-  slug: string;
   name: string;
-  terrain: string;
-  difficulty: string;
-  distance: number;
-  image_url: string;
-  location: string;
-  description: string;
-  latitude: number;
-  longitude: number;
-  elevation_gain: number;
+  difficulty: string | null;
+  length: number | null;
+  image_url: string | null;
+  location: string | null;
+  description: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  elevation_gain: number | null;
 }
 
 const Trails = () => {
@@ -44,7 +42,6 @@ const Trails = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState('all');
-  const [terrainFilter, setTerrainFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [allTrails, setAllTrails] = useState<Trail[]>([]);
@@ -58,7 +55,7 @@ const Trails = () => {
   useEffect(() => {
     setCurrentPage(1); // Reset to first page when filters change
     fetchTrails();
-  }, [searchTerm, difficultyFilter, terrainFilter]);
+  }, [searchTerm, difficultyFilter]);
 
   useEffect(() => {
     fetchTrails();
@@ -89,15 +86,11 @@ const Trails = () => {
 
       // Apply filters
       if (searchTerm) {
-        query = query.or(`name.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%,terrain.ilike.%${searchTerm}%`);
+        query = query.or(`name.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%`);
       }
 
       if (difficultyFilter !== 'all') {
         query = query.eq('difficulty', difficultyFilter);
-      }
-
-      if (terrainFilter !== 'all') {
-        query = query.eq('terrain', terrainFilter);
       }
 
       // Apply pagination
@@ -119,54 +112,28 @@ const Trails = () => {
   };
 
   const getImageUrl = (trail: Trail) => {
-    // Use placeholder images based on terrain type
-    const placeholderImages = {
-      'Mountain': 'photo-1469474968028-56623f02e42e',
-      'Alpine': 'photo-1470071459604-3b5ec3a7fe05',
-      'Sandstone': 'photo-1426604966848-d7adac402bff',
-      'Rock': 'photo-1513836279014-a89f7a76ae86',
-      'Desert': 'photo-1472396961693-142e6e269027',
-      'Forest': 'photo-1509316975850-ff9c5deb0cd9',
-      'Canyon': 'photo-1482938289607-e9573fc25ebb',
-      'Coastal': 'photo-1500375592092-40eb2168fd21',
-      'Water': 'photo-1506744038136-46273834b3fb'
-    };
-    
-    const terrainKey = Object.keys(placeholderImages).find(key => 
-      trail.terrain?.toLowerCase().includes(key.toLowerCase())
-    );
-    
-    const fallbackImage = placeholderImages[terrainKey as keyof typeof placeholderImages] || 'photo-1469474968028-56623f02e42e';
-    
-    return `https://images.unsplash.com/${fallbackImage}?w=800&h=600&fit=crop`;
+    if (trail.image_url) return trail.image_url;
+    // Default placeholder
+    return `https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop`;
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty.toLowerCase()) {
+  const getDifficultyColor = (difficulty: string | null) => {
+    switch (difficulty?.toLowerCase()) {
       case 'beginner':
+      case 'easy':
         return 'bg-green-500';
       case 'intermediate':
+      case 'moderate':
         return 'bg-orange-500';
       case 'expert':
+      case 'difficult':
         return 'bg-red-500';
       default:
         return 'bg-gray-500';
     }
   };
 
-  const getTerrainIcon = (terrain: string) => {
-    switch (terrain.toLowerCase()) {
-      case 'rock':
-        return Mountain;
-      case 'mountain':
-        return Mountain;
-      default:
-        return Compass;
-    }
-  };
-
-  const uniqueDifficulties = [...new Set(allTrails.map(t => t.difficulty))];
-  const uniqueTerrains = [...new Set(allTrails.map(t => t.terrain))];
+  const uniqueDifficulties = [...new Set(allTrails.map(t => t.difficulty).filter(Boolean))];
   
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
@@ -240,19 +207,7 @@ const Trails = () => {
             <SelectContent>
               <SelectItem value="all">All Difficulties</SelectItem>
               {uniqueDifficulties.map(difficulty => (
-                <SelectItem key={difficulty} value={difficulty}>{difficulty}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={terrainFilter} onValueChange={setTerrainFilter}>
-            <SelectTrigger className="w-full md:w-[180px]">
-              <SelectValue placeholder="Terrain" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Terrains</SelectItem>
-              {uniqueTerrains.map(terrain => (
-                <SelectItem key={terrain} value={terrain}>{terrain}</SelectItem>
+                <SelectItem key={difficulty} value={difficulty!}>{difficulty}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -279,8 +234,6 @@ const Trails = () => {
         {/* Trails Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {trails.map((trail) => {
-            const TerrainIcon = getTerrainIcon(trail.terrain);
-            
             return (
               <Card key={trail.id} className="group hover:shadow-primary transition-smooth hover:-translate-y-1 overflow-hidden">
                 <div className="relative">
@@ -295,13 +248,7 @@ const Trails = () => {
                   />
                   <div className="absolute top-4 left-4">
                     <Badge className={`text-white ${getDifficultyColor(trail.difficulty)}`}>
-                      {trail.difficulty}
-                    </Badge>
-                  </div>
-                  <div className="absolute top-4 right-4">
-                    <Badge variant="secondary" className="bg-white/90 text-black">
-                      <TerrainIcon className="mr-1 h-3 w-3" />
-                      {trail.terrain}
+                      {trail.difficulty || 'Unknown'}
                     </Badge>
                   </div>
                 </div>
@@ -321,8 +268,8 @@ const Trails = () => {
                   
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div>
-                      <p className="text-muted-foreground">Distance</p>
-                      <p className="font-medium">{trail.distance} miles</p>
+                      <p className="text-muted-foreground">Length</p>
+                      <p className="font-medium">{trail.length} miles</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Elevation</p>
@@ -334,12 +281,12 @@ const Trails = () => {
                 <CardFooter className="pt-2 space-y-2">
                   <div className="flex gap-2">
                     <Button asChild variant="outline" size="sm" className="flex-1">
-                      <Link to={`/trail/${trail.slug}`}>
+                      <Link to={`/trail/${trail.id}`}>
                         View Details
                       </Link>
                     </Button>
                     <Button asChild size="sm" className="flex-1">
-                      <Link to={`/trip-planner?trail=${trail.slug}`}>
+                      <Link to={`/trip-planner?trail=${trail.id}`}>
                         Add to Trip
                       </Link>
                     </Button>
@@ -349,8 +296,8 @@ const Trails = () => {
                   <div className="flex justify-center">
                     <SocialShare
                       title={trail.name}
-                      excerpt={`Explore the ${trail.name} trail in ${trail.location}. ${trail.difficulty} difficulty, ${trail.distance} miles of ${trail.terrain} terrain.`}
-                      url={`/trail/${trail.slug}`}
+                      excerpt={`Explore the ${trail.name} trail in ${trail.location}. ${trail.difficulty} difficulty, ${trail.length} miles.`}
+                      url={`/trail/${trail.id}`}
                       image={getImageUrl(trail)}
                       variant="icon"
                       size="sm"

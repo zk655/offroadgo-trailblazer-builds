@@ -26,15 +26,14 @@ import SEOHead from '@/components/SEOHead';
 
 interface Product {
   id: string;
-  slug: string;
   title: string;
-  category: string;
-  price: number;
-  brand: string;
-  rating: number;
-  image_url: string;
-  amazon_link: string;
-  description: string;
+  category: string | null;
+  price: number | null;
+  brand: string | null;
+  rating: number | null;
+  image_url: string | null;
+  affiliate_link: string | null;
+  description: string | null;
 }
 
 const ProductDetail = () => {
@@ -50,15 +49,15 @@ const ProductDetail = () => {
     }
   }, [slug]);
 
-  const fetchProduct = async (productSlug: string) => {
+  const fetchProduct = async (productId: string) => {
     try {
       setLoading(true);
       
-      // Fetch the main product by slug
+      // Fetch the main product by id
       const { data: productData, error: productError } = await supabase
         .from('mods')
         .select('*')
-        .eq('slug', productSlug)
+        .eq('id', productId)
         .single();
 
       if (productError) throw productError;
@@ -70,7 +69,7 @@ const ProductDetail = () => {
           .from('mods')
           .select('*')
           .eq('category', productData.category)
-          .neq('slug', productSlug)
+          .neq('id', productId)
           .limit(4);
 
         if (relatedError) throw relatedError;
@@ -171,7 +170,7 @@ const ProductDetail = () => {
         title={`${product.title} - ${product.brand} | Off-Road Parts`}
         description={`${product.description} ${product.brand} ${product.title} - $${formatPrice(product.price)}. Top-rated ${product.category} with ${product.rating} stars.`}
         keywords={`${product.brand}, ${product.title}, ${product.category}, off-road parts, 4x4 accessories, modification`}
-        url={`/products/${product.slug}`}
+        url={`/products/${product.id}`}
         type="product"
         image={product.image_url}
       />
@@ -280,10 +279,10 @@ const ProductDetail = () => {
 
                 {/* Action Buttons */}
                 <div className="space-y-3">
-                  {product.amazon_link && (
+                  {product.affiliate_link && (
                     <Button asChild size="lg" className="w-full">
                       <a 
-                        href={getAmazonAffiliateLink(product.amazon_link)} 
+                        href={getAmazonAffiliateLink(product.affiliate_link)} 
                         target="_blank" 
                         rel="noopener noreferrer"
                       >
@@ -334,7 +333,7 @@ const ProductDetail = () => {
                       key={relatedProduct.id} 
                       className="group hover:shadow-primary transition-smooth hover:-translate-y-1 overflow-hidden"
                     >
-                      <Link to={`/product/${relatedProduct.slug}`}>
+                      <Link to={`/product/${relatedProduct.id}`}>
                         <div className="relative">
                           <img
                             src={relatedProduct.image_url}
