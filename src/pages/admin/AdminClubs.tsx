@@ -73,7 +73,7 @@ export default function AdminClubs() {
     enabled: !!user && (userRole === "admin" || userRole === "editor"),
   });
 
-  const createMutation = useMutation({
+  const createMutation = useMutation<void, Error, ClubFormData>({
     mutationFn: async (data: ClubFormData) => {
       const processedData = {
         name: data.name,
@@ -96,12 +96,12 @@ export default function AdminClubs() {
       setIsDialogOpen(false);
       form.reset();
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({ title: "Error creating club", description: error.message, variant: "destructive" });
     },
   });
 
-  const updateMutation = useMutation({
+  const updateMutation = useMutation<void, Error, { id: string; data: ClubFormData }>({
     mutationFn: async ({ id, data }: { id: string; data: ClubFormData }) => {
       const processedData = {
         name: data.name,
@@ -125,12 +125,12 @@ export default function AdminClubs() {
       setEditingClub(null);
       form.reset();
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({ title: "Error updating club", description: error.message, variant: "destructive" });
     },
   });
 
-  const deleteMutation = useMutation({
+  const deleteMutation = useMutation<void, Error, string>({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("clubs").delete().eq("id", id);
       if (error) throw error;
@@ -139,7 +139,7 @@ export default function AdminClubs() {
       queryClient.invalidateQueries({ queryKey: ["admin-clubs"] });
       toast({ title: "Club deleted successfully" });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({ title: "Error deleting club", description: error.message, variant: "destructive" });
     },
   });
