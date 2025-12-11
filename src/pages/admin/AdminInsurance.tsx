@@ -61,7 +61,7 @@ export default function AdminInsurance() {
     enabled: !!user && (userRole === "admin" || userRole === "editor"),
   });
 
-  const createMutation = useMutation({
+  const createMutation = useMutation<void, Error, ProviderFormData>({
     mutationFn: async (data: ProviderFormData) => {
       const processedData = {
         name: data.name,
@@ -82,12 +82,12 @@ export default function AdminInsurance() {
       setIsDialogOpen(false);
       form.reset();
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({ title: "Error creating provider", description: error.message, variant: "destructive" });
     },
   });
 
-  const updateMutation = useMutation({
+  const updateMutation = useMutation<void, Error, { id: string; data: ProviderFormData }>({
     mutationFn: async ({ id, data }: { id: string; data: ProviderFormData }) => {
       const processedData = {
         name: data.name,
@@ -109,12 +109,12 @@ export default function AdminInsurance() {
       setEditingProvider(null);
       form.reset();
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({ title: "Error updating provider", description: error.message, variant: "destructive" });
     },
   });
 
-  const deleteMutation = useMutation({
+  const deleteMutation = useMutation<void, Error, string>({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("insurance_providers").delete().eq("id", id);
       if (error) throw error;
@@ -123,7 +123,7 @@ export default function AdminInsurance() {
       queryClient.invalidateQueries({ queryKey: ["admin-insurance-providers"] });
       toast({ title: "Provider deleted successfully" });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({ title: "Error deleting provider", description: error.message, variant: "destructive" });
     },
   });

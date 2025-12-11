@@ -79,7 +79,7 @@ export default function AdminEvents() {
     enabled: !!user && (userRole === "admin" || userRole === "editor"),
   });
 
-  const createMutation = useMutation({
+  const createMutation = useMutation<void, Error, EventFormData>({
     mutationFn: async (data: EventFormData) => {
       const processedData = {
         title: data.title,
@@ -103,12 +103,12 @@ export default function AdminEvents() {
       setIsDialogOpen(false);
       form.reset();
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({ title: "Error creating event", description: error.message, variant: "destructive" });
     },
   });
 
-  const updateMutation = useMutation({
+  const updateMutation = useMutation<void, Error, { id: string; data: EventFormData }>({
     mutationFn: async ({ id, data }: { id: string; data: EventFormData }) => {
       const processedData = {
         title: data.title,
@@ -133,12 +133,12 @@ export default function AdminEvents() {
       setEditingEvent(null);
       form.reset();
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({ title: "Error updating event", description: error.message, variant: "destructive" });
     },
   });
 
-  const deleteMutation = useMutation({
+  const deleteMutation = useMutation<void, Error, string>({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("events").delete().eq("id", id);
       if (error) throw error;
@@ -147,7 +147,7 @@ export default function AdminEvents() {
       queryClient.invalidateQueries({ queryKey: ["admin-events"] });
       toast({ title: "Event deleted successfully" });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({ title: "Error deleting event", description: error.message, variant: "destructive" });
     },
   });
