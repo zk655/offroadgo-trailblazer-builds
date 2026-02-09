@@ -21,6 +21,24 @@ export const useAutoDataSync = (options: SyncOptions = {}) => {
 
   const syncData = async (showToast: boolean = false) => {
     try {
+      // Only sync if user is authenticated and has admin role
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        console.log('Data sync skipped - not authenticated');
+        return;
+      }
+
+      const { data: userRole } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (!userRole || userRole.role !== 'admin') {
+        console.log('Data sync skipped - not admin');
+        return;
+      }
+
       // Check if data was synced recently (within last 30 minutes)
       const lastSyncTime = localStorage.getItem('lastDataSync');
       const now = Date.now();
@@ -51,7 +69,6 @@ export const useAutoDataSync = (options: SyncOptions = {}) => {
       }
 
       if (!hasErrors) {
-        // Store last sync time
         localStorage.setItem('lastDataSync', now.toString());
         
         if (showToast) {
@@ -85,21 +102,17 @@ export const useAutoDataSync = (options: SyncOptions = {}) => {
   useEffect(() => {
     if (!enabled) return;
 
-    // Sync on mount if enabled and not already synced
     if (syncOnMount && !hasSyncedRef.current) {
       hasSyncedRef.current = true;
-      // Delay initial sync to allow page to load
       setTimeout(() => syncData(false), 2000);
     }
 
-    // Set up periodic sync
     if (syncInterval > 0) {
       intervalRef.current = setInterval(() => {
         syncData(false);
       }, syncInterval);
     }
 
-    // Cleanup interval on unmount
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -107,7 +120,6 @@ export const useAutoDataSync = (options: SyncOptions = {}) => {
     };
   }, [enabled, syncOnMount, syncInterval]);
 
-  // Manual sync function for components that need it
   const manualSync = () => syncData(true);
 
   return { manualSync };
