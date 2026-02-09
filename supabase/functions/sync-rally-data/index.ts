@@ -12,12 +12,30 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseClient = createClient(
+    const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      { auth: { autoRefreshToken: false, persistSession: false } }
     )
 
+    // Verify caller is authenticated and has admin role
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token)
+    if (userError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    const { data: userRole } = await supabaseAdmin.from('user_roles').select('role').eq('user_id', user.id).single()
+    if (!userRole || userRole.role !== 'admin') {
+      return new Response(JSON.stringify({ error: 'Insufficient permissions' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+
     console.log('Starting rally data sync...')
+
+    const supabaseClient = supabaseAdmin
 
     // Fetch real rally data
     const realClubs = await fetchRealRallyClubs()
