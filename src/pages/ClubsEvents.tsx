@@ -47,7 +47,7 @@ const ClubsEvents = () => {
     queryKey: ['clubs'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('clubs')
+        .from('clubs_public')
         .select('*')
         .order('name');
       
