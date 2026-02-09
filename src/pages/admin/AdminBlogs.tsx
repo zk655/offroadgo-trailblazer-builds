@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { sanitizeHtml } from "@/utils/sanitizer";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getLiveBlogContent } from "@/services/blogService";
@@ -556,7 +557,7 @@ export default function AdminBlogs() {
                 <p className="text-muted-foreground">{viewingBlog.excerpt}</p>
                 <div 
                   className="prose prose-sm dark:prose-invert max-w-none"
-                  dangerouslySetInnerHTML={{ __html: viewingBlog.content || "" }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(viewingBlog.content || "") }}
                 />
               </div>
             )}
