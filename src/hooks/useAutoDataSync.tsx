@@ -17,7 +17,7 @@ export const useAutoDataSync = (options: SyncOptions = {}) => {
 
   const { toast } = useToast();
   const hasSyncedRef = useRef(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const syncData = async (showToast: boolean = false) => {
     try {
